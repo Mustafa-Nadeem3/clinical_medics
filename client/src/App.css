@@ -1,0 +1,89 @@
+/* My Custom CSS */
+.text-primary {
+  color: #38b6ff !important;
+}
+
+.text-secondary {
+  color: #8795a1 !important;
+}
+
+.text-green {
+  color: green;
+}
+
+.text-red {
+  color: red;
+}
+
+.text-yellow {
+  color: yellow
+}
+
+.bg-primary {
+  background-color: #38b6ff !important;
+}
+
+.bg-secondary {
+  background-color: #8795a1 !important;
+}
+
+.border-primary {
+  border-color: #38b6ff !important;
+}
+
+.border-secondary {
+  border-color: #8795a1 !important;
+}
+
+.btn-primary {
+  background-color: #38b6ff !important;
+  border-color: #38b6ff !important;
+}
+
+body {
+  font-family: "Open Sans";
+}
+
+/* Box Custom ScrollBar */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #a8a8a8; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8; 
+}
+
+/* Body Custom ScrollBar */
+/* width */
+body::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+body::-webkit-scrollbar-track {
+  border-radius: 0px !important; 
+}
+ 
+/* Handle */
+body::-webkit-scrollbar-thumb {
+  background: #a8a8a8; 
+  border-radius: 0px !important;
+}
+
+/* Handle on hover */
+body::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8; 
+}

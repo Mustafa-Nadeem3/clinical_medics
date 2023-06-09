@@ -1,0 +1,1288 @@
+/* To apply image as elements background */
+/* style={{backgroundImage: `url("/images/main-background.jpeg")`,
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "cover"
+}} */
+
+/* Navbar CSS */
+.navbar {
+  background-color: #d4e8f7;
+  transition: 0.5s !important;
+}
+
+.navbar .active {
+  background-color: white !important;
+}
+
+.nav-item:hover {
+  border-bottom: 2px solid #38b6ff;
+  cursor: pointer;
+}
+
+.nav-item .rounded-pill:hover {
+  background-color: rgb(56, 182, 255);
+  color: white !important;
+  border-color: #38b6ff;
+}
+
+/* Menubar CSS */
+.menubar {
+  margin-top: 70px;
+  display: flex;
+  perspective: 10px;
+  transform: perspective(300px) rotateX(20deg);
+  will-change: perspective;
+  perspective-origin: center center;
+  transition: all 1.3s ease-out;
+  justify-content: center;
+  transform-style: preserve-3d;
+}
+
+.menubar .active {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.menubar:hover {
+  perspective: 1000px;
+  transition: all 1.5s ease-in;
+  transform: perspective(10000px) rotateX(0deg);
+}
+
+.menubar:hover .text {
+  opacity: 1;
+}
+
+.menubar:hover > div {
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.menubar:hover .explainer {
+  opacity: 0;
+}
+
+.left,
+.center,
+.right,
+.lefter,
+.righter {
+  width: 90px;
+  height: 70px;
+  transform-style: preserve-3d;
+  border-radius: 5px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  transition-delay: 1s;
+  position: relative;
+  background-position: center center;
+  background-color: rgb(212, 232, 247);
+  cursor: pointer;
+  background-blend-mode: color-burn;
+  padding-top: -10px;
+}
+
+.text {
+  transform: translateY(30px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  bottom: 0;
+  left: 5px;
+  position: absolute;
+  will-change: transform;
+  color: white;
+  text-shadow: 0 0 5px rgba(56, 182, 255, 0.6);
+}
+
+.lefter {
+  transform: translateX(-60px) translateZ(-50px) rotateY(-10deg);
+}
+
+.left {
+  transform: translateX(-30px) translateZ(-25px) rotateY(-5deg);
+}
+
+.center {
+  opacity: 1;
+  background-image: url("/public/images/login-bg.svg");
+  background-size: 100px;
+  background-blend-mode: darken;
+}
+
+.right {
+  transform: translateX(30px) translateZ(-25px) rotateY(5deg);
+}
+
+.righter {
+  transform: translateX(60px) translateZ(-50px) rotateY(10deg);
+}
+
+.lefter img,
+.left img,
+.center img,
+.right img,
+.righter img {
+  margin-top: -10px;
+}
+
+.explainer {
+  color: #8795a1;
+  transition: all 0.6s ease;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(212, 232, 247);
+  background-image: radial-gradient(circle at center top, white, #d4e8f7);
+  border-radius: 10px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login {
+  transition: 0.5s;
+}
+
+.login .rounded-pill:hover {
+  background-color: rgb(56, 182, 255);
+  color: white !important;
+  border-color: #38b6ff;
+}
+
+.navbar-alt {
+  background-color: white !important;
+}
+
+.disabled {
+  display: none !important;
+}
+
+/* Menubar CSS */
+.menubar {
+  margin-top: 70px;
+  display: flex;
+  perspective: 10px;
+  transform: perspective(300px) rotateX(20deg);
+  will-change: perspective;
+  perspective-origin: center center;
+  transition: all 1.3s ease-out;
+  justify-content: center;
+  transform-style: preserve-3d;
+}
+
+.menubar .active {
+  background-color: rgb(255, 255, 255, 0.5);
+}
+
+.menubar:hover {
+  perspective: 1000px;
+  transition: all 1.5s ease-in;
+  transform: perspective(10000px) rotateX(0deg);
+}
+
+.menubar:hover .text {
+  opacity: 1;
+}
+
+.menubar:hover > div {
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.menubar:hover .explainer {
+  opacity: 0;
+}
+
+.left,
+.center,
+.right,
+.lefter,
+.righter {
+  width: 90px;
+  height: 70px;
+  transform-style: preserve-3d;
+  border-radius: 5px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  transition-delay: 1s;
+  position: relative;
+  background-position: center center;
+  background-color: rgb(212, 232, 247);
+  cursor: pointer;
+  background-blend-mode: color-burn;
+  padding-top: -10px;
+}
+
+/* .left:hover,
+.center:hover,
+.right:hover,
+.lefter:hover,
+.righter:hover {
+ color: white;
+} */
+
+.text {
+  transform: translateY(30px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  bottom: 0;
+  left: 5px;
+  position: absolute;
+  will-change: transform;
+  color: white;
+  text-shadow: 0 0 5px rgba(56, 182, 255, 0.6);
+}
+
+.lefter {
+  transform: translateX(-60px) translateZ(-50px) rotateY(-10deg);
+}
+
+.left {
+  transform: translateX(-30px) translateZ(-25px) rotateY(-5deg);
+}
+
+.center {
+  opacity: 1;
+  background-image: url("/public/images/login-bg.svg");
+  background-size: 100px;
+  background-blend-mode: darken;
+}
+
+.right {
+  transform: translateX(30px) translateZ(-25px) rotateY(5deg);
+}
+
+.righter {
+  transform: translateX(60px) translateZ(-50px) rotateY(10deg);
+}
+
+.lefter img,
+.left img,
+.center img,
+.right img,
+.righter img {
+  margin-top: -10px;
+}
+
+.explainer {
+  color: #8795a1;
+  transition: all 0.6s ease;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(212, 232, 247);
+  background-image: radial-gradient(circle at center top, white, #d4e8f7);
+  border-radius: 10px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Home CSS */
+.logo-img {
+  width: 120px !important;
+  height: 40px !important;
+}
+
+.name {
+  margin-left: 48px;
+  margin-top: 10px;
+}
+
+.banner img {
+  width: 100%;
+  margin-top: 65px;
+}
+
+/* Our App CSS */
+.our-app {
+  margin-top: -90px;
+  cursor: pointer !important;
+}
+
+.our-app:hover {
+  cursor: pointer !important;
+}
+
+.title1 {
+  margin-top: -40px;
+}
+
+.our-app .card {
+  border-color: white;
+  transition: all 0.5s ease;
+}
+
+.our-app .card:hover {
+  box-shadow: 0px 8px 16px #38b6ff !important;
+}
+
+.our-app .card-body {
+  margin-top: 30px;
+}
+
+.our-app .card-title {
+  text-decoration: none;
+  font-size: 50px !important;
+}
+
+/* How It Works CSS */
+.how-it-works {
+  margin-top: 90px;
+}
+
+.how-it-works .card {
+  background: none;
+  border: none;
+}
+
+.how-it-works .card-body {
+  padding: 0px !important;
+}
+
+.how-it-works-1:before {
+  content: "1";
+  font-size: 200px;
+  position: absolute;
+  color: #38b6ff;
+  left: 130px;
+  top: -110px;
+  opacity: 0.2;
+}
+
+.how-it-works-2:before {
+  content: "2";
+  font-size: 200px;
+  position: absolute;
+  color: #38b6ff;
+  left: 130px;
+  top: -110px;
+  opacity: 0.2;
+}
+
+.how-it-works-3:before {
+  content: "3";
+  font-size: 200px;
+  position: absolute;
+  color: #38b6ff;
+  left: 130px;
+  top: -110px;
+  opacity: 0.2;
+}
+
+/* Why Choose CSS */
+.why-choose .card {
+  height: 500px !important;
+  border: none;
+}
+
+.why-choose .my-card {
+  height: 161.5px !important;
+}
+
+.why-choose .card-img-top {
+  width: 200px !important;
+  height: 120px !important;
+}
+
+.why-choose .card-body hr {
+  border-top: 3px dotted white;
+}
+
+/* Our Expert CSS */
+.our-experts .col-6 {
+  border-radius: 5px !important;
+}
+
+/* Comment CSS */
+.comment-nav a {
+  cursor: pointer;
+}
+
+.comment-nav a i {
+  font-size: 30px;
+}
+
+.comment-text {
+  font-size: 18px;
+  line-height: 40px;
+}
+
+.comment-background {
+  padding-top: 40px;
+}
+
+.comment-background i {
+  font-size: 100px !important;
+  top: 0px !important;
+  color: #8795a1;
+  opacity: 15%;
+}
+
+/* Footer CSS */
+footer a:hover {
+  color: #8795a1 !important;
+  text-decoration: underline !important;
+}
+
+.social-button {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none !important;
+  width: 35px;
+  height: 35px;
+  text-decoration: none !important;
+  border-radius: 100%;
+  background: #ffffff;
+  text-align: center;
+}
+
+.social-button::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  display: block;
+  width: 0;
+  height: 0;
+  border-radius: 100%;
+  transition: 0.5s;
+}
+
+.social-button:focus,
+.social-button:hover {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.social-button:focus::after,
+.social-button:hover::after {
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  margin-left: calc(-50% - 1px);
+}
+
+.social-button i {
+  position: relative;
+  z-index: 1;
+  transition: 0.5s;
+}
+
+.social-button-mail {
+  color: #0072c6;
+}
+
+.social-button--mail::after {
+  background: #0072c6;
+}
+
+.social-button--facebook {
+  color: #3b5999;
+}
+
+.social-button--facebook::after {
+  background: #3b5999;
+}
+
+.social-button--instagram {
+  color: #e4405f;
+}
+
+.social-button--instagram::after {
+  background: #e4405f;
+}
+
+/* Login CSS */
+.login-form {
+  margin-top: 110px;
+  width: 100%;
+  padding: 45px;
+  padding-top: 60px;
+  padding-bottom: 60px;
+  border: 2px solid rgba(230, 230, 230);
+  box-shadow: 15px 15px 10px 5px rgba(119, 119, 119, 0.5),
+    -10px 10px 10px 5px rgba(255, 255, 255, 0.85),
+    inset 15px 15px 10px 5px rgba(119, 119, 119, 0.5),
+    inset -10px 10px 10px 5px rgba(255, 255, 255, 0.85);
+  margin-left: 20px;
+  margin-right: 20px;
+  border-radius: 20px;
+  display: block !important;
+}
+
+.user-details {
+  margin-top: 30px;
+}
+
+.input-box {
+  position: relative !important;
+  width: 100% !important;
+  margin-bottom: 35px !important;
+}
+
+.input-field {
+  height: 60px !important;
+  padding-left: 15px !important;
+  font-size: 18px !important;
+  width: 100% !important;
+  border: 2px solid rgba(230, 230, 230) !important;
+  outline: none !important;
+  background-color: transparent !important;
+  border-radius: 50px !important;
+  box-shadow: 5px 10px 8px 8px rgba(119, 119, 119, 0.5),
+    -5px 10px 8px 0px rgba(255, 255, 255, 0.85),
+    inset 5px 10px 8px 8px rgba(119, 119, 119, 0.5),
+    inset -5px 10px 8px 0px rgba(255, 255, 255, 0.85) !important;
+  padding-top: 10px !important;
+}
+
+.input-field:active {
+  box-shadow: 5px 5px 5px 0px rgba(119, 119, 119, 0.5),
+    -5px 5px 5px 0px rgba(255, 255, 255, 0.85),
+    inset 5px 5px 5px 0px rgba(119, 119, 119, 0.5),
+    inset -5px 5px 5px 0px rgba(255, 255, 255, 0.85) !important;
+}
+
+.button {
+  width: 100% !important;
+}
+
+.button input {
+  width: 100% !important;
+  height: 50px !important;
+  font-weight: bold !important;
+  font-size: 18px !important;
+  background: rgba(230, 230, 230) !important;
+  border: 1px solid rgba(230, 230, 230) !important;
+  border-radius: 50px !important;
+  box-shadow: 10px 10px 10px 2px rgba(119, 119, 119, 0.5),
+    -5px -5px 7px 2px rgba(255, 255, 255, 0.85) !important;
+  color: #38b6ff !important;
+  outline: none !important;
+  cursor: pointer !important;
+}
+
+.button input:active {
+  box-shadow: 5px 5px 5px 2px rgba(119, 119, 119, 0.5),
+    -5px 5px 5px 2px rgba(255, 255, 255, 0.85),
+    inset 5px 5px 5px 2px rgba(119, 119, 119, 0.5),
+    inset -5px 5px 5px 2px rgba(255, 255, 255, 0.85) !important;
+}
+
+.footer {
+  width: 100%;
+  margin-top: 25px;
+}
+
+.footer:hover {
+  color: #8795a1;
+}
+
+#toggle {
+  cursor: pointer;
+}
+
+::placeholder,
+input-field {
+  color: #8795a1;
+}
+
+.login-image {
+  margin-top: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* SignUp CSS */
+.signUp {
+  margin-top: 110px;
+  width: 100%;
+  padding: 45px;
+  padding-top: 60px;
+  padding-bottom: 60px;
+  border: 2px solid rgba(230, 230, 230);
+  box-shadow: 15px 15px 10px 5px rgba(119, 119, 119, 0.5),
+    -10px 10px 10px 5px rgba(255, 255, 255, 0.85),
+    inset 15px 15px 10px 5px rgba(119, 119, 119, 0.5),
+    inset -10px 10px 10px 5px rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  display: block !important;
+  align-self: center;
+}
+
+/* Dashboard CSS */
+.dashboard {
+  width: 1040px;
+  margin-left: 230px;
+}
+
+.dashboard .col-4 {
+  width: fit-content;
+}
+
+.menu {
+  width: 210px;
+  height: 100%;
+  background-color: #38b6ff;
+}
+
+.menu img {
+  width: 70px;
+  height: 70px;
+}
+
+.links i {
+  width: 20px;
+  height: 20px;
+}
+
+.links .nav-link {
+  width: 200px;
+  height: 50px;
+  margin-left: -2px;
+  padding-left: 35px !important;
+  border-radius: 5px 0px 0px 5px;
+  border: 2px solid #38b6ff;
+  display: flex;
+  align-items: center;
+  transition: 0.3s;
+}
+
+.links .nav-link i {
+  display: flex;
+  align-items: center;
+}
+
+.links .nav-link:hover {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.current-link {
+  background-color: #f8f9fa !important;
+  border-radius: 5px 0px 0px 5px !important;
+  border: 2px solid #f8f9fa !important;
+}
+
+.log {
+  position: fixed;
+  bottom: 0;
+}
+
+.d-navbar {
+  width: 1070px;
+  height: 50px;
+  margin-left: 210px;
+  background-color: #ffffff;
+  border-bottom: 2px solid #ffffff;
+}
+
+.cur-link {
+  position: relative;
+  border-bottom: 5px solid rgb(56, 182, 255);
+  padding-top: 10px;
+  padding-bottom: 8px;
+  transition: 300s;
+}
+
+.amount-card {
+  width: 1050px;
+  margin-left: 230px;
+}
+
+.dash-card {
+  width: 252px !important;
+  height: 70px !important;
+  border: none !important;
+  margin-top: 80px;
+}
+
+.dash-card .icon {
+  width: 50px;
+  height: 50px;
+  background-color: #38b6ff;
+  border-radius: 30px;
+}
+
+.dash-card .card-body {
+  padding-top: 10px;
+}
+
+.dash-details {
+  width: 512px !important;
+  height: 350px !important;
+  background-color: white !important;
+  margin-left: -5px !important;
+  margin-right: 15px;
+  border-radius: 0px !important;
+  border-color: #ffffff !important;
+}
+
+.dash-details1 {
+  width: 1034px !important;
+  height: 350px !important;
+  background-color: white !important;
+  margin-left: -5px !important;
+  margin-right: 15px;
+  border-radius: 0px !important;
+  border-color: #ffffff !important;
+}
+
+.card-header {
+  border: 5px #8795a1;
+}
+
+.d-image {
+  width: 70px;
+  height: 70px;
+}
+
+.d-text {
+  font-size: 12px;
+}
+
+.d-button a {
+  border: 2px solid #38b6ff;
+}
+
+.d-button a:hover {
+  background-color: #38b6ff !important;
+  border: 2px solid #38b6ff !important;
+  color: #ffffff !important;
+}
+
+.customButton {
+  background-color: #ffffff !important;
+  border: 2px solid #38b6ff !important;
+  color: #38b6ff !important;
+}
+
+.customButton:hover {
+  background-color: #38b6ff !important;
+  border: 2px solid #38b6ff !important;
+  color: #ffffff !important;
+}
+
+.customLink:hover {
+  background-color: #8795a1 !important;
+  border: 2px solid #8795a1 !important;
+  color: #ffffff !important;
+}
+
+.fa-circle-check {
+  font-size: 25px;
+  color: #36cc61;
+}
+
+.fa-circle-check:hover {
+  cursor: pointer;
+}
+
+.fa-circle-xmark {
+  font-size: 25px;
+  color: #ff3861;
+}
+
+.fa-circle-xmark:hover {
+  cursor: pointer;
+}
+
+.amount-card .fa-dollar-sign {
+  background-color: #36cc61 !important;
+}
+
+.amount-card .fa-calendar-check {
+  background-color: #ff3861 !important;
+}
+
+.amount-card .u1 {
+  background-color: #9738ff !important;
+}
+
+.amount-card .u2 {
+  background-color: #ff3861 !important;
+}
+
+.amount-card .u3 {
+  background-color: #38ffed !important;
+}
+
+.amount-card .u4 {
+  background-color: #ff9f38 !important;
+}
+
+.fa-circle {
+  color: #ffdb38;
+}
+
+.amount-card .fa-pills {
+  background-color: #36cc61 !important;
+}
+
+/* Calender CSS */
+.calendar {
+  height: max-content;
+  width: 1030px;
+  margin-left: 238px;
+  background-color: var(--bg-main);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.light .calendar {
+  box-shadow: var(--shadow);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 25px;
+  font-weight: 600;
+  color: var(--color-txt);
+  padding: 10px;
+}
+
+.calendar-body {
+  padding: 10px;
+}
+
+.calendar-week-day {
+  height: 50px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font-weight: 600;
+}
+
+.calendar-week-day div {
+  display: grid;
+  place-items: center;
+  color: var(--bg-second);
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  color: var(--color-txt);
+}
+
+.calendar-days div {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  position: relative;
+  cursor: pointer;
+  animation: to-top 1s forwards;
+}
+
+.calendar-days div span {
+  position: absolute;
+}
+
+.calendar-days div:hover span {
+  transition: width 0.2s ease-in-out, height 0.2s ease-in-out;
+}
+
+.calendar-days div span:nth-child(1),
+.calendar-days div span:nth-child(3) {
+  width: 2px;
+  height: 0;
+  background-color: var(--color-txt);
+}
+
+.calendar-days div:hover span:nth-child(1),
+.calendar-days div:hover span:nth-child(3) {
+  height: 100%;
+}
+
+.calendar-days div span:nth-child(1) {
+  bottom: 0;
+  left: 0;
+}
+
+.calendar-days div span:nth-child(3) {
+  top: 0;
+  right: 0;
+}
+
+.calendar-days div span:nth-child(2),
+.calendar-days div span:nth-child(4) {
+  width: 0;
+  height: 2px;
+  background-color: var(--color-txt);
+}
+
+.calendar-days div:hover span:nth-child(2),
+.calendar-days div:hover span:nth-child(4) {
+  width: 100%;
+}
+
+.calendar-days div span:nth-child(2) {
+  top: 0;
+  left: 0;
+}
+
+.calendar-days div span:nth-child(4) {
+  bottom: 0;
+  right: 0;
+}
+
+.calendar-days div:hover span:nth-child(2) {
+  transition-delay: 0.2s;
+}
+
+.calendar-days div:hover span:nth-child(3) {
+  transition-delay: 0.4s;
+}
+
+.calendar-days div:hover span:nth-child(4) {
+  transition-delay: 0.6s;
+}
+
+.calendar-days div.curr-date,
+.calendar-days div.curr-date:hover {
+  background-color: var(--blue);
+  color: var(--white);
+  border-radius: 50%;
+}
+
+.calendar-days div.curr-date span {
+  display: none;
+}
+
+.month-picker {
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.month-picker:hover {
+  background-color: var(--color-hover);
+}
+
+.year-picker {
+  display: flex;
+  align-items: center;
+}
+
+.year-change {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin: 0 10px;
+  padding-top: 20px;
+  cursor: pointer;
+}
+
+.year-change:hover {
+  background-color: var(--color-hover);
+}
+
+.calendar-footer {
+  padding: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.toggle {
+  display: flex;
+}
+
+.toggle span {
+  margin-right: 10px;
+  color: var(--color-txt);
+}
+
+.month-list {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: var(--bg-main);
+  padding: 20px;
+  grid-template-columns: repeat(3, auto);
+  gap: 5px;
+  display: grid;
+  transform: scale(1.5);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.month-list.show {
+  transform: scale(1);
+  visibility: visible;
+  pointer-events: visible;
+  transition: all 0.2s ease-in-out;
+}
+
+.month-list > div {
+  display: grid;
+  place-items: center;
+}
+
+.month-list > div > div {
+  width: 100%;
+  padding: 5px 20px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  color: var(--color-txt);
+}
+
+.month-list > div > div:hover {
+  background-color: var(--color-hover);
+}
+
+/* Chat CSS */
+.chat {
+  width: 1040px;
+  margin-left: 240px;
+}
+
+.chat-body {
+  padding: 10px;
+  min-height: 300px;
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+.chat-footer {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  background-color: rgb(135, 149, 161, 0.1);
+}
+
+#message-input {
+  flex-grow: 1;
+  padding: 5px;
+  border: none;
+  border-radius: 3px;
+}
+
+#send-btn {
+  background-color: #4287f5;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 5px 10px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+#send-btn:hover {
+  background-color: #336ac0;
+}
+
+/* Finder CSS */
+.finder1 {
+  width: 1030px;
+  margin-left: 240px;
+}
+
+.finder1 button:hover {
+  background-color: #38b6ff !important;
+  color: #ffffff !important;
+}
+
+.search-image {
+  width: 70px;
+  height: 70px;
+}
+
+/* Edit Profile CSS */
+.edit-profile {
+  width: 1030px;
+  margin-left: 240px;
+}
+
+.edit-profile i:hover {
+  cursor: pointer;
+}
+
+.edit-button {
+  color: #8795a1;
+}
+
+.edit-button:hover {
+  color: #38b6ff;
+}
+
+.myDrop {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.myDrop button {
+  border: none;
+  background-color: #ffffff;
+  margin: 0px;
+  padding: 0px;
+}
+
+.fa-caret-up {
+  display: none;
+}
+
+.myDrop-btn {
+  transition: 0.5s;
+}
+
+.myDrop-btn:hover {
+  background-color: rgb(56, 182, 255) !important;
+  color: white !important;
+  border-color: #38b6ff;
+}
+
+/* About Us CSS */
+/* .video-style {
+  width: 100vh;
+  height: 100vh;
+} */
+.about-us {
+  margin-top: 90px;
+}
+
+/* Policy CSS */
+.policy {
+  margin-top: 90px;
+}
+
+/* Find Doctor CSS */
+/* Find Pharmacy CSS */
+/* Find Laboratory CSS */
+.finder {
+  margin-top: 90px;
+}
+
+.finder-design {
+  margin-top: 20px;
+  width: 100%;
+  padding: 45px;
+  padding-top: 60px;
+  padding-bottom: 60px;
+  border: 2px solid rgba(230, 230, 230);
+  box-shadow: 15px 15px 10px 5px rgba(119, 119, 119, 0.5),
+    -10px 10px 10px 5px rgba(255, 255, 255, 0.85),
+    inset 15px 15px 10px 5px rgba(119, 119, 119, 0.5),
+    inset -10px 10px 10px 5px rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  display: block !important;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.button-container:hover {
+  justify-content: end;
+}
+
+.finder-button {
+  width: 80px;
+  height: 50px;
+  padding: 10px;
+  font-size: 18px;
+  background: rgba(230, 230, 230);
+  border: 1px solid rgba(230, 230, 230);
+  border-radius: 50px;
+  box-shadow: 10px 10px 10px 2px rgba(119, 119, 119, 0.5),
+    -5px -5px 7px 2px rgba(255, 255, 255, 0.85);
+  color: #38b6ff;
+  outline: none;
+  cursor: pointer;
+}
+
+.finder-button:active {
+  box-shadow: 5px 5px 5px 2px rgba(119, 119, 119, 0.5),
+    -5px 5px 5px 2px rgba(255, 255, 255, 0.85),
+    inset 5px 5px 5px 2px rgba(119, 119, 119, 0.5),
+    inset -5px 5px 5px 2px rgba(255, 255, 255, 0.85) !important;
+}
+
+.finder-text {
+  text-shadow: 10px 10px 10px rgba(119, 119, 119, 0.5),
+    -5px -5px 7px rgba(255, 255, 255, 0.85);
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.finder-image {
+  box-shadow: 10px 10px 10px 2px rgba(119, 119, 119, 0.5),
+    -5px -5px 7px 2px rgba(255, 255, 255, 0.85);
+}
+
+.line-shadow {
+  box-shadow: 10px 10px 10px 2px rgba(119, 119, 119, 0.5),
+    -5px -5px 7px 2px rgba(255, 255, 255, 0.85);
+}
+
+/* Book Appointment CSS */
+.book-appointment {
+  margin-top: 90px;
+}
+
+.book-appointment img {
+  width: 80px;
+  height: 80px;
+}
+
+.book-appointment .btn {
+  transition: 0.5s;
+  box-shadow: 5px 5px 5px 2px rgba(119, 119, 119, 0.5),
+    -5px -5px 7px 2px rgba(255, 255, 255, 0.85);
+}
+
+.book-appointment .btn:hover {
+  background-color: #38b6ff;
+  color: white;
+}
+
+/* Profile CSS */
+.profile {
+  margin-top: 90px;
+}
+
+.profile-image {
+  width: 250px;
+  height: auto;
+}
+
+.profile-image img {
+  width: 180px;
+  height: 180px;
+}
+
+.profile .fa-pen-to-square:hover {
+  cursor: pointer;
+}
+
+/* Prescription CSS */
+.prescription textarea {
+  height: 100px !important;
+}
+
+/* View Doctor CSS */
+.finder1 .edit-button1 {
+  color: #8795a1;
+  background-color: #ffffff !important;
+  border: none !important;
+}
+
+.finder1 .edit-button1:hover {
+  color: #8795a1 !important;
+  background-color: #ffffff !important;
+}
