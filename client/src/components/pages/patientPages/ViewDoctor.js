@@ -75,6 +75,39 @@ function ViewDoctor() {
     }
   }, [])
 
+  // const [doctorName1, setDoctorName1] = useState('')
+  // const [patientName, setPatientName] = useState('')
+  // const [appointmentTime, setAppointmentTime] = useState('')
+  // const [appointmentType, setAppointmentType] = useState('')
+
+  // async function addAppointment() {
+  //   try {
+  //     const req = await fetch('http://localhost:5000/api/appointment_request', {
+  //       method: 'POST',
+  //       headers: {
+  //         'x-access-token': localStorage.getItem('token')
+  //       },
+  //       body: JSON.stringify({
+  //         doctorName1: `${doctorData.firstName} ${doctorData.lastName}`,
+  //         patientName: `${serverData.firstName} ${serverData.lastName}`,
+  //         appointmentTime,
+  //         appointmentType,
+  //       }),
+  //     })
+
+  //     const data = await req.json()
+
+  //     if (data.status === 'ok') {
+  //       setDoctorData(data.doctors)
+  //     } else {
+  //       alert('Error: ' + data.error)
+  //     }
+  //   } catch (error) {
+  //     console.error(error)
+  //     alert('Error fetching doctor data', error)
+  //   }
+  // }
+
   return (
     <>
       <nav className="nav flex-column menu position-fixed">
@@ -173,14 +206,16 @@ function ViewDoctor() {
                     ? `${doctorData.firstName} ${doctorData.lastName}`
                     : doctorData.firstName || doctorData.lastName || 'Name not found'}</h5>
                   <h6 className="mb-0 test-secondary">{doctorData.specialization || 'Specialization not found'}</h6>
-                  <p className="test-secondary">{doctorData.specialization || 'Degree not found'}</p>
+                  <p className="test-secondary">{doctorData.degree || 'Degree not found'}</p>
+                  <p>{doctorData._id}</p>
+                  <p>{index}</p>
                 </div>
                 <div className="col-5 pt-3 text-end">
                   <Button className="edit-button1" onClick={openModal}><i class="fa-solid fa-calendar-check me-2"></i>Book Appointment</Button>
 
                   <Modal show={modalIsOpen} onHide={closeModal}>
                     <Modal.Header closeButton>
-                      <Modal.Title className="text-primary">Booking</Modal.Title>
+                      <Modal.Title className="text-primary">Booking: {doctorData._id}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                       <div className="col-12 d-flex mb-2">
@@ -206,8 +241,24 @@ function ViewDoctor() {
                           ))}
                         </select>
                       </div>
+                      <div className="col-12 mb-2">
+                        <h6>Appointment Type: </h6>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
+                          <label class="form-check-label" for="flexRadioDefault1">
+                            Physical
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" />
+                          <label class="form-check-label" for="flexRadioDefault2">
+                            Online
+                          </label>
+                        </div>
+                      </div>
                     </Modal.Body>
                     <Modal.Footer className="d-flex justify-content-center">
+                      <Button variant="secondary" className="text-center">Submit</Button>
                       <Button variant="secondary" onClick={closeModal} className="text-center">Close</Button>
                     </Modal.Footer>
                   </Modal>

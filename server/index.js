@@ -212,23 +212,23 @@ app.post('/api/patient_profile', async (req, res) => {
   }
 })
 
-app.post('/api/appointment_request', async (req, res) => {
+// app.post('/api/appointment_request', async (req, res) => {
 
-  try {
-    User.create({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: decryptedPassword,
-      profession: req.body.profession,
-    })
+//   try {
+//     User.create({
+//       firstName: req.body.firstName,
+//       lastName: req.body.lastName,
+//       email: req.body.email,
+//       password: decryptedPassword,
+//       profession: req.body.profession,
+//     })
 
-    res.json({ status: 'ok' })
-  } catch (err) {
-    console.log(err) // To check errors
-    res.json({ status: 'error', error: 'Duplicate Email' })
-  }
-})
+//     res.json({ status: 'ok' })
+//   } catch (err) {
+//     console.log(err) // To check errors
+//     res.json({ status: 'error', error: 'Duplicate Email' })
+//   }
+// })
 
 app.listen(5000, () => {
   console.log('Server started on 5000')
