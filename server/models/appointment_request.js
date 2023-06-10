@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const AppointmentRequest = new mongoose.scheme(
+const AppointmentRequest = new mongoose.Schema(
   {
     DoctorName: { type: String },
     PatientName: { type: String },
@@ -14,7 +14,8 @@ const AppointmentRequest = new mongoose.scheme(
     Approval: {
       type: String,
       minlength: 1,
-      maxlength: 1
+      maxlength: 1,
+      default: 'P'
     },
   },
   { collection: 'AppointmentRequest' }

@@ -215,18 +215,19 @@ app.post('/api/patient_profile', async (req, res) => {
 // app.post('/api/appointment_request', async (req, res) => {
 
 //   try {
-//     User.create({
-//       firstName: req.body.firstName,
-//       lastName: req.body.lastName,
-//       email: req.body.email,
-//       password: decryptedPassword,
-//       profession: req.body.profession,
-//     })
+//     AppointmentRequest.create({
+//       doctorName: req.body.doctorName,
+//       patientName: req.body.patientName,
+//       appointmentDate: req.body.appointmentDate,
+//       appointmentTime: req.body.appointmentTime
+//     },
+//     {new: true}
+//     )
 
 //     res.json({ status: 'ok' })
 //   } catch (err) {
 //     console.log(err) // To check errors
-//     res.json({ status: 'error', error: 'Duplicate Email' })
+//     res.json({ status: 'error', error: 'Appointment Request Error' })
 //   }
 // })
 

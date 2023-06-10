@@ -5,18 +5,6 @@ import '../../style.css';
 import { Button, Modal } from 'react-bootstrap';
 
 function ViewDoctor() {
-  // Booking Form Start
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  const openModal = () => {
-    setModalIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalIsOpen(false);
-  };
-  // Booking Form End
-
   const [serverData, setServerData] = useState('')
 
   async function doctorDetails() {
@@ -44,6 +32,26 @@ function ViewDoctor() {
   }, [])
 
   const [doctorData, setDoctorData] = useState([])
+
+  // Booking Form Start
+  const [modalIsOpen, setModalIsOpen] = useState(Array(doctorData.length).fill(false));
+
+  const openModal = (index) => {
+    setModalIsOpen((prevState) => {
+      const newState = [...prevState]
+      newState[index] = true
+      return newState
+    })
+  }
+
+  const closeModal = (index) => {
+    setModalIsOpen((prevState) => {
+      const newState = [...prevState]
+      newState[index] = false
+      return newState
+    })
+  }
+  // Booking Form End
 
   async function doctorDetails1() {
     try {
@@ -75,10 +83,11 @@ function ViewDoctor() {
     }
   }, [])
 
-  // const [doctorName1, setDoctorName1] = useState('')
-  // const [patientName, setPatientName] = useState('')
-  // const [appointmentTime, setAppointmentTime] = useState('')
-  // const [appointmentType, setAppointmentType] = useState('')
+  const [doctorName1, setDoctorName1] = useState('')
+  const [patientName, setPatientName] = useState('')
+  const [appointmentDate, setAppointmentDate] = useState('')
+  const [appointmentTime, setAppointmentTime] = useState('')
+  const [appointmentType, setAppointmentType] = useState('')
 
   // async function addAppointment() {
   //   try {
@@ -88,8 +97,9 @@ function ViewDoctor() {
   //         'x-access-token': localStorage.getItem('token')
   //       },
   //       body: JSON.stringify({
-  //         doctorName1: `${doctorData.firstName} ${doctorData.lastName}`,
-  //         patientName: `${serverData.firstName} ${serverData.lastName}`,
+  //         doctorName1,
+  //         patientName,
+  //         appointmentDate,
   //         appointmentTime,
   //         appointmentType,
   //       }),
@@ -98,7 +108,7 @@ function ViewDoctor() {
   //     const data = await req.json()
 
   //     if (data.status === 'ok') {
-  //       setDoctorData(data.doctors)
+
   //     } else {
   //       alert('Error: ' + data.error)
   //     }
@@ -134,9 +144,9 @@ function ViewDoctor() {
           </div>
         </div>
       </nav>
-      <nav class="navbar fixed-top d-navbar mb-3 shadow">
+      <nav className="navbar fixed-top d-navbar mb-3 shadow">
         <div className="container justify-content-start">
-          <Link class="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/viewDoctor">View Doctor's</Link>
+          <Link className="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/viewDoctor">View Doctor's</Link>
         </div>
       </nav>
       <div className="container amount-card">
@@ -190,9 +200,9 @@ function ViewDoctor() {
       <div className="container finder1">
         <div className="row bg-white shadow my-3">
           <div className="col-12 mb-2 mt-2">
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-              <button class="btn btn-outline-success border-primary text-primary" type="submit">Search</button>
+            <form className="d-flex" role="search">
+              <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+              <button className="btn btn-outline-success border-primary text-primary" type="submit">Search</button>
             </form>
           </div>
           {doctorData.map((doctorData, index) => (
@@ -207,59 +217,90 @@ function ViewDoctor() {
                     : doctorData.firstName || doctorData.lastName || 'Name not found'}</h5>
                   <h6 className="mb-0 test-secondary">{doctorData.specialization || 'Specialization not found'}</h6>
                   <p className="test-secondary">{doctorData.degree || 'Degree not found'}</p>
-                  <p>{doctorData._id}</p>
-                  <p>{index}</p>
                 </div>
                 <div className="col-5 pt-3 text-end">
-                  <Button className="edit-button1" onClick={openModal}><i class="fa-solid fa-calendar-check me-2"></i>Book Appointment</Button>
+                  <Button className="edit-button1" onClick={() => openModal(index)}><i className="fa-solid fa-calendar-check me-2"></i>Book Appointment</Button>
 
-                  <Modal show={modalIsOpen} onHide={closeModal}>
+                  <Modal show={modalIsOpen[index]} onHide={() => closeModal(index)}>
                     <Modal.Header closeButton>
-                      <Modal.Title className="text-primary">Booking: {doctorData._id}</Modal.Title>
+                      <Modal.Title className="text-primary">Booking</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      <div className="col-12 d-flex mb-2">
-                        <div className="col-12 mt-3">
-                          <h6 className="mb-2">Doctor Name: {doctorData.firstName && doctorData.lastName
-                            ? `${doctorData.firstName} ${doctorData.lastName}`
-                            : doctorData.firstName || doctorData.lastName || 'Username'}</h6>
+                      <div className="row">
+                        <div className="col-12 d-flex mb-2">
+                          <div className="col-12 mt-3 d-flex">
+                            <h6 className="mb-2 fw-bold me-2">Doctor Name: </h6>
+                            <h6>{doctorData.firstName && doctorData.lastName
+                              ? `${doctorData.firstName} ${doctorData.lastName}`
+                              : doctorData.firstName || doctorData.lastName || 'Doctor Name'}</h6>
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-12 mb-2">
-                        <h6>Patient Name: {serverData.firstName && serverData.lastName
-                          ? `${serverData.firstName} ${serverData.lastName}`
-                          : serverData.firstName || serverData.lastName || 'Username'}</h6>
-                      </div>
-                      <div className="col-12 mb-2">
-                        <p>Available Time Slots :</p>
-                      </div>
-                      <div className="btn-group col-12 mb-3 w-75" role="group">
-                        <select class="form-select" aria-label="Default select example">
-                          <option selected>Open To See Time Slots</option>
-                          {doctorData.appointmentTime.map((time, index) => (
-                            <option key={index} value={time}>{time}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="col-12 mb-2">
-                        <h6>Appointment Type: </h6>
-                        <div class="form-check">
-                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
-                          <label class="form-check-label" for="flexRadioDefault1">
-                            Physical
-                          </label>
+                        <div className="col-12 mb-2 d-flex">
+                          <h6 className="fw-bold me-2">Patient Name: </h6>
+                          <br />
+                          <h6 className="">{serverData.firstName && serverData.lastName
+                            ? `${serverData.firstName} ${serverData.lastName}`
+                            : serverData.firstName || serverData.lastName || 'Patient Name'}</h6>
                         </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" />
-                          <label class="form-check-label" for="flexRadioDefault2">
-                            Online
-                          </label>
+                        <div className="col-12 mb-2 d-flex">
+                          <p className="fw-bold me-2 pt-1">Appointment Date: </p>
+                          <div className="mb-3">
+                            <input type="date" className="form-control" />
+                          </div>
+                        </div>
+                        <div className="col-12 mb-1 d-flex">
+                          <p className="fw-bold me-2 pt-1">Available Time Slots :</p>
+                          <div className="btn-group col-6 mb-3" role="group">
+                            <select className="form-select" aria-label="Default select example" onChange={(e) => setAppointmentTime(e.target.value)}>
+                              <option selected>Open To See Time Slots</option>
+                              {doctorData.appointmentTime.map((time, index) => (
+                                <option key={index} value={time}>{time}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="col-12 mb-2">
+                          <h6 className="fw-bold">Appointment Type: </h6>
+                          <div className="d-flex">
+                            <div className="form-check me-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="appointmentType"
+                                id="flexRadioDefault1"
+                                value="Physical"
+                                checked={appointmentType === "Physical"}
+                                onChange={(e) => setAppointmentType(e.target.value)}
+                              />
+                              <label className="form-check-label" htmlFor="flexRadioDefault1">
+                                Physical
+                              </label>
+                            </div>
+                            <div className="form-check">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="appointmentType"
+                                id="flexRadioDefault2"
+                                value="Online"
+                                checked={appointmentType === "Online"}
+                                onChange={(e) => setAppointmentType(e.target.value)}
+                              />
+                              <label className="form-check-label" htmlFor="flexRadioDefault2">
+                                Online
+                              </label>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </Modal.Body>
                     <Modal.Footer className="d-flex justify-content-center">
-                      <Button variant="secondary" className="text-center">Submit</Button>
-                      <Button variant="secondary" onClick={closeModal} className="text-center">Close</Button>
+                      <Button variant="secondary" onClick={() => {
+                        setDoctorName1(`${doctorData.firstName} ${doctorData.lastName}`)
+                        setPatientName(`${serverData.firstName} ${serverData.lastName}`)
+
+                      }} className="text-center">Submit</Button>
+                      <Button variant="secondary" onClick={() => closeModal(index)} className="text-center">Close</Button>
                     </Modal.Footer>
                   </Modal>
                 </div>
