@@ -6,9 +6,12 @@ const bodyParser = require('body-parser')
 
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+
+// Models
 const User = require('./models/user')
 const DoctorProfile = require('./models/doctor_profile')
 const PatientProfile = require('./models/patient_profile')
+const AppointmentRequest = require('./models/appointment_request')
 
 app.use(cors())
 app.use(express.json())
@@ -212,24 +215,91 @@ app.post('/api/patient_profile', async (req, res) => {
   }
 })
 
-// app.post('/api/appointment_request', async (req, res) => {
+app.post('/api/appointment_request', async (req, res) => {
 
-//   try {
-//     AppointmentRequest.create({
-//       doctorName: req.body.doctorName,
-//       patientName: req.body.patientName,
-//       appointmentDate: req.body.appointmentDate,
-//       appointmentTime: req.body.appointmentTime
-//     },
-//     {new: true}
-//     )
+  try {
+    const request = await AppointmentRequest.create({
+      doctorID: req.body.doctorID,
+      doctorFirstName: req.body.doctorFirstName,
+      doctorLastName: req.body.doctorLastName,
+      patientID: req.body.patientID,
+      patientFirstName: req.body.patientFirstName,
+      patientLastName: req.body.patientLastName,
+      appointmentDate: req.body.appointmentDate,
+      appointmentTime: req.body.appointmentTime,
+      appointmentType: req.body.appointmentType,
+      approval: req.body.approval
+    })
 
-//     res.json({ status: 'ok' })
-//   } catch (err) {
-//     console.log(err) // To check errors
-//     res.json({ status: 'error', error: 'Appointment Request Error' })
-//   }
-// })
+    return res.json({
+      status: 'ok',
+      doctorID: request.doctorID,
+      patientID: request.patientID,
+      appointmentDate: request.appointmentDate,
+      appointmentTime: request.appointmentTime,
+      approval: request.approval
+    })
+  } catch (err) {
+    console.log(err); // To check errors
+    res.json({ status: 'error', error: 'Post Appointment Request Error' })
+  }
+})
+
+app.get('/api/p_appointment_request', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const request = await AppointmentRequest.find({ patientID: _id })
+
+    console.log(request)
+
+    return res.json({ status: 'ok', appointmentRequest: request })
+  } catch (error) {
+    console.error('Get Appointment Request Error:', error)
+    return res.json({ status: 'error', error: 'Get Appointment Request Error' })
+  }
+})
+
+app.get('/api/d_appointment_request', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const request = await AppointmentRequest.find({ doctorID: _id })
+
+    console.log(request)
+
+    return res.json({ status: 'ok', appointmentRequest: request })
+  } catch (error) {
+    res.json({ status: 'error', error: ' Get Appointment Request Error' })
+  }
+})
+
+app.post('/api/d_appointment_request', async (req, res) => {
+  try {
+    const request = await AppointmentRequest.findOneAndUpdate(
+      {
+        doctorID: req.body.doctorID,
+        doctorFirstName: req.body.doctorFirstName,
+        doctorLastName: req.body.doctorLastName,
+        patientID: req.body.patientID,
+        patientFirstName: req.body.patientFirstName,
+        patientLastName: req.body.patientLastName,
+        appointmentDate: req.body.appointmentDate,
+        appointmentTime: req.body.appointmentTime,
+        appointmentType: req.body.appointmentType,
+        approval: req.body.approval
+      }
+    )
+
+    return res.json({ status: 'ok', appointmentRequest: request })
+  } catch (error) {
+    res.json({ status: 'error', error: ' Get Appointment Request Error' })
+  }
+})
 
 app.listen(5000, () => {
   console.log('Server started on 5000')

@@ -92,6 +92,73 @@ function DoctorDashboard() {
     }
   }, [])
 
+  const [requestData, setRequestData] = useState([])
+
+  async function getAppointmentRequest() {
+    const response = await fetch('http://localhost:5000/api/d_appointment_request', {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setRequestData(data.appointmentRequest)
+    } else {
+      alert('Error: ' + data.error)
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getAppointmentRequest()
+    } else {
+      alert('Error in Appointment Request useEffect')
+    }
+  }, [])
+
+  const [doctorID, setDoctorID] = useState('')
+  const [doctorFirstName, setDoctorFirstName] = useState('')
+  const [doctorLastName, setDoctorLastName] = useState('')
+  const [patientID, setPatientID] = useState('')
+  const [patientFirstName, setPatientFirstName] = useState('')
+  const [patientLastName, setPatientLastName] = useState('')
+  const [appointmentDate, setAppointmentDate] = useState('')
+  const [appointmentTime, setAppointmentTime] = useState('')
+  const [appointmentType, setAppointmentType] = useState('')
+  const [approval] = useState('P')
+
+  async function updateAppointmentRequest() {
+    const response = await fetch('http://localhost:5000/api/d_appointment_request', {
+      method: 'POST',
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+      body: JSON.stringify({
+        doctorID,
+        doctorFirstName,
+        doctorLastName,
+        patientID,
+        patientFirstName,
+        patientLastName,
+        appointmentDate,
+        appointmentTime,
+        appointmentType,
+        approval,
+      }),
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setRequestData(data.appointmentRequest)
+    } else {
+      alert('Error: ' + data.error)
+    }
+  }
+
   return (
     <>
       <nav className="nav flex-column menu position-fixed">
@@ -291,18 +358,27 @@ function DoctorDashboard() {
             <div class="card-header">Appointment Request</div>
             <div class="card-body overflow-scroll">
               <ul className="list-group">
-                <li className="d-flex list-group-item border border-0">
-                  <div className="col-8">
-                    <h6>Patient Name</h6>
-                    <p class="fs-6">Appointment Date</p>
-                  </div>
-                  <div className="col-4 mx-auto d-flex align-items-center">
-                    <p>
-                      <i className="fa-regular fa-circle-check me-3"></i>
-                      <i className="fa-regular fa-circle-xmark"></i>
-                    </p>
-                  </div>
-                </li>
+                {requestData.map((requestData, index) => (
+                  <li key={index} className="d-flex list-group-item border border-0">
+                    <div className="col-8">
+                      <h6>
+                        {requestData.patientFirstName && requestData.patientLastName
+                          ? `${requestData.patientFirstName} ${requestData.patientLastName}`
+                          : requestData.patientFirstName || requestData.patientLastName || 'No Username Found'}
+                      </h6>
+                      <div className="d-flex">
+                        <p className="me-2">{requestData.appointmentDate || 'No Date Found'}</p>
+                        <p>{requestData.appointmentTime || 'No Time Found'}</p>
+                      </div>
+                    </div>
+                    <div className="col-4 mx-auto my-auto">
+                      <p>
+                        <i className="fs-4 fa-regular fa-circle-check me-3"></i>
+                        <i className="fs-4 fa-regular fa-circle-xmark"></i>
+                      </p>
+                    </div>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

@@ -2,20 +2,23 @@ const mongoose = require('mongoose')
 
 const AppointmentRequest = new mongoose.Schema(
   {
-    DoctorName: { type: String },
-    PatientName: { type: String },
-    AppointmentDate: { type: Date },
-    AppointmentTime: { type: String },
-    AppointmentType: {
+    doctorID: { type: String },
+    doctorFirstName: { type: String },
+    doctorLastName: { type: String },
+    patientID: { type: String },
+    patientFirstName: { type: String },
+    patientLastName: { type: String },
+    appointmentDate: { type: String },
+    appointmentTime: { type: String },
+    appointmentType: {
       type: String,
       minlength: 1,
       maxlength: 1
     },
-    Approval: {
+    approval: {
       type: String,
       minlength: 1,
-      maxlength: 1,
-      default: 'P'
+      maxlength: 1
     },
   },
   { collection: 'AppointmentRequest' }

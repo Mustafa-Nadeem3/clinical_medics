@@ -53,7 +53,7 @@ function PatientDashboard() {
     } else {
       alert('error in p dashboardDetails ' + data.error)
     }
-  };
+  }
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -61,6 +61,33 @@ function PatientDashboard() {
       getDashboardDetails()
     } else {
       alert('error in dashboard useEffect')
+    }
+  }, [])
+
+  const [requestData, setRequestData] = useState([])
+
+  async function getAppointmentRequest() {
+    const response = await fetch('http://localhost:5000/api/p_appointment_request', {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setRequestData(data.appointmentRequest)
+    } else {
+      alert('Error: ' + data.error)
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getAppointmentRequest()
+    } else {
+      alert('Error in Appointment Request useEffect')
     }
   }, [])
 
@@ -90,11 +117,11 @@ function PatientDashboard() {
           </div>
         </div>
       </nav>
-      <nav class="navbar fixed-top d-navbar mb-3 shadow">
+      <nav className="navbar fixed-top d-navbar mb-3 shadow">
         <div className="container justify-content-start">
-          <Link class="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/dashboard">Dashboard</Link>
-          <Link class="nav-link text-secondary me-4" to="/profile">Profile</Link>
-          <Link class="nav-link text-secondary me-4" to="/settings">Settings</Link>
+          <Link className="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/dashboard">Dashboard</Link>
+          <Link className="nav-link text-secondary me-4" to="/profile">Profile</Link>
+          <Link className="nav-link text-secondary me-4" to="/settings">Settings</Link>
         </div>
       </nav>
       <div className="container amount-card">
@@ -147,24 +174,24 @@ function PatientDashboard() {
       </div>
       <div className="row dashboard">
         <div className="col-12 d-flex">
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Appointments</div>
-            <div class="card-body overflow-scroll">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Appointments</div>
+            <div className="card-body overflow-scroll">
               <ul className="list-group">
                 <li className="d-flex list-group-item border border-0">
                   <div className="col-8">
                     <h6>Doctor Name</h6>
                   </div>
-                  <div className="col-4 justify-content-end">
-                    <p class="fs-6">12:00</p>
+                  <div className="col-4 mx-auto my-auto">
+                    <p className="fs-6">12:00</p>
                   </div>
                 </li>
               </ul>
             </div>
           </div>
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Doctor's Details</div>
-            <div class="card-body">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Doctor's Details</div>
+            <div className="card-body">
               <div className="col-12 d-flex">
                 <div className="col-4 me-2">
                   <img src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2 d-image" />
@@ -199,11 +226,11 @@ function PatientDashboard() {
                 </div>
               </div>
               <div className="col-12 d-flex d-button">
-                <div class="col-4 me-5">
-                  <Button className="customButton" onClick={openLinkInNewTab}><i class="fa-solid fa-phone me-1"></i>Connect</Button>
+                <div className="col-4 me-5">
+                  <Button className="customButton" onClick={openLinkInNewTab}><i className="fa-solid fa-phone me-1"></i>Connect</Button>
                 </div>
-                <div class="col-4 me-5">
-                  <Button className="customButton" onClick={openModal}><i class="fa-solid fa-upload me-1"></i>Upload</Button>
+                <div className="col-4 me-5">
+                  <Button className="customButton" onClick={openModal}><i className="fa-solid fa-upload me-1"></i>Upload</Button>
 
                   <Modal show={modalIsOpen} hide={closeModal} >
                     <Modal.Header closeButton>
@@ -211,8 +238,8 @@ function PatientDashboard() {
                     </Modal.Header>
                     <Modal.Body>
                       <span className="fs-6 text-red">Only .pdf file</span>
-                      <div class="form-floating mb-3">
-                        <input type="file" class="form-control file-style" id="floatingFile" placeholder="Upload File" />
+                      <div className="form-floating mb-3">
+                        <input type="file" className="form-control file-style" id="floatingFile" placeholder="Upload File" />
                         <label for="floatingFile" className="mb-1 mt-0">Upload File</label>
                       </div>
                     </Modal.Body>
@@ -221,8 +248,8 @@ function PatientDashboard() {
                     </Modal.Footer>
                   </Modal>
                 </div>
-                <div class="col-4 me-5">
-                  <Button className="customButton" onClick={openModal1}><i class="fa-solid fa-download me-1"></i>Prescription</Button>
+                <div className="col-4 me-5">
+                  <Button className="customButton" onClick={openModal1}><i className="fa-solid fa-download me-1"></i>Prescription</Button>
 
                   <Modal show={modalIsOpen1} onHide={closeModal1}>
                     <Modal.Header closeButton>
@@ -237,6 +264,35 @@ function PatientDashboard() {
                   </Modal>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-12 d-flex">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Appointment Status</div>
+            <div className="card-body">
+              <ul className="list-group">
+                {requestData.map((requestData, index) => (
+                  <li key={index} className="d-flex list-group-item border border-0">
+                    <div className="col-8">
+                      <h6>
+                        {requestData.doctorFirstName && requestData.doctorLastName
+                          ? `${requestData.doctorFirstName} ${requestData.doctorLastName}`
+                          : requestData.doctorFirstName || requestData.doctorLastName || 'No Username Found'}
+                      </h6>
+                      <div className="d-flex">
+                        <p className="me-2">{requestData.appointmentDate || 'No Date Found'}</p>
+                        <p>{requestData.appointmentTime || 'No Time Found'}</p>
+                      </div>
+                    </div>
+                    <div className="col-4 mx-auto my-auto">
+                      <p className="fs-6">
+                        {requestData.approval === 'P' ? 'Pending' : requestData.approval === 'R' ? 'Rejected' : 'No Status Found'}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>

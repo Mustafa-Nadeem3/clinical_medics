@@ -83,40 +83,53 @@ function ViewDoctor() {
     }
   }, [])
 
-  const [doctorName1, setDoctorName1] = useState('')
-  const [patientName, setPatientName] = useState('')
+
+  const [doctorID, setDoctorID] = useState('')
+  const [doctorFirstName, setDoctorFirstName] = useState('')
+  const [doctorLastName, setDoctorLastName] = useState('')
+  const [patientID, setPatientID] = useState('')
+  const [patientFirstName, setPatientFirstName] = useState('')
+  const [patientLastName, setPatientLastName] = useState('')
   const [appointmentDate, setAppointmentDate] = useState('')
   const [appointmentTime, setAppointmentTime] = useState('')
   const [appointmentType, setAppointmentType] = useState('')
+  const [approval] = useState('P')
 
-  // async function addAppointment() {
-  //   try {
-  //     const req = await fetch('http://localhost:5000/api/appointment_request', {
-  //       method: 'POST',
-  //       headers: {
-  //         'x-access-token': localStorage.getItem('token')
-  //       },
-  //       body: JSON.stringify({
-  //         doctorName1,
-  //         patientName,
-  //         appointmentDate,
-  //         appointmentTime,
-  //         appointmentType,
-  //       }),
-  //     })
+  async function addAppointmentRequest() {
 
-  //     const data = await req.json()
+    try {
+      const req = await fetch('http://localhost:5000/api/appointment_request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          doctorID,
+          doctorFirstName,
+          doctorLastName,
+          patientID,
+          patientFirstName,
+          patientLastName,
+          appointmentDate,
+          appointmentTime,
+          appointmentType,
+          approval,
+        }),
+      })
 
-  //     if (data.status === 'ok') {
+      const data = await req.json()
+      console.log(data);
 
-  //     } else {
-  //       alert('Error: ' + data.error)
-  //     }
-  //   } catch (error) {
-  //     console.error(error)
-  //     alert('Error fetching doctor data', error)
-  //   }
-  // }
+      if (data.status === 'ok') {
+        console.log('Appointment Request ' + data.status)
+      } else {
+        alert('Error: ' + data.error)
+      }
+    } catch (error) {
+      console.error(error)
+      alert('Error fetching appointment request', error)
+    }
+  }
 
   return (
     <>
@@ -223,7 +236,7 @@ function ViewDoctor() {
 
                   <Modal show={modalIsOpen[index]} onHide={() => closeModal(index)}>
                     <Modal.Header closeButton>
-                      <Modal.Title className="text-primary">Booking</Modal.Title>
+                      <Modal.Title className="text-primary">Booking <span >{doctorData._id}</span></Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                       <div className="row">
@@ -245,7 +258,11 @@ function ViewDoctor() {
                         <div className="col-12 mb-2 d-flex">
                           <p className="fw-bold me-2 pt-1">Appointment Date: </p>
                           <div className="mb-3">
-                            <input type="date" className="form-control" />
+                            <input
+                              type="date"
+                              className="form-control"
+                              onChange={(e) => setAppointmentDate(e.target.value)}>
+                            </input>
                           </div>
                         </div>
                         <div className="col-12 mb-1 d-flex">
@@ -268,8 +285,8 @@ function ViewDoctor() {
                                 type="radio"
                                 name="appointmentType"
                                 id="flexRadioDefault1"
-                                value="Physical"
-                                checked={appointmentType === "Physical"}
+                                value="P"
+                                checked={appointmentType === "P"}
                                 onChange={(e) => setAppointmentType(e.target.value)}
                               />
                               <label className="form-check-label" htmlFor="flexRadioDefault1">
@@ -282,8 +299,8 @@ function ViewDoctor() {
                                 type="radio"
                                 name="appointmentType"
                                 id="flexRadioDefault2"
-                                value="Online"
-                                checked={appointmentType === "Online"}
+                                value="O"
+                                checked={appointmentType === "O"}
                                 onChange={(e) => setAppointmentType(e.target.value)}
                               />
                               <label className="form-check-label" htmlFor="flexRadioDefault2">
@@ -296,9 +313,14 @@ function ViewDoctor() {
                     </Modal.Body>
                     <Modal.Footer className="d-flex justify-content-center">
                       <Button variant="secondary" onClick={() => {
-                        setDoctorName1(`${doctorData.firstName} ${doctorData.lastName}`)
-                        setPatientName(`${serverData.firstName} ${serverData.lastName}`)
-
+                        setDoctorID(doctorData._id)
+                        setDoctorFirstName(doctorData.firstName)
+                        setDoctorLastName(doctorData.lastName)
+                        setPatientID(serverData._id)
+                        setPatientFirstName(serverData.firstName)
+                        setPatientLastName(serverData.lastName)
+                        closeModal(index)
+                        addAppointmentRequest()
                       }} className="text-center">Submit</Button>
                       <Button variant="secondary" onClick={() => closeModal(index)} className="text-center">Close</Button>
                     </Modal.Footer>
