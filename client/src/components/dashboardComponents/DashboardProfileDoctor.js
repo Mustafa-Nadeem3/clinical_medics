@@ -377,7 +377,7 @@ function DashboardProfileDoctor() {
               </>
             ) : (
               <p className="text-secondary my-3 me-2">
-                {serverData.appointmentTime || 'Appointment Time not found'}
+                <span className="me-2">{serverData.appointmentTime || 'Appointment Time not found'}</span>
                 {!editingAppointmentTime && (
                   <i
                     className="fa-solid fa-pen-to-square ms-2"

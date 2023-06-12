@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../App.css';
 import '../style.css';
 import { Link } from 'react-router-dom';
 
-function DashboardProfilePatient(props) {
-  const serverData = props.data
+function DashboardProfilePatient() {
+  const [serverData, setServerData] = useState('')
+
+  console.log(serverData)
 
   const [editingProfileImage, setEditingProfileImage] = useState(false);
   const [editingFirstName, setEditingFirstName] = useState(false)
@@ -81,7 +83,32 @@ function DashboardProfilePatient(props) {
     } else {
       alert('error in updateProfile ' + data.error)
     }
-  };
+  }
+
+  async function getProfileDetails() {
+    const response = await fetch('http://localhost:5000/api/patient_profile', {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setServerData(data)
+    } else {
+      alert('error in profile ' + data.error)
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getProfileDetails()
+    } else {
+      alert('error in d profile useEffect')
+    }
+  }, [])
 
   return (
     <>

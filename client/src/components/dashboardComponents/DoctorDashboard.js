@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import '../../App.css';
 import '../style.css';
 import { Link } from 'react-router-dom';
-// import ChartComponent from './ChartComponent';
 import { Button, Modal } from 'react-bootstrap';
 
-function DoctorDashboard() {
+const DoctorDashboard = () => {
   // Contact Link Start
   const openLinkInNewTab = () => {
     const url = 'https://us05web.zoom.us/meeting/schedule';
@@ -119,6 +118,33 @@ function DoctorDashboard() {
     }
   }, [])
 
+  const [bookedData, setBookedData] = useState([])
+
+  async function getBookedAppointment() {
+    const response = await fetch('http://localhost:5000/api/book_appointment', {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setBookedData(data.appointmentBooked)
+    } else {
+      console.log('Error: ' + data.error)
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getBookedAppointment()
+    } else {
+      alert('Error in Appointment Request useEffect')
+    }
+  }, [])
+
   const [doctorID, setDoctorID] = useState('')
   const [doctorFirstName, setDoctorFirstName] = useState('')
   const [doctorLastName, setDoctorLastName] = useState('')
@@ -128,13 +154,13 @@ function DoctorDashboard() {
   const [appointmentDate, setAppointmentDate] = useState('')
   const [appointmentTime, setAppointmentTime] = useState('')
   const [appointmentType, setAppointmentType] = useState('')
-  const [approval] = useState('P')
+  const [approval, setApproval] = useState('')
 
-  async function updateAppointmentRequest() {
-    const response = await fetch('http://localhost:5000/api/d_appointment_request', {
+  async function bookAppointment() {
+    const response = await fetch('http://localhost:5000/api/book_appointment', {
       method: 'POST',
       headers: {
-        'x-access-token': localStorage.getItem('token'),
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         doctorID,
@@ -151,11 +177,12 @@ function DoctorDashboard() {
     })
 
     const data = await response.json()
+    console.log('Here' + data)
 
     if (data.status === 'ok') {
       setRequestData(data.appointmentRequest)
     } else {
-      alert('Error: ' + data.error)
+      console.log('Error: ' + data.error)
     }
   }
 
@@ -184,11 +211,11 @@ function DoctorDashboard() {
           </div>
         </div>
       </nav>
-      <nav class="navbar fixed-top d-navbar mb-3 shadow">
+      <nav className="navbar fixed-top d-navbar mb-3 shadow">
         <div className="container justify-content-start">
-          <Link class="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/dashboard">Dashboard</Link>
-          <Link class="nav-link text-secondary me-4" to="/profile">Profile</Link>
-          <Link class="nav-link text-secondary me-4" to="/settings">Settings</Link>
+          <Link className="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/dashboard">Dashboard</Link>
+          <Link className="nav-link text-secondary me-4" to="/profile">Profile</Link>
+          <Link className="nav-link text-secondary me-4" to="/settings">Settings</Link>
         </div>
       </nav>
       <div className="container amount-card">
@@ -230,25 +257,29 @@ function DoctorDashboard() {
       </div>
       <div className="row dashboard">
         <div className="col-12 d-flex">
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Today's Appointments</div>
-            <div class="card-body overflow-scroll">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Today's Appointments</div>
+            <div className="card-body overflow-scroll">
               <ul className="list-group">
-                <li className="d-flex list-group-item border border-0">
-                  <div className="col-8">
-                    <h6>Patient Name</h6>
-                    <p class="fs-6">Appointment Details</p>
-                  </div>
-                  <div className="col-4 justify-content-end">
-                    <p class="fs-6">12:00</p>
-                  </div>
-                </li>
+                {bookedData && bookedData.length > 0 ? (
+                  bookedData.map((bookedData, index) => (
+                    <li key={index} className="d-flex list-group-item border border-0">
+                      <div className="col-8">
+                        <h6>{bookedData[index].patientFirstName}</h6>
+                        <p>{bookedData.appointmentDate || 'No Time Found'}</p>
+                      </div>
+                      <div className="col-4 justify-content-end">
+                        <p className="fs-6">{bookedData.appointmentTime}</p>
+                      </div>
+                    </li>
+                  ))
+                ) : <h6 className="d-flex justify-content-center align-items-center">No Data Available</h6>}
               </ul>
             </div>
           </div>
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Next Patient Details</div>
-            <div class="card-body">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Next Patient Details</div>
+            <div className="card-body">
               <div className="col-12 d-flex">
                 <div className="col-4 me-2">
                   <img src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2 d-image" />
@@ -285,11 +316,11 @@ function DoctorDashboard() {
                 <div className="col-4"></div>
               </div>
               <div className="col-12 d-flex d-button">
-                <div class="col-4 me-5">
-                  <Button className="customButton" onClick={openLinkInNewTab}><i class="fa-solid fa-phone me-1"></i>Contact</Button>
+                <div className="col-4 me-5">
+                  <Button className="customButton" onClick={openLinkInNewTab}><i className="fa-solid fa-phone me-1"></i>Contact</Button>
                 </div>
-                <div class="col-4 me-5">
-                  <Button className="customButton" onClick={openModal1}><i class="fa-solid fa-folder me-1"></i>Record</Button>
+                <div className="col-4 me-5">
+                  <Button className="customButton" onClick={openModal1}><i className="fa-solid fa-folder me-1"></i>Record</Button>
 
                   <Modal show={modalIsOpen1} hide={closeModal1} >
                     <Modal.Header closeButton>
@@ -303,8 +334,8 @@ function DoctorDashboard() {
                     </Modal.Footer>
                   </Modal>
                 </div>
-                <div class="col-4 me-5">
-                  <Button className="customButton" onClick={openModal}><i class="fa-solid fa-file-pen me-1"></i>Prescription</Button>
+                <div className="col-4 me-5">
+                  <Button className="customButton" onClick={openModal}><i className="fa-solid fa-file-pen me-1"></i>Prescription</Button>
 
                   <Modal show={modalIsOpen} onHide={closeModal}>
                     <Modal.Header closeButton>
@@ -316,23 +347,23 @@ function DoctorDashboard() {
                           <div key={index} >
                             <div className="form-floating mb-3">
                               <input
-                                class="form-control"
+                                className="form-control"
                                 id="floatingInput"
                                 placeholder="Medicine Name"
                                 value={medicine.name}
                                 onChange={(event) => handleMedicineNameChange(index, event)}
                               />
-                              <label for="floatingInput">Medicine Name</label>
+                              <label htmlFor="floatingInput">Medicine Name</label>
                             </div>
                             <div className="form-floating mb-3">
                               <textarea
-                                class="form-control mb-3"
+                                className="form-control mb-3"
                                 id="floatingTextarea2"
                                 placeholder="Medicine Details"
                                 value={medicine.details}
                                 onChange={(event) => handleMedicineDetailsChange(index, event)}
                               />
-                              <label for="floatingTextarea2">Medicine Details</label>
+                              <label htmlFor="floatingTextarea2">Medicine Details</label>
                             </div>
                             <button onClick={() => handleRemoveMedicine(index)} className="myDrop-btn bg-white text-white border border-2 border-primary text-primary rounded-pill p-2 ps-3 pe-3 me-3 mb-3">Remove</button>
                           </div>
@@ -354,37 +385,68 @@ function DoctorDashboard() {
           </div>
         </div>
         <div className="col-12 d-flex">
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Appointment Request</div>
-            <div class="card-body overflow-scroll">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Appointment Request</div>
+            <div className="card-body overflow-scroll">
               <ul className="list-group">
-                {requestData.map((requestData, index) => (
-                  <li key={index} className="d-flex list-group-item border border-0">
-                    <div className="col-8">
-                      <h6>
-                        {requestData.patientFirstName && requestData.patientLastName
-                          ? `${requestData.patientFirstName} ${requestData.patientLastName}`
-                          : requestData.patientFirstName || requestData.patientLastName || 'No Username Found'}
-                      </h6>
-                      <div className="d-flex">
-                        <p className="me-2">{requestData.appointmentDate || 'No Date Found'}</p>
-                        <p>{requestData.appointmentTime || 'No Time Found'}</p>
+                {requestData && requestData.length > 0 ? (
+                  requestData.map((requestData, index) => (
+                    <li key={index} className="d-flex list-group-item border border-0">
+                      <div className="col-8">
+                        <h6>
+                          {requestData.patientFirstName && requestData.patientLastName
+                            ? `${requestData.patientFirstName} ${requestData.patientLastName}`
+                            : requestData.patientFirstName || requestData.patientLastName || 'No Username Found'}
+                        </h6>
+                        <div className="d-flex">
+                          <p className="me-2">{requestData.appointmentDate || 'No Date Found'}</p>
+                          <p>{requestData.appointmentTime || 'No Time Found'}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="col-4 mx-auto my-auto">
-                      <p>
-                        <i className="fs-4 fa-regular fa-circle-check me-3"></i>
-                        <i className="fs-4 fa-regular fa-circle-xmark"></i>
-                      </p>
-                    </div>
-                  </li>
-                ))}
+                      <div className="col-4 mx-auto my-auto">
+                        <i
+                          className="fs-4 fa-regular fa-circle-check me-3"
+                          onClick={() => {
+                            setDoctorID(requestData.doctorID)
+                            setDoctorFirstName(requestData.doctorFirstName)
+                            setDoctorLastName(requestData.doctorLastName)
+                            setPatientID(requestData.patientID)
+                            setPatientFirstName(requestData.patientFirstName)
+                            setPatientLastName(requestData.patientLastName)
+                            setAppointmentDate(requestData.appointmentDate)
+                            setAppointmentTime(requestData.appointmentTime)
+                            setAppointmentType(requestData.appointmentType)
+                            setApproval('A')
+                            bookAppointment()
+                          }}
+                        >
+                        </i>
+                        <i
+                          className="fs-4 fa-regular fa-circle-xmark"
+                          onClick={() => {
+                            setDoctorID(requestData.doctorID)
+                            setDoctorFirstName(requestData.doctorFirstName)
+                            setDoctorLastName(requestData.doctorLastName)
+                            setPatientID(requestData.patientID)
+                            setPatientFirstName(requestData.patientFirstName)
+                            setPatientLastName(requestData.patientLastName)
+                            setAppointmentDate(requestData.appointmentDate)
+                            setAppointmentTime(requestData.appointmentTime)
+                            setAppointmentType(requestData.appointmentType)
+                            setApproval('R')
+                            bookAppointment()
+                          }}>
+                        </i>
+                      </div>
+                    </li>
+                  ))
+                ) : <h6 className="d-flex justify-content-center align-items-center">No Data Available</h6>}
               </ul>
             </div>
           </div>
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Statistics Of Appointment</div>
-            <div class="card-body">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Statistics Of Appointment</div>
+            <div className="card-body">
               {/* <ChartComponent /> */}
             </div>
           </div>

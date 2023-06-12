@@ -12,6 +12,7 @@ const User = require('./models/user')
 const DoctorProfile = require('./models/doctor_profile')
 const PatientProfile = require('./models/patient_profile')
 const AppointmentRequest = require('./models/appointment_request')
+const AppointmentBooked = require('./models/appointment_booked')
 
 app.use(cors())
 app.use(express.json())
@@ -65,6 +66,34 @@ app.post('/api/register', async (req, res) => {
     }
     else if (req.body.profession == 'u') {
       await PatientProfile.create({
+        _id: user._id,
+        profileImage: {
+          data: null,
+          contentType: null
+        },
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        profession: req.body.profession,
+        address: null
+      })
+    }
+    else if (req.body.profession == 'l') {
+      await LabProfile.create({
+        _id: user._id,
+        profileImage: {
+          data: null,
+          contentType: null
+        },
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        profession: req.body.profession,
+        address: null
+      })
+    }
+    else if (req.body.profession == 'p') {
+      await PharmacistProfile.create({
         _id: user._id,
         profileImage: {
           data: null,
@@ -166,12 +195,12 @@ app.post('/api/doctor_profile', async (req, res) => {
         specialization: req.body.specialization,
         appointmentTime: req.body.appointmentTime,
         fee: req.body.fee
-      }
+      },
+      { new: true }
     )
 
     return res.json({ status: 'ok', _id: profile._id, firstName: profile.firstName, lastName: profile.lastName, email: profile.email })
   } catch (error) {
-    console.log(error)
     res.json({ status: 'error', error: ' invalid token in post d profile' })
   }
 })
@@ -182,7 +211,7 @@ app.get('/api/patient_profile', async (req, res) => {
   try {
     const decoded = jwt.verify(token, 'secret123')
     const _id = decoded._id
-    const profile = await PatientProfile.findOne({ _id: _id })
+    const profile = await PatientProfile.findById(_id)
 
     return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, profession: profile.profession, address: profile.address })
   } catch (error) {
@@ -210,7 +239,6 @@ app.post('/api/patient_profile', async (req, res) => {
 
     return res.json({ status: 'ok', _id: profile._id, firstName: profile.firstName, lastName: profile.lastName, email: profile.email })
   } catch (error) {
-    console.log(error)
     res.json({ status: 'error', error: ' invalid token in p profile' })
   }
 })
@@ -229,7 +257,8 @@ app.post('/api/appointment_request', async (req, res) => {
       appointmentTime: req.body.appointmentTime,
       appointmentType: req.body.appointmentType,
       approval: req.body.approval
-    })
+    }
+    )
 
     return res.json({
       status: 'ok',
@@ -253,8 +282,6 @@ app.get('/api/p_appointment_request', async (req, res) => {
     const _id = decoded._id
     const request = await AppointmentRequest.find({ patientID: _id })
 
-    console.log(request)
-
     return res.json({ status: 'ok', appointmentRequest: request })
   } catch (error) {
     console.error('Get Appointment Request Error:', error)
@@ -270,17 +297,58 @@ app.get('/api/d_appointment_request', async (req, res) => {
     const _id = decoded._id
     const request = await AppointmentRequest.find({ doctorID: _id })
 
-    console.log(request)
-
     return res.json({ status: 'ok', appointmentRequest: request })
   } catch (error) {
     res.json({ status: 'error', error: ' Get Appointment Request Error' })
   }
 })
 
-app.post('/api/d_appointment_request', async (req, res) => {
+app.get('/api/book_appointment', async (req, res) => {
+  const token = req.headers['x-access-token']
+
   try {
-    const request = await AppointmentRequest.findOneAndUpdate(
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const booking = await AppointmentRequest.find({ doctorID: _id })
+
+    return res.json({ status: 'ok', bookedAppointment: booking })
+  } catch (error) {
+    console.log(error)
+    res.json({ status: 'error', error: ' Get Appointment Booked Error' })
+  }
+})
+
+app.post('/api/book_appointment', async (req, res) => {
+  try {
+    const {
+      doctorID,
+      doctorFirstName,
+      doctorLastName,
+      patientID,
+      patientFirstName,
+      patientLastName,
+      appointmentDate,
+      appointmentTime,
+      appointmentType,
+      approval
+    } = req.body
+
+    if (
+      !doctorID ||
+      !doctorFirstName ||
+      !doctorLastName ||
+      !patientID ||
+      !patientFirstName ||
+      !patientLastName ||
+      !appointmentDate ||
+      !appointmentTime ||
+      !appointmentType ||
+      !approval
+    ) {
+      return res.status(400).json({ status: 'error', error: 'Missing required fields in Appointment Booking' })
+    } 
+
+    await AppointmentBooked.create(
       {
         doctorID: req.body.doctorID,
         doctorFirstName: req.body.doctorFirstName,
@@ -295,9 +363,10 @@ app.post('/api/d_appointment_request', async (req, res) => {
       }
     )
 
-    return res.json({ status: 'ok', appointmentRequest: request })
+    return res.json({ status: 'ok' })
   } catch (error) {
-    res.json({ status: 'error', error: ' Get Appointment Request Error' })
+    console.log(error)
+    res.json({ status: 'error', error: ' Appointment Booked Error' })
   }
 })
 
