@@ -64,6 +64,33 @@ function PatientDashboard() {
     }
   }, [])
 
+  const [bookedData, setBookedData] = useState([])
+
+  async function getBookedAppointment() {
+    const response = await fetch('http://localhost:5000/api/p_book_appointment', {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setBookedData(data.appointmentBooked)
+    } else {
+      console.log('Error: ' + data.error)
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getBookedAppointment()
+    } else {
+      alert('Error in Appointment Request useEffect')
+    }
+  }, [])
+
   const [requestData, setRequestData] = useState([])
 
   async function getAppointmentRequest() {
@@ -178,14 +205,19 @@ function PatientDashboard() {
             <div className="card-header">Appointments</div>
             <div className="card-body overflow-scroll">
               <ul className="list-group">
-                <li className="d-flex list-group-item border border-0">
-                  <div className="col-8">
-                    <h6>Doctor Name</h6>
-                  </div>
-                  <div className="col-4 mx-auto my-auto">
-                    <p className="fs-6">12:00</p>
-                  </div>
-                </li>
+                {bookedData && bookedData.length > 0 ? (
+                  bookedData.map((bookedData, index) => (
+                    <li key={index} className="d-flex list-group-item border border-0">
+                      <div className="col-8">
+                        <h6>{bookedData.patientFirstName}</h6>
+                        <p>{bookedData.appointmentDate || 'No Time Found'}</p>
+                      </div>
+                      <div className="col-4 justify-content-end">
+                        <p className="fs-6">{bookedData.appointmentTime}</p>
+                      </div>
+                    </li>
+                  ))
+                ) : <h6 className="d-flex justify-content-center align-items-center">No Data Available</h6>}
               </ul>
             </div>
           </div>
@@ -269,7 +301,7 @@ function PatientDashboard() {
         </div>
         <div className="col-12 d-flex">
           <div className="card dash-details col-6 mb-3 shadow">
-            <div className="card-header">Appointment Status</div>
+            <div className="card-header">Requested Appointment Status</div>
             <div className="card-body">
               <ul className="list-group">
                 {requestData.map((requestData, index) => (
@@ -285,10 +317,13 @@ function PatientDashboard() {
                         <p>{requestData.appointmentTime || 'No Time Found'}</p>
                       </div>
                     </div>
-                    <div className="col-4 mx-auto my-auto">
-                      <p className="fs-6">
-                        {requestData.approval === 'P' ? 'Pending' : requestData.approval === 'R' ? 'Rejected' : 'No Status Found'}
-                      </p>
+                    <div className="col-4 mx-auto my-auto d-flex">
+                      <div>
+                        <p className="fs-6 pending-text">
+                          {requestData.approval === 'P' ? 'Pending' : requestData.approval === 'R' ? 'Rejected' : 'No Status Found'}
+                        </p>
+                      </div>
+                      <div className="custom-loader ms-1"></div>
                     </div>
                   </li>
                 ))}

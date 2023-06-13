@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react'
 import '../../../App.css';
 import { Link } from 'react-router-dom';
 import '../../style.css';
-import { Button, Modal } from 'react-bootstrap';
 
-function ViewDoctor() {
+function ViewPatient() {
   const [serverData, setServerData] = useState('')
 
-  async function patientDetails() {
-    const req = await fetch('http://localhost:5000/api/patient_profile', {
+  async function doctorDetails() {
+    const req = await fetch('http://localhost:5000/api/doctor_profile', {
       headers: {
         'x-access-token': localStorage.getItem('token')
       },
@@ -25,37 +24,17 @@ function ViewDoctor() {
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
-      patientDetails()
+      doctorDetails()
     } else {
       alert('error')
     }
   }, [])
 
-  const [doctorData, setDoctorData] = useState([])
+  const [patientData, setPatientData] = useState([])
 
-  // Booking Form Start
-  const [modalIsOpen, setModalIsOpen] = useState(Array(doctorData.length).fill(false));
-
-  const openModal = (index) => {
-    setModalIsOpen((prevState) => {
-      const newState = [...prevState]
-      newState[index] = true
-      return newState
-    })
-  }
-
-  const closeModal = (index) => {
-    setModalIsOpen((prevState) => {
-      const newState = [...prevState]
-      newState[index] = false
-      return newState
-    })
-  }
-  // Booking Form End
-
-  async function doctorDetails() {
+  async function patientDetails() {
     try {
-      const req = await fetch('http://localhost:5000/api/display_doctor', {
+      const req = await fetch('http://localhost:5000/api/display_patient', {
         headers: {
           'x-access-token': localStorage.getItem('token')
         }
@@ -64,72 +43,24 @@ function ViewDoctor() {
       const data = await req.json()
 
       if (data.status === 'ok') {
-        setDoctorData(data.doctors)
+        setPatientData(data.doctors)
       } else {
         alert('Error: ' + data.error)
       }
     } catch (error) {
       console.error(error)
-      alert('Error fetching doctor data', error)
+      alert('Error fetching patient data', error)
     }
   }
 
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
-      doctorDetails()
+      patientDetails()
     } else {
-      alert('Error in findDoctor useEffect')
+      alert('Error in findPatient useEffect')
     }
   }, [])
-
-
-  const [doctorID, setDoctorID] = useState('')
-  const [doctorFirstName, setDoctorFirstName] = useState('')
-  const [doctorLastName, setDoctorLastName] = useState('')
-  const [patientID, setPatientID] = useState('')
-  const [patientFirstName, setPatientFirstName] = useState('')
-  const [patientLastName, setPatientLastName] = useState('')
-  const [appointmentDate, setAppointmentDate] = useState('')
-  const [appointmentTime, setAppointmentTime] = useState('')
-  const [appointmentType, setAppointmentType] = useState('')
-  const [approval] = useState('P')
-
-  async function addAppointmentRequest() {
-
-    try {
-      const req = await fetch('http://localhost:5000/api/appointment_request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          doctorID,
-          doctorFirstName,
-          doctorLastName,
-          patientID,
-          patientFirstName,
-          patientLastName,
-          appointmentDate,
-          appointmentTime,
-          appointmentType,
-          approval,
-        }),
-      })
-
-      const data = await req.json()
-      console.log(data);
-
-      if (data.status === 'ok') {
-        console.log('Appointment Request ' + data.status)
-      } else {
-        alert('Error: ' + data.error)
-      }
-    } catch (error) {
-      console.error(error)
-      alert('Error fetching appointment request', error)
-    }
-  }
 
   return (
     <>
@@ -145,10 +76,9 @@ function ViewDoctor() {
                 : serverData.firstName || serverData.lastName || 'No Username Found'}</h6>
             </div>
             <div className="col-12 links mb-5">
-              <Link className="nav-link text-white" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
+              <Link className="nav-link text-white" aria-current="page" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
               <Link className="nav-link text-white" to="/calendar"><i className="fa-solid fa-calendar-days me-1"></i>Calendar</Link>
-              <Link className="nav-link text-primary current-link" to="/viewDoctor"><i className="fa-solid fa-user me-1"></i>View Doctor</Link>
-              <Link className="nav-link text-white" to="/medicalFile"><i className="fa-solid fa-file-pen me-1"></i>Medical File</Link>
+              <Link className="nav-link text-primary current-link" to="/viewPatient"><i className="fa-solid fa-user me-1"></i>Patient Record</Link>
               <Link className="nav-link text-white" to="/chat"><i className="fa-solid fa-message me-1"></i>Chat</Link>
             </div>
             <div className="col-12 links mt-2">
@@ -157,53 +87,42 @@ function ViewDoctor() {
           </div>
         </div>
       </nav>
-      <nav className="navbar fixed-top d-navbar mb-3 shadow">
+      <nav class="navbar fixed-top d-navbar mb-3 shadow">
         <div className="container justify-content-start">
-          <Link className="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/viewDoctor">View Doctor's</Link>
+          <Link class="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/viewPatient">Record</Link>
         </div>
       </nav>
       <div className="container amount-card">
         <div className="row mb-3 d-flex">
           <div className="ms-2 col-3 g-0 dash-card shadow d-flex">
             <div className="col-6 d-flex justify-content-center mt-2 ps-5">
-              <i className="u2 fa-solid fa-user-group icon text-white d-flex justify-content-center align-items-center fs-5"></i>
+              <i className="fa-solid fa-user-group icon text-white d-flex justify-content-center align-items-center fs-5"></i>
             </div>
             <div className="col-6 d-flex justify-content-start">
               <div className="card-body ps-0">
-                <h6 className="card-title mt-0 mb-0">Doctors</h6>
+                <h6 className="card-title mt-0 mb-0">Patients</h6>
                 <p className="card-text fs-5">0</p>
               </div>
             </div>
           </div>
           <div className="ms-2 col-3 g-0 dash-card shadow d-flex">
             <div className="col-6 d-flex justify-content-center mt-2 ps-5">
-              <i className="u1 fa-solid fa-calendar-check icon text-white d-flex justify-content-center align-items-center fs-5"></i>
+              <i className="fa-solid fa-dollar-sign icon text-white d-flex justify-content-center align-items-center fs-5"></i>
             </div>
             <div className="col-6 d-flex justify-content-start">
               <div className="card-body ps-0">
-                <h6 className="card-title mt-0 mb-0">Appointments</h6>
+                <h6 className="card-title mt-0 mb-0">Income</h6>
                 <p className="card-text fs-5">0</p>
               </div>
             </div>
           </div>
           <div className="ms-2 col-3 g-0 dash-card shadow d-flex">
             <div className="col-6 d-flex justify-content-center mt-2 ps-5">
-              <i className="u3 fa-solid fa-flask-vial icon text-white d-flex justify-content-center align-items-center fs-5"></i>
+              <i className="fa-solid fa-calendar-check icon text-white d-flex justify-content-center align-items-center fs-5"></i>
             </div>
             <div className="col-6 d-flex justify-content-start">
               <div className="card-body ps-0">
-                <h6 className="card-title mt-0 mb-0">Lab Tests</h6>
-                <p className="card-text fs-5">0</p>
-              </div>
-            </div>
-          </div>
-          <div className="ms-2 col-3 g-0 dash-card shadow d-flex">
-            <div className="col-6 d-flex justify-content-center mt-2 ps-5">
-              <i className="fa-solid fa-pills icon text-white d-flex justify-content-center align-items-center fs-5"></i>
-            </div>
-            <div className="col-6 d-flex justify-content-start">
-              <div className="card-body ps-0">
-                <h6 className="card-title mt-0 mb-0">Medicines</h6>
+                <h6 className="card-title mt-0 mb-0">Treatments</h6>
                 <p className="card-text fs-5">0</p>
               </div>
             </div>
@@ -211,30 +130,30 @@ function ViewDoctor() {
         </div>
       </div>
       <div className="container finder1">
-        <div className="row bg-white shadow my-3">
+        <div className="row bg-white shadow">
           <div className="col-12 mb-2 mt-2">
-            <form className="d-flex" role="search">
-              <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-              <button className="btn btn-outline-success border-primary text-primary" type="submit">Search</button>
+            <form class="d-flex" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+              <button class="btn btn-outline-success border-primary text-secondary" type="submit">Search</button>
             </form>
           </div>
-          {doctorData.map((doctorData, index) => (
+          {patientData.map((patientData, index) => (
             <div className="col-12" key={index}>
               <div className="col-12 d-flex">
                 <div className="col-2 pt-3 text-center">
-                  <img className="w-50 rounded-circle border border-2" src={doctorData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
+                  <img className="w-50 rounded-circle border border-2" src={patientData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
                 </div>
                 <div className="col-5 pt-3">
-                  <h5 className="mb-0 test-secondary">{doctorData.firstName && doctorData.lastName
-                    ? `${doctorData.firstName} ${doctorData.lastName}`
-                    : doctorData.firstName || doctorData.lastName || 'Name not found'}</h5>
-                  <h6 className="mb-0 test-secondary">{doctorData.specialization || 'Specialization not found'}</h6>
-                  <p className="test-secondary">{doctorData.degree || 'Degree not found'}</p>
+                  <h5 className="mb-0 test-secondary">{patientData.firstName && patientData.lastName
+                    ? `${patientData.firstName} ${patientData.lastName}`
+                    : patientData.firstName || patientData.lastName || 'Name not found'}</h5>
+                  <h6 className="mb-0 test-secondary">{patientData.specialization || 'Specialization not found'}</h6>
+                  <p className="test-secondary">{patientData.degree || 'Degree not found'}</p>
                 </div>
                 <div className="col-5 pt-3 text-end">
-                  <Button className="edit-button1" onClick={() => openModal(index)}><i className="fa-solid fa-calendar-check me-2"></i>Book Appointment</Button>
+                  {/* <Button className="edit-button1" onClick={() => openModal(index)}><i className="fa-solid fa-calendar-check me-2"></i>Book Appointment</Button> */}
 
-                  <Modal show={modalIsOpen[index]} onHide={() => closeModal(index)}>
+                  {/* <Modal show={modalIsOpen[index]} onHide={() => closeModal(index)}>
                     <Modal.Header closeButton>
                       <Modal.Title className="text-primary">Booking <span >{doctorData._id}</span></Modal.Title>
                     </Modal.Header>
@@ -312,19 +231,10 @@ function ViewDoctor() {
                       </div>
                     </Modal.Body>
                     <Modal.Footer className="d-flex justify-content-center">
-                      <Button variant="secondary" onClick={() => {
-                        setDoctorID(doctorData._id)
-                        setDoctorFirstName(doctorData.firstName)
-                        setDoctorLastName(doctorData.lastName)
-                        setPatientID(serverData._id)
-                        setPatientFirstName(serverData.firstName)
-                        setPatientLastName(serverData.lastName)
-                        closeModal(index)
-                        addAppointmentRequest()
-                      }} className="text-center">Submit</Button>
-                      <Button variant="secondary" onClick={() => closeModal(index)} className="text-center">Close</Button>
+                      <Button variant="secondary" className="text-center">Submit</Button>
+                      <Button variant="secondary" } className="text-center">Close</Button>
                     </Modal.Footer>
-                  </Modal>
+                  </Modal> */}
                 </div>
               </div>
               <div className="col-12 d-flex">
@@ -352,4 +262,4 @@ function ViewDoctor() {
   )
 }
 
-export default ViewDoctor
+export default ViewPatient

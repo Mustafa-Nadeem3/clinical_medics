@@ -27,7 +27,7 @@ import EditProfile from './components/pages/EditProfile';
 import TestList from './components/pages/TestList';
 import MedicineList from './components/pages/pharmacistPages/MedicineList';
 import Revoke from './components/pages/RevokeAppointment';
-import PatientRecord from './components/pages/doctorPages/PatientRecord';
+import ViewPatient from './components/pages/doctorPages/ViewPatient';
 import MedicalRecord from './components/pages/doctorPages/MedicalRecord';
 import Inventory from './components/pages/pharmacistPages/Inventory';
 import AddItem from './components/pages/pharmacistPages/AddItem';
@@ -60,7 +60,7 @@ const App = () => {
           <Route path="/settings" element={<Settings />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/revoke" element={<Revoke />} />
-          <Route path="/patientRecord" element={<PatientRecord />} />
+          <Route path="/viewPatient" element={<ViewPatient />} />
           <Route path="/medicalRecord" element={<MedicalRecord />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/inventory" element={<Inventory />} />

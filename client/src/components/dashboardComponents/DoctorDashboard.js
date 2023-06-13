@@ -4,7 +4,7 @@ import '../style.css';
 import { Link } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
 
-const DoctorDashboard = () => {
+function DoctorDashboard() {
   // Contact Link Start
   const openLinkInNewTab = () => {
     const url = 'https://us05web.zoom.us/meeting/schedule';
@@ -121,7 +121,7 @@ const DoctorDashboard = () => {
   const [bookedData, setBookedData] = useState([])
 
   async function getBookedAppointment() {
-    const response = await fetch('http://localhost:5000/api/book_appointment', {
+    const response = await fetch('http://localhost:5000/api/d_book_appointment', {
       headers: {
         'x-access-token': localStorage.getItem('token'),
       },
@@ -202,7 +202,7 @@ const DoctorDashboard = () => {
             <div className="col-12 links mb-5">
               <Link className="nav-link text-primary current-link" aria-current="page" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
               <Link className="nav-link text-white" to="/calendar"><i className="fa-solid fa-calendar-days me-1"></i>Calendar</Link>
-              <Link className="nav-link text-white" to="/patientRecord"><i className="fa-solid fa-user me-1"></i>Patient Record</Link>
+              <Link className="nav-link text-white" to="/viewPatient"><i className="fa-solid fa-user me-1"></i>View Patient</Link>
               <Link className="nav-link text-white" to="/chat"><i className="fa-solid fa-message me-1"></i>Chat</Link>
             </div>
             <div className="col-12 links mt-2">
@@ -265,7 +265,7 @@ const DoctorDashboard = () => {
                   bookedData.map((bookedData, index) => (
                     <li key={index} className="d-flex list-group-item border border-0">
                       <div className="col-8">
-                        <h6>{bookedData[index].patientFirstName}</h6>
+                        <h6>{bookedData.patientFirstName}</h6>
                         <p>{bookedData.appointmentDate || 'No Time Found'}</p>
                       </div>
                       <div className="col-4 justify-content-end">

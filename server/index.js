@@ -151,12 +151,23 @@ app.get('/api/dashboard', async (req, res) => {
 
 app.get('/api/display_doctor', async (req, res) => {
   try {
-    const doctors = await DoctorProfile.find({});
+    const doctors = await DoctorProfile.find({})
 
-    return res.json({ status: 'ok', doctors: doctors });
+    return res.json({ status: 'ok', doctors: doctors })
   } catch (error) {
-    console.error('Error retrieving documents:', error);
-    res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' });
+    console.error('Error retrieving documents:', error)
+    res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' })
+  }
+})
+
+app.get('/api/display_patient', async (req, res) => {
+  try {
+    const patients = await PatientProfile.find({})
+
+    return res.json({ status: 'ok', patients: patients })
+  } catch (error) {
+    console.error('Error retrieving documents:', error)
+    res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' })
   }
 })
 
@@ -303,13 +314,28 @@ app.get('/api/d_appointment_request', async (req, res) => {
   }
 })
 
-app.get('/api/book_appointment', async (req, res) => {
+app.get('/api/d_book_appointment', async (req, res) => {
   const token = req.headers['x-access-token']
 
   try {
     const decoded = jwt.verify(token, 'secret123')
     const _id = decoded._id
     const booking = await AppointmentRequest.find({ doctorID: _id })
+
+    return res.json({ status: 'ok', bookedAppointment: booking })
+  } catch (error) {
+    console.log(error)
+    res.json({ status: 'error', error: ' Get Appointment Booked Error' })
+  }
+})
+
+app.get('/api/p_book_appointment', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const booking = await AppointmentRequest.find({ patientID: _id })
 
     return res.json({ status: 'ok', bookedAppointment: booking })
   } catch (error) {
@@ -345,25 +371,25 @@ app.post('/api/book_appointment', async (req, res) => {
       !appointmentType ||
       !approval
     ) {
-      return res.status(400).json({ status: 'error', error: 'Missing required fields in Appointment Booking' })
-    } 
-
-    await AppointmentBooked.create(
-      {
-        doctorID: req.body.doctorID,
-        doctorFirstName: req.body.doctorFirstName,
-        doctorLastName: req.body.doctorLastName,
-        patientID: req.body.patientID,
-        patientFirstName: req.body.patientFirstName,
-        patientLastName: req.body.patientLastName,
-        appointmentDate: req.body.appointmentDate,
-        appointmentTime: req.body.appointmentTime,
-        appointmentType: req.body.appointmentType,
-        approval: req.body.approval
-      }
-    )
-
-    return res.json({ status: 'ok' })
+      return res.status(400).json({ status: 'error', error: ' Missing required fields in Appointment Booking' })
+    } else {
+      await AppointmentBooked.create(
+        {
+          doctorID: req.body.doctorID,
+          doctorFirstName: req.body.doctorFirstName,
+          doctorLastName: req.body.doctorLastName,
+          patientID: req.body.patientID,
+          patientFirstName: req.body.patientFirstName,
+          patientLastName: req.body.patientLastName,
+          appointmentDate: req.body.appointmentDate,
+          appointmentTime: req.body.appointmentTime,
+          appointmentType: req.body.appointmentType,
+          approval: req.body.approval
+        }
+      )
+  
+      return res.json({ status: 'ok' })
+    }
   } catch (error) {
     console.log(error)
     res.json({ status: 'error', error: ' Appointment Booked Error' })
