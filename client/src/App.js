@@ -33,6 +33,7 @@ import Inventory from './components/pages/pharmacistPages/Inventory';
 import AddItem from './components/pages/pharmacistPages/AddItem';
 import RemoveItem from './components/pages/pharmacistPages/RemoveItem';
 import ViewDoctor from './components/pages/patientPages/ViewDoctor';
+import ViewLab from './components/pages/patientPages/ViewLab';
 
 const App = () => {
   return (
@@ -67,6 +68,7 @@ const App = () => {
           <Route path="/addItem" element={<AddItem />} />
           <Route path="/removeItem" element={<RemoveItem />} />
           <Route path="/viewDoctor" element={<ViewDoctor />} />
+          <Route path="/viewLab" element={<ViewLab />} />
           <Route path="/aboutUs" element={<AboutUs />} />
           <Route path="/cookies" element={<Cookies />} />
           <Route path="/privacy" element={<Privacy />} />

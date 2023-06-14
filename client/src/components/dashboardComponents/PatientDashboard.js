@@ -135,6 +135,7 @@ function PatientDashboard() {
               <Link className="nav-link text-primary current-link" aria-current="page" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
               <Link className="nav-link text-white" to="/calendar"><i className="fa-solid fa-calendar-days me-1"></i>Calendar</Link>
               <Link className="nav-link text-white" to={{ pathname: "/viewDoctor", state: { serverData } }}><i className="fa-solid fa-user me-1"></i>View Doctor</Link>
+              <Link className="nav-link text-white" to={{ pathname: "/viewLab", state: { serverData } }}><i className="fa-solid fa-user me-1"></i>View Lab</Link>
               <Link className="nav-link text-white" to="/medicalFile"><i className="fa-solid fa-file-pen me-1"></i>Medical File</Link>
               <Link className="nav-link text-white" to="/chat"><i className="fa-solid fa-message me-1"></i>Chat</Link>
             </div>
@@ -317,13 +318,22 @@ function PatientDashboard() {
                         <p>{requestData.appointmentTime || 'No Time Found'}</p>
                       </div>
                     </div>
-                    <div className="col-4 mx-auto my-auto d-flex">
-                      <div>
-                        <p className="fs-6 pending-text">
-                          {requestData.approval === 'P' ? 'Pending' : requestData.approval === 'R' ? 'Rejected' : 'No Status Found'}
-                        </p>
-                      </div>
-                      <div className="custom-loader ms-1"></div>
+                    <div className="col-4 mx-auto my-auto d-flex align-items-center">
+                      {requestData.approval === 'P' ? (
+                        <>
+                          <p className="fs-6 me-2 pending-text">Pending</p>
+                          <p className="d-flex">
+                            <i className="fa-solid fa-circle fa-fade me-2 pending-icon1"></i>
+                            <i className="fa-solid fa-circle fa-fade me-2 pending-icon2"></i>
+                            <i className="fa-solid fa-circle fa-fade pending-icon3"></i>
+                          </p>
+                        </>
+                      ) : requestData.approval === 'R' ?
+                        (
+                          <>
+                            <p>Rejected</p>
+                          </>
+                        ) : 'No Status Found'}
                     </div>
                   </li>
                 ))}
@@ -331,7 +341,7 @@ function PatientDashboard() {
             </div>
           </div>
         </div>
-      </div>
+      </div >
     </>
   )
 }

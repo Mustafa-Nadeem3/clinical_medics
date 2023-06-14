@@ -839,23 +839,39 @@
     color: #ffdb38;
   }
 
-  .custom-loader {
-    width: 25px;
-    height: 6px;
-    margin-top: 10px;
-    background: radial-gradient(circle closest-side, #ffdb38 90%, #0000) 0 0/33%
-      100% space;
-    clip-path: inset(0 100% 0 0);
-    animation: d1 2s steps(4) infinite;
+  .pending-icon1,
+  .pending-icon2,
+  .pending-icon3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5px;
+    opacity: 0;
+    animation: fade 1s infinite;
   }
-  @keyframes d1 {
-    to {
-      clip-path: inset(0 -34% 0 0);
+
+  .pending-icon2 {
+    animation-delay: 0.2s;
+  }
+
+  .pending-icon3 {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes fade {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
     }
   }
 
   /* Calender CSS */
-  .note ul{
+  .note ul {
     list-style-type: none;
   }
 

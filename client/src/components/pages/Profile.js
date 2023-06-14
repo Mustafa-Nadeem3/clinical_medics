@@ -4,6 +4,7 @@ import '../style.css';
 import { useNavigate } from 'react-router-dom';
 import DashboardProfileDoctor from '../dashboardComponents/DashboardProfileDoctor';
 import DashboardProfilePatient from '../dashboardComponents/DashboardProfilePatient';
+import DashboardProfileLab from '../dashboardComponents/DashboardProfileLab';
 
 const Profile = () => {
   const navigate = useNavigate()
@@ -41,9 +42,9 @@ const Profile = () => {
     console.log('patient')
     return <DashboardProfilePatient data={serverData} />
   }
-  // else if (serverData.profession === 'l') {
-  //   return <LabDashboard data={serverData} />
-  // }
+  else if (serverData.profession === 'l') {
+    return <DashboardProfileLab data={serverData} />
+  }
   // else if (serverData.profession === 'p') {
   //   return <PharmacistDashboard data={serverData} />
   // }

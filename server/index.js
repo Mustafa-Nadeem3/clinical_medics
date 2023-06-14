@@ -11,6 +11,7 @@ const bcrypt = require('bcrypt')
 const User = require('./models/user')
 const DoctorProfile = require('./models/doctor_profile')
 const PatientProfile = require('./models/patient_profile')
+const LabProfile = require('./models/lab_profile')
 const AppointmentRequest = require('./models/appointment_request')
 const AppointmentBooked = require('./models/appointment_booked')
 
@@ -251,6 +252,45 @@ app.post('/api/patient_profile', async (req, res) => {
     return res.json({ status: 'ok', _id: profile._id, firstName: profile.firstName, lastName: profile.lastName, email: profile.email })
   } catch (error) {
     res.json({ status: 'error', error: ' invalid token in p profile' })
+  }
+})
+
+app.get('/api/lab_profile', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const profile = await LabProfile.findById(_id)
+
+    return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, profession: profile.profession, address: profile.address, labTest: profile.labTest })
+  } catch (error) {
+    res.json({ status: 'error', error: ' invalid token in l profile' })
+  }
+})
+
+app.post('/api/lab_profile', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const profile = await LabProfile.findByIdAndUpdate(
+      _id,
+      {
+        profileImage: req.body.profileImage,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        address: req.body.address,
+        labTest: req.body.labTest
+      },
+      { new: true }
+    )
+
+    return res.json({ status: 'ok', _id: profile._id, firstName: profile.firstName, lastName: profile.lastName, email: profile.email })
+  } catch (error) {
+    res.json({ status: 'error', error: ' invalid token in l profile' })
   }
 })
 

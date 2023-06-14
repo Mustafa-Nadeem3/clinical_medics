@@ -1,48 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import '../../App.css';
 import '../style.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-function DashboardProfileDoctor() {
+function DashboardProfileLab() {
   const [serverData, setServerData] = useState('')
-  const navigate = useNavigate()
 
+  console.log(serverData)
+
+  const [editingProfileImage, setEditingProfileImage] = useState(false);
   const [editingFirstName, setEditingFirstName] = useState(false)
   const [editingLastName, setEditingLastName] = useState(false)
   const [editingEmail, setEditingEmail] = useState(false)
   const [editingAddress, setEditingAddress] = useState(false)
-  const [editingOfficeAddress, setEditingOfficeAddress] = useState(false)
-  const [editingDegree, setEditingDegree] = useState(false)
-  const [editingSpecialization, setEditingSpecialization] = useState(false)
-  const [editingProfileImage, setEditingProfileImage] = useState(false)
-  const [editingAppointmentTime, setEditingAppointmentTime] = useState(false)
-  const [editingFee, setEditingFee] = useState(false)
+  const [editingLabTest, setEditingLabTest] = useState(false)
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      setProfileImage(reader.result);
-    };
+      setProfileImage(reader.result)
+    }
 
     if (file) {
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file)
     }
-  };
+  }
 
   const _id = serverData._id
   const [profileImage, setProfileImage] = useState('')
   const [firstName, setFirstName] = useState(serverData.firstName)
   const [lastName, setLastName] = useState(serverData.lastName)
   const [email, setEmail] = useState(serverData.email)
-  const profession = serverData.profession
   const [address, setAddress] = useState('')
-  const [officeAddress, setOfficeAddress] = useState('')
-  const [degree, setDegree] = useState('')
-  const [specialization, setSpecialization] = useState('')
-  const [appointmentTime, setAppointmentTime] = useState([])
-  const [fee, setFee] = useState('')
+  const [labTest, setLabTest] = useState([])
 
   const handleEditClick = (field) => {
     switch (field) {
@@ -61,28 +53,18 @@ function DashboardProfileDoctor() {
       case 'address':
         setEditingAddress(true);
         break;
-      case 'officeAddress':
-        setEditingOfficeAddress(true);
-        break;
-      case 'degree':
-        setEditingDegree(true);
-        break;
-      case 'specialization':
-        setEditingSpecialization(true);
-        break;
-      case 'appointmentTime':
-        setEditingAppointmentTime(true);
-        break;
-      case 'fee':
-        setEditingFee(true);
+      case 'labTest':
+        setEditingLabTest(true);
         break;
       default:
-        alert('error handleEditClick function')
+        alert('error u handleEditClick function')
     }
-  }
+  };
 
-  async function updateProfile() {
-    const response = await fetch('http://localhost:5000/api/doctor_profile', {
+  async function updateProfile(event) {
+    event.preventDefault()
+
+    const response = await fetch('http://localhost:5000/api/lab_profile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -94,35 +76,23 @@ function DashboardProfileDoctor() {
         firstName,
         lastName,
         email,
-        profession,
         address,
-        officeAddress,
-        degree,
-        specialization,
-        appointmentTime,
-        fee,
+        labTest,
       }),
     })
-
-    // To Check Size of Payload
-    // const payload = JSON.stringify({ key: 'value' })
-    // const encoder = new TextEncoder()
-    // const payloadSizeInBytes = encoder.encode(payload).length
-    // console.log('Payload Size:', payloadSizeInBytes, 'bytes')
 
     const data = await response.json()
 
     if (data.status === 'ok') {
+      console.log(data.status)
       alert('Profile Updated')
-      navigate('/profile')
     } else {
-      console.log(data.error)
       alert('error in updateProfile ' + data.error)
     }
   }
 
   async function getProfileDetails() {
-    const response = await fetch('http://localhost:5000/api/doctor_profile', {
+    const response = await fetch('http://localhost:5000/api/lab_profile', {
       headers: {
         'x-access-token': localStorage.getItem('token'),
       },
@@ -146,24 +116,24 @@ function DashboardProfileDoctor() {
     }
   }, [])
 
-  // Appointment Time Start
-  const handleAppointmentTimeChange = (value, index) => {
-    const updatedTimes = [...appointmentTime]
+  // Lab Test Start
+  const handleLabTestChange = (value, index) => {
+    const updatedTimes = [...labTest]
     updatedTimes[index] = value
-    setAppointmentTime(updatedTimes)
+    setLabTest(updatedTimes)
   }
 
-  const handleAddAppointmentTime = () => {
-    const updatedTimes = [...appointmentTime, '']
-    setAppointmentTime(updatedTimes)
+  const handleAddLabTest = () => {
+    const updatedTimes = [...labTest, ''];
+    setLabTest(updatedTimes)
   }
 
-  const handleRemoveAppointmentTime = (index) => {
-    const updatedTimes = [...appointmentTime]
+  const handleRemoveLabTest = (index) => {
+    const updatedTimes = [...labTest]
     updatedTimes.splice(index, 1)
-    setAppointmentTime(updatedTimes)
+    setLabTest(updatedTimes)
   }
-  // Appointment Time End
+  // Lab Test End
 
   return (
     <>
@@ -181,7 +151,8 @@ function DashboardProfileDoctor() {
             <div className="col-12 links mb-5">
               <Link className="nav-link text-primary current-link" aria-current="page" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
               <Link className="nav-link text-white" to="/calendar"><i className="fa-solid fa-calendar-days me-1"></i>Calendar</Link>
-              <Link className="nav-link text-white" to="/viewPatient"><i className="fa-solid fa-user me-1"></i>View Patient</Link>
+              <Link className="nav-link text-white" to="/viewDoctor"><i className="fa-solid fa-user me-1"></i>View Doctor</Link>
+              <Link className="nav-link text-white" to="/medicalFile"><i className="fa-solid fa-file-pen me-1"></i>Medical File</Link>
               <Link className="nav-link text-white" to="/chat"><i className="fa-solid fa-message me-1"></i>Chat</Link>
             </div>
             <div className="col-12 links mt-2">
@@ -205,7 +176,7 @@ function DashboardProfileDoctor() {
               {editingProfileImage ? (
                 <input
                   type="file"
-                  className="form-control mt-2"
+                  className="form-control"
                   onChange={handleImageUpload}
                 />
               ) : (
@@ -266,7 +237,7 @@ function DashboardProfileDoctor() {
             {editingEmail ? (
               <input
                 type="text"
-                className="form-control w-75"
+                className="form-control"
                 placeholder={serverData.email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -285,7 +256,7 @@ function DashboardProfileDoctor() {
             {editingAddress ? (
               <input
                 type="text"
-                className="form-control w-75"
+                className="form-control"
                 placeholder={serverData.address}
                 onChange={(e) => setAddress(e.target.value)}
               />
@@ -300,107 +271,31 @@ function DashboardProfileDoctor() {
                 )}
               </p>
             )}
-            <h5 className="text-secondary my-3">Office Address: (Hospital or Clinic)</h5>
-            {editingOfficeAddress ? (
-              <input
-                type="text"
-                className="form-control w-75"
-                placeholder={serverData.officeAddress}
-                onChange={(e) => setOfficeAddress(e.target.value)}
-              />
-            ) : (
-              <p className="text-secondary my-3">
-                {serverData.officeAddress || 'Office Address not found'}
-                {!editingOfficeAddress && (
-                  <i
-                    className="fa-solid fa-pen-to-square ms-2"
-                    onClick={() => handleEditClick('officeAddress')}
-                  ></i>
-                )}
-              </p>
-            )}
-            <h5 className="text-secondary my-3">Degree</h5>
-            {editingDegree ? (
-              <input
-                type="text"
-                className="form-control w-75"
-                placeholder={serverData.degree}
-                onChange={(e) => setDegree(e.target.value)}
-              />
-            ) : (
-              <p className="text-secondary my-3">
-                {serverData.degree || 'Degree not found'}
-                {!editingDegree && (
-                  <i
-                    className="fa-solid fa-pen-to-square ms-2"
-                    onClick={() => handleEditClick('degree')}
-                  ></i>
-                )}
-              </p>
-            )}
-            <h5 className="text-secondary my-3">Specialization</h5>
-            {editingSpecialization ? (
-              <input
-                type="text"
-                className="form-control w-75"
-                placeholder={serverData.specialization}
-                onChange={(e) => setSpecialization(e.target.value)}
-              />
-            ) : (
-              <p className="text-secondary my-3">
-                {serverData.specialization || 'Specialization not found'}
-                {!editingSpecialization && (
-                  <i
-                    className="fa-solid fa-pen-to-square ms-2"
-                    onClick={() => handleEditClick('specialization')}
-                  ></i>
-                )}
-              </p>
-            )}
-            <h5 className="text-secondary my-3">Appointment Time</h5>
-            {editingAppointmentTime ? (
+            <h5 className="text-secondary my-3">Lab Test</h5>
+            {editingLabTest ? (
               <>
-                {appointmentTime.map((time, index) => (
+                {labTest.map((time, index) => (
                   <input
                     key={index}
                     type="text"
                     className="form-control w-75 mb-1"
-                    placeholder="Appointment Time"
+                    placeholder="Lab Test"
                     value={time}
-                    onChange={(e) => handleAppointmentTimeChange(e.target.value, index)}
+                    onChange={(e) => handleLabTestChange(e.target.value, index)}
                   />
                 ))}
                 <div className="d-flex justify-content-center mt-3">
-                  <button className="text-primary rounded-pill me-2 bg-light border-white border-0" onClick={handleAddAppointmentTime}><i class="fa-solid fa-plus"></i></button>
-                  <button className="text-primary rounded-pill bg-light border-white border-0" onClick={handleRemoveAppointmentTime}><i class="fa-solid fa-minus"></i></button>
+                  <button className="text-primary rounded-pill me-2 bg-light border-white border-0" onClick={handleAddLabTest}><i class="fa-solid fa-plus"></i></button>
+                  <button className="text-primary rounded-pill bg-light border-white border-0" onClick={handleRemoveLabTest}><i class="fa-solid fa-minus"></i></button>
                 </div>
               </>
             ) : (
               <p className="text-secondary my-3 me-2">
-                <span className="me-2">{serverData.appointmentTime || 'Appointment Time not found'}</span>
-                {!editingAppointmentTime && (
+                <span className="me-2">{serverData.labTest || 'Appointment Time not found'}</span>
+                {!editingLabTest && (
                   <i
-                    className="fa-solid fa-pen-to-square ms-2"
-                    onClick={() => handleEditClick('appointmentTime')}
-                  ></i>
-                )}
-              </p>
-            )}
-            <h5 className="text-secondary my-3">Fee</h5>
-            {editingFee ? (
-              <input
-                type="text"
-                className="form-control w-75"
-                placeholder={serverData.fee}
-                onChange={(e) => setFee(e.target.value)}
-              />
-            ) : (
-              <p className="text-secondary my-3">
-                {serverData.fee || 'Fee not found'}
-                {!editingFee && (
-                  <i
-                    className="fa-solid fa-pen-to-square ms-2"
-                    onClick={() => handleEditClick('fee')}
+                    className="fa-solid fa-pen-to-square"
+                    onClick={() => handleEditClick('labTest')}
                   ></i>
                 )}
               </p>
@@ -417,4 +312,4 @@ function DashboardProfileDoctor() {
   )
 }
 
-export default DashboardProfileDoctor
+export default DashboardProfileLab

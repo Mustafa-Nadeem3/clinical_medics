@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../App.css';
 import '../style.css';
 import { Link } from 'react-router-dom';
@@ -6,6 +6,33 @@ import { Link } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
 
 function LabDashboard() {
+  const [serverData, setServerData] = useState('')
+
+  async function getDashboardDetails() {
+    const response = await fetch('http://localhost:5000/api/lab_profile', {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setServerData(data)
+    } else {
+      alert('error in dashboardDetails ' + data.error)
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getDashboardDetails()
+    } else {
+      alert('error in d dashboard useEffect')
+    }
+  }, [])
+
   // Record View Start
   const [modalIsOpen1, setModalIsOpen1] = useState(false);
 
@@ -24,15 +51,17 @@ function LabDashboard() {
         <div className="container-fluid">
           <div className="row">
             <div className="col-12 text-center rounded-circle mt-4 mb-2">
-              <img src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2" />
+              <img src={serverData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2" />
             </div>
             <div className="col-12">
-              <h6 className="text-white text-center mb-4">Username</h6>
+              <h6 className="text-white text-center mb-4">{serverData.firstName && serverData.lastName
+                ? `${serverData.firstName} ${serverData.lastName}`
+                : serverData.firstName || serverData.lastName || 'No Username Found'}</h6>
             </div>
             <div className="col-12 links mb-5">
               <Link className="nav-link text-primary current-link" aria-current="page" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
               <Link className="nav-link text-white" to="/calendar"><i className="fa-solid fa-calendar-days me-1"></i>Calendar</Link>
-              <Link className="nav-link text-white" to="/patientRecord"><i className="fa-solid fa-user me-1"></i>Patient Record</Link>
+              <Link className="nav-link text-white" to="/viewPatient"><i className="fa-solid fa-user me-1"></i>View Patient</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>
@@ -159,9 +188,11 @@ function LabDashboard() {
                     <h6>Patient Name</h6>
                   </div>
                   <div className="col-4 mx-auto d-flex align-items-center">
-                    <p class="fs-6">Pending</p>
-                    <p>
-                      <i className="fa-solid fa-circle ms-3"></i>
+                    <p class="fs-6 me-2 pending-text">Pending</p>
+                    <p className="d-flex ">
+                      <i class="fa-solid fa-circle fa-fade me-2 pending-icon1"></i>
+                      <i class="fa-solid fa-circle fa-fade me-2 pending-icon2"></i>
+                      <i class="fa-solid fa-circle fa-fade pending-icon3"></i>
                     </p>
                   </div>
                 </li>

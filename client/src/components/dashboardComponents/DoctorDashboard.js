@@ -197,7 +197,7 @@ function DoctorDashboard() {
             <div className="col-12">
               <h6 className="text-white text-center mb-4">{serverData.firstName && serverData.lastName
                 ? `${serverData.firstName} ${serverData.lastName}`
-                : serverData.firstName || serverData.lastName || 'Username'}</h6>
+                : serverData.firstName || serverData.lastName || 'No Username Found'}</h6>
             </div>
             <div className="col-12 links mb-5">
               <Link className="nav-link text-primary current-link" aria-current="page" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
