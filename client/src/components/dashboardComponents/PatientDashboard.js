@@ -76,7 +76,7 @@ function PatientDashboard() {
     const data = await response.json()
 
     if (data.status === 'ok') {
-      setBookedData(data.appointmentBooked)
+      setBookedData(data.bookings)
     } else {
       console.log('Error: ' + data.error)
     }
@@ -136,7 +136,6 @@ function PatientDashboard() {
               <Link className="nav-link text-white" to="/calendar"><i className="fa-solid fa-calendar-days me-1"></i>Calendar</Link>
               <Link className="nav-link text-white" to={{ pathname: "/viewDoctor", state: { serverData } }}><i className="fa-solid fa-user me-1"></i>View Doctor</Link>
               <Link className="nav-link text-white" to={{ pathname: "/viewLab", state: { serverData } }}><i className="fa-solid fa-user me-1"></i>View Lab</Link>
-              <Link className="nav-link text-white" to="/medicalFile"><i className="fa-solid fa-file-pen me-1"></i>Medical File</Link>
               <Link className="nav-link text-white" to="/chat"><i className="fa-solid fa-message me-1"></i>Chat</Link>
             </div>
             <div className="col-12 links mt-2">
@@ -210,10 +209,12 @@ function PatientDashboard() {
                   bookedData.map((bookedData, index) => (
                     <li key={index} className="d-flex list-group-item border border-0">
                       <div className="col-8">
-                        <h6>{bookedData.patientFirstName}</h6>
+                        <h6>{bookedData.doctorFirstName && bookedData.doctorLastName
+                          ? `${bookedData.doctorFirstName} ${bookedData.doctorLastName}`
+                          : bookedData.doctorFirstName || bookedData.doctorLastName || 'No Username Found'}</h6>
                         <p>{bookedData.appointmentDate || 'No Time Found'}</p>
                       </div>
-                      <div className="col-4 justify-content-end">
+                      <div className="col-4 mx-auto my-auto">
                         <p className="fs-6">{bookedData.appointmentTime}</p>
                       </div>
                     </li>
@@ -337,6 +338,28 @@ function PatientDashboard() {
                     </div>
                   </li>
                 ))}
+              </ul>
+            </div>
+          </div>
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Lab Test</div>
+            <div className="card-body overflow-scroll">
+              <ul className="list-group">
+                {bookedData && bookedData.length > 0 ? (
+                  bookedData.map((bookedData, index) => (
+                    <li key={index} className="d-flex list-group-item border border-0">
+                      <div className="col-8">
+                        <h6>{bookedData.doctorFirstName && bookedData.doctorLastName
+                          ? `${bookedData.doctorFirstName} ${bookedData.doctorLastName}`
+                          : bookedData.doctorFirstName || bookedData.doctorLastName || 'No Username Found'}</h6>
+                        <p>{bookedData.appointmentDate || 'No Time Found'}</p>
+                      </div>
+                      <div className="col-4 mx-auto my-auto">
+                        <p className="fs-6">{bookedData.appointmentTime}</p>
+                      </div>
+                    </li>
+                  ))
+                ) : <h6 className="d-flex justify-content-center align-items-center">No Data Available</h6>}
               </ul>
             </div>
           </div>

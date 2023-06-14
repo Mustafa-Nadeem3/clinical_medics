@@ -161,6 +161,17 @@ app.get('/api/display_doctor', async (req, res) => {
   }
 })
 
+app.get('/api/display_lab', async (req, res) => {
+  try {
+    const labs = await LabProfile.find({})
+
+    return res.json({ status: 'ok', labs: labs })
+  } catch (error) {
+    console.error('Error retrieving documents:', error)
+    res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' })
+  }
+})
+
 app.get('/api/display_patient', async (req, res) => {
   try {
     const patients = await PatientProfile.find({})
@@ -261,6 +272,7 @@ app.get('/api/lab_profile', async (req, res) => {
   try {
     const decoded = jwt.verify(token, 'secret123')
     const _id = decoded._id
+    console.log(_id)
     const profile = await LabProfile.findById(_id)
 
     return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, profession: profile.profession, address: profile.address, labTest: profile.labTest })
@@ -375,9 +387,9 @@ app.get('/api/p_book_appointment', async (req, res) => {
   try {
     const decoded = jwt.verify(token, 'secret123')
     const _id = decoded._id
-    const booking = await AppointmentRequest.find({ patientID: _id })
+    const bookings = await AppointmentRequest.find({ patientID: _id })
 
-    return res.json({ status: 'ok', bookedAppointment: booking })
+    return res.json({ status: 'ok', bookings: bookings })
   } catch (error) {
     console.log(error)
     res.json({ status: 'error', error: ' Get Appointment Booked Error' })

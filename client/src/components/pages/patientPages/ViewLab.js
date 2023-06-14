@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../../App.css';
 import { Link } from 'react-router-dom';
 import '../../style.css';
-// import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 
 function ViewLab() {
   const [serverData, setServerData] = useState('')
@@ -34,23 +34,23 @@ function ViewLab() {
   const [labData, setLabData] = useState([])
 
   // Booking Form Start
-  // const [modalIsOpen, setModalIsOpen] = useState(Array(labData.length).fill(false));
+  const [modalIsOpen, setModalIsOpen] = useState(Array(labData.length).fill(false));
 
-  // const openModal = (index) => {
-  //   setModalIsOpen((prevState) => {
-  //     const newState = [...prevState]
-  //     newState[index] = true
-  //     return newState
-  //   })
-  // }
+  const openModal = (index) => {
+    setModalIsOpen((prevState) => {
+      const newState = [...prevState]
+      newState[index] = true
+      return newState
+    })
+  }
 
-  // const closeModal = (index) => {
-  //   setModalIsOpen((prevState) => {
-  //     const newState = [...prevState]
-  //     newState[index] = false
-  //     return newState
-  //   })
-  // }
+  const closeModal = (index) => {
+    setModalIsOpen((prevState) => {
+      const newState = [...prevState]
+      newState[index] = false
+      return newState
+    })
+  }
   // Booking Form End
 
   async function labDetails() {
@@ -65,8 +65,8 @@ function ViewLab() {
 
       if (data.status === 'ok') {
         console.log(data)
-        console.log(data.lab)
-        setLabData(data.lab)
+        console.log(data.labs)
+        setLabData(data.labs)
       } else {
         alert('Error: ' + data.error)
       }
@@ -81,57 +81,57 @@ function ViewLab() {
     if (token) {
       labDetails()
     } else {
-      alert('Error in findLab useEffect')
+      alert('Error')
     }
   }, [])
 
 
-  // const [labID, setLabID] = useState('')
-  // const [labFirstName, setLabFirstName] = useState('')
-  // const [labLastName, setLabLastName] = useState('')
-  // const [patientID, setPatientID] = useState('')
-  // const [patientFirstName, setPatientFirstName] = useState('')
-  // const [patientLastName, setPatientLastName] = useState('')
-  // const [testDate, setTestDate] = useState('')
-  // const [testTime, setTestTime] = useState('')
-  // const [testType, setTestType] = useState('')
-  // const [approval] = useState('P')
+  const [labID, setLabID] = useState('')
+  const [labFirstName, setLabFirstName] = useState('')
+  const [labLastName, setLabLastName] = useState('')
+  const [patientID, setPatientID] = useState('')
+  const [patientFirstName, setPatientFirstName] = useState('')
+  const [patientLastName, setPatientLastName] = useState('')
+  const [testDate, setTestDate] = useState('')
+  const [testTime, setTestTime] = useState('')
+  const [testType, setTestType] = useState('')
+  const [approval] = useState('P')
 
-  // async function addTestRequest() {
+  async function addTestRequest() {
 
-  //   try {
-  //     const req = await fetch('http://localhost:5000/api/lab_request', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         labID,
-  //         labFirstName,
-  //         labLastName,
-  //         patientID,
-  //         patientFirstName,
-  //         patientLastName,
-  //         testDate,
-  //         testTime,
-  //         testType,
-  //         approval,
-  //       }),
-  //     })
+    try {
+      const req = await fetch('http://localhost:5000/api/lab_request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          labID,
+          labFirstName,
+          labLastName,
+          patientID,
+          patientFirstName,
+          patientLastName,
+          testDate,
+          testTime,
+          testType,
+          approval,
+        }),
+      })
 
-  //     const data = await req.json()
-  //     console.log(data);
+      const data = await req.json()
+      console.log(data);
 
-  //     if (data.status === 'ok') {
-  //       console.log('Test Request ' + data.status)
-  //     } else {
-  //       alert('Error: ' + data.error)
-  //     }
-  //   } catch (error) {
-  //     console.error(error)
-  //     alert('Error fetching test request', error)
-  //   }
-  // }
+      if (data.status === 'ok') {
+        console.log('Test Request ' + data.status)
+      } else {
+        alert('Error: ' + data.error)
+      }
+    } catch (error) {
+      console.error(error)
+      alert('Error fetching test request', error)
+    }
+  }
 
   return (
     <>
@@ -221,136 +221,138 @@ function ViewLab() {
               <button className="btn btn-outline-success border-primary text-primary" type="submit">Search</button>
             </form>
           </div>
-          {labData.map((labData, index) => (
-            <div className="col-12" key={index}>
-              <div className="col-12 d-flex">
-                <div className="col-2 pt-3 text-center">
-                  <img className="w-50 rounded-circle border border-2" src={labData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
-                </div>
-                <div className="col-5 pt-3">
-                  <h5 className="mb-0 test-secondary">{labData.firstName && labData.lastName
-                    ? `${labData.firstName} ${labData.lastName}`
-                    : labData.firstName || labData.lastName || 'Name not found'}</h5>
-                  <h6 className="mb-0 test-secondary">{labData.specialization || 'Specialization not found'}</h6>
-                  <p className="test-secondary">{labData.degree || 'Degree not found'}</p>
-                </div>
-                {/* <div className="col-5 pt-3 text-end">
-                  <Button className="edit-button1" onClick={() => openModal(index)}><i className="fa-solid fa-calendar-check me-2"></i>Book Appointment</Button>
+          {labData && labData.length > 0 ? (
+            labData.map((labData, index) => (
+              <div className="col-12" key={index}>
+                <div className="col-12 d-flex">
+                  <div className="col-2 pt-3 text-center">
+                    <img className="w-50 rounded-circle border border-2" src={labData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
+                  </div>
+                  <div className="col-5 pt-3">
+                    <h5 className="mb-0 test-secondary">{labData.firstName && labData.lastName
+                      ? `${labData.firstName} ${labData.lastName}`
+                      : labData.firstName || labData.lastName || 'Name not found'}</h5>
+                    <h6 className="mb-0 test-secondary">{labData.specialization || 'Specialization not found'}</h6>
+                    <p className="test-secondary">{labData.degree || 'Degree not found'}</p>
+                  </div>
+                  <div className="col-5 pt-3 text-end">
+                    <Button className="edit-button1" onClick={() => openModal(index)}><i className="fa-solid fa-calendar-check me-2"></i>Book Appointment</Button>
 
-                  <Modal show={modalIsOpen[index]} onHide={() => closeModal(index)}>
-                    <Modal.Header closeButton>
-                      <Modal.Title className="text-primary">Booking <span >{labData._id}</span></Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <div className="row">
-                        <div className="col-12 d-flex mb-2">
-                          <div className="col-12 mt-3 d-flex">
-                            <h6 className="mb-2 fw-bold me-2">BioTechnician Name: </h6>
-                            <h6>{labData.firstName && labData.lastName
-                              ? `${labData.firstName} ${labData.lastName}`
-                              : labData.firstName || labData.lastName || 'No BioTechnician Name Found'}</h6>
-                          </div>
-                        </div>
-                        <div className="col-12 mb-2 d-flex">
-                          <h6 className="fw-bold me-2">Patient Name: </h6>
-                          <br />
-                          <h6 className="">{serverData.firstName && serverData.lastName
-                            ? `${serverData.firstName} ${serverData.lastName}`
-                            : serverData.firstName || serverData.lastName || 'Patient Name'}</h6>
-                        </div>
-                        <div className="col-12 mb-2 d-flex">
-                          <p className="fw-bold me-2 pt-1">Appointment Date: </p>
-                          <div className="mb-3">
-                            <input
-                              type="date"
-                              className="form-control"
-                              onChange={(e) => setTestDate(e.target.value)}>
-                            </input>
-                          </div>
-                        </div>
-                        <div className="col-12 mb-1 d-flex">
-                          <p className="fw-bold me-2 pt-1">Test Time Slots :</p>
-                          <div className="btn-group col-6 mb-3" role="group">
-                            <select className="form-select" aria-label="Default select example" onChange={(e) => setTestTime(e.target.value)}>
-                              <option selected>Open To See Time Slots</option>
-                              {labData.appointmentTime.map((time, index) => (
-                                <option key={index} value={time}>{time}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                        <div className="col-12 mb-2">
-                          <h6 className="fw-bold">Appointment Type: </h6>
-                          <div className="d-flex">
-                            <div className="form-check me-3">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name="appointmentType"
-                                id="flexRadioDefault1"
-                                value="P"
-                                checked={appointmentType === "P"}
-                                onChange={(e) => setAppointmentType(e.target.value)}
-                              />
-                              <label className="form-check-label" htmlFor="flexRadioDefault1">
-                                Physical
-                              </label>
-                            </div>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name="appointmentType"
-                                id="flexRadioDefault2"
-                                value="O"
-                                checked={appointmentType === "O"}
-                                onChange={(e) => setAppointmentType(e.target.value)}
-                              />
-                              <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                Online
-                              </label>
+                    <Modal show={modalIsOpen[index]} onHide={() => closeModal(index)}>
+                      <Modal.Header closeButton>
+                        <Modal.Title className="text-primary">Booking</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="row">
+                          <div className="col-12 d-flex mb-2">
+                            <div className="col-12 mt-3 d-flex">
+                              <h6 className="mb-2 fw-bold me-2">BioTechnician Name: </h6>
+                              <h6>{labData.firstName && labData.lastName
+                                ? `${labData.firstName} ${labData.lastName}`
+                                : labData.firstName || labData.lastName || 'No BioTechnician Name Found'}</h6>
                             </div>
                           </div>
+                          <div className="col-12 mb-2 d-flex">
+                            <h6 className="fw-bold me-2">Patient Name: </h6>
+                            <br />
+                            <h6 className="">{serverData.firstName && serverData.lastName
+                              ? `${serverData.firstName} ${serverData.lastName}`
+                              : serverData.firstName || serverData.lastName || 'Patient Name'}</h6>
+                          </div>
+                          <div className="col-12 mb-2 d-flex">
+                            <p className="fw-bold me-2 pt-1">Test Date: </p>
+                            <div className="mb-3">
+                              <input
+                                type="date"
+                                className="form-control"
+                                onChange={(e) => setTestDate(e.target.value)}>
+                              </input>
+                            </div>
+                          </div>
+                          <div className="col-12 mb-1 d-flex">
+                            <p className="fw-bold me-2 pt-1">Test Time Slots :</p>
+                            <div className="btn-group col-6 mb-3" role="group">
+                              <select className="form-select" aria-label="Default select example" onChange={(e) => setTestTime(e.target.value)}>
+                                <option selected>Open To See Time Slots</option>
+                                {labData.appointmentTime.map((time, index) => (
+                                  <option key={index} value={time}>{time}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                          <div className="col-12 mb-2">
+                            <h6 className="fw-bold">Test Type: </h6>
+                            <div className="d-flex">
+                              <div className="form-check me-3">
+                                <input
+                                  className="form-check-input"
+                                  type="radio"
+                                  name="appointmentType"
+                                  id="flexRadioDefault1"
+                                  value="L"
+                                  checked={testType === "L"}
+                                  onChange={(e) => setTestType(e.target.value)}
+                                />
+                                <label className="form-check-label" htmlFor="flexRadioDefault1">
+                                  At Lab
+                                </label>
+                              </div>
+                              <div className="form-check">
+                                <input
+                                  className="form-check-input"
+                                  type="radio"
+                                  name="appointmentType"
+                                  id="flexRadioDefault2"
+                                  value="H"
+                                  checked={testType === "H"}
+                                  onChange={(e) => setTestType(e.target.value)}
+                                />
+                                <label className="form-check-label" htmlFor="flexRadioDefault2">
+                                  At Home
+                                </label>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </Modal.Body>
-                    <Modal.Footer className="d-flex justify-content-center">
-                      <Button variant="secondary" onClick={() => {
-                        setLabID(labData._id)
-                        setLabFirstName(labData.firstName)
-                        setLabLastName(labData.lastName)
-                        setPatientID(serverData._id)
-                        setPatientFirstName(serverData.firstName)
-                        setPatientLastName(serverData.lastName)
-                        closeModal(index)
-                        addAppointmentRequest()
-                      }} className="text-center">Submit</Button>
-                      <Button variant="secondary" onClick={() => closeModal(index)} className="text-center">Close</Button>
-                    </Modal.Footer>
-                  </Modal>
-                </div> */}
-              </div>
-              <div className="col-12 d-flex">
-                <div className="col-4 text-center border-end">
-                  <h6 className="test-secondary">Reviews</h6>
-                  <p className="test-secondary">0</p>
+                      </Modal.Body>
+                      <Modal.Footer className="d-flex justify-content-center">
+                        <Button variant="secondary" onClick={() => {
+                          setLabID(labData._id)
+                          setLabFirstName(labData.firstName)
+                          setLabLastName(labData.lastName)
+                          setPatientID(serverData._id)
+                          setPatientFirstName(serverData.firstName)
+                          setPatientLastName(serverData.lastName)
+                          closeModal(index)
+                          addTestRequest()
+                        }} className="text-center">Submit</Button>
+                        <Button variant="secondary" onClick={() => closeModal(index)} className="text-center">Close</Button>
+                      </Modal.Footer>
+                    </Modal>
+                  </div>
                 </div>
-                <div className="col-4 text-center border-end">
-                  <h6 className="test-secondary">Experience</h6>
-                  <p className="test-secondary">0 years</p>
+                <div className="col-12 d-flex">
+                  <div className="col-4 text-center border-end">
+                    <h6 className="test-secondary">Reviews</h6>
+                    <p className="test-secondary">0</p>
+                  </div>
+                  <div className="col-4 text-center border-end">
+                    <h6 className="test-secondary">Experience</h6>
+                    <p className="test-secondary">0 years</p>
+                  </div>
+                  <div className="col-4 text-center">
+                    <h6 className="test-secondary">Fees</h6>
+                    <p className="test-secondary">Rs. 0</p>
+                  </div>
                 </div>
-                <div className="col-4 text-center">
-                  <h6 className="test-secondary">Fees</h6>
-                  <p className="test-secondary">Rs. 0</p>
+                <div className="col-12">
+                  <hr className="line-shadow"></hr>
                 </div>
               </div>
-              <div className="col-12">
-                <hr className="line-shadow"></hr>
-              </div>
-            </div>
-          ))}
+            ))
+          ) : <h6 className="d-flex justify-content-center align-items-center">No Data Available</h6>}
         </div>
-      </div >
+      </div>
     </>
   )
 }
