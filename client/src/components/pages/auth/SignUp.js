@@ -7,12 +7,27 @@ import Footer from '../../layout/Footer';
 
 function SignUp() {
   const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+
+  const togglePasswordVisible = () => {
+    setShowPassword((prevState) => !prevState)
+  }
+
+  const handleMouseEnter = () => {
+    setIsHovered(true)
+  }
+
+  const handleMouseLeave = () => {
+    setIsHovered(false)
+  }
+
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [profession, setProfession] = useState('')
-  
+
   const handleProfessionChange = (e) => {
     setProfession(e.target.value);
   };
@@ -103,6 +118,16 @@ function SignUp() {
                 onChange={(e) => setPassword(e.target.value)}
                 required />
               <label for="password" className="text-secondary">Password</label>
+              <span
+                onClick={togglePasswordVisible}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}>
+                {showPassword ? (
+                  <i className={isHovered ? 'fa-solid fa-eye fa-bounce' : 'fa-solid fa-eye'}></i>
+                ) : (
+                  <i className={isHovered ? 'fa-solid fa-eye-slash fa-bounce' : 'fa-solid fa-eye-slash'}></i>
+                )}
+              </span>
             </div>
           </div>
           <div className="col-12 mb-3 ms-2">
@@ -127,6 +152,16 @@ function SignUp() {
             <div className="form-floating input-box">
               <input type="password" className="input-field form-control text-secondary" id="confirmPass" placeholder="Confirm Password" autocomplete="off" required />
               <label for="confirmPass" className="text-secondary">Confirm Password</label>
+              <span
+                onClick={togglePasswordVisible}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}>
+                {showPassword ? (
+                  <i className={isHovered ? 'fa-solid fa-eye fa-bounce' : 'fa-solid fa-eye'}></i>
+                ) : (
+                  <i className={isHovered ? 'fa-solid fa-eye-slash fa-bounce' : 'fa-solid fa-eye-slash'}></i>
+                )}
+              </span>
             </div>
           </div>
           <div className="col-12">

@@ -609,6 +609,20 @@
     align-items: center;
   }
 
+  .login-form .fa-eye-slash {
+    color: #8795a1;
+    position: absolute;
+    margin-left: -40px;
+    margin-top: 25px;
+  }
+
+  .login-form .fa-eye {
+    color: #8795a1;
+    position: absolute;
+    margin-left: -40px;
+    margin-top: 25px;
+  }
+
   /* SignUp CSS */
   .signUp {
     margin-top: 110px;
@@ -624,6 +638,20 @@
     border-radius: 20px;
     display: block !important;
     align-self: center;
+  }
+
+  .signUp .fa-eye-slash {
+    color: #8795a1;
+    position: absolute;
+    margin-top: -35px;
+    margin-left: 1000px;
+  }
+
+  .signUp .fa-eye {
+    color: #8795a1;
+    position: absolute;
+    margin-top: -35px;
+    margin-left: 1000px;
   }
 
   /* Dashboard CSS */

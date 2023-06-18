@@ -13,6 +13,10 @@ function DashboardProfilePatient() {
   const [editingLastName, setEditingLastName] = useState(false)
   const [editingEmail, setEditingEmail] = useState(false)
   const [editingAddress, setEditingAddress] = useState(false)
+  // const [editingDOB, setDOB] = useState(false)
+  // const [editingGender, setGender] = useState(false)
+  // const [editingWeight, setWeight] = useState(false)
+  // const [editingHeight, setHeight] = useState(false)
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -156,7 +160,7 @@ function DashboardProfilePatient() {
                 />
               ) : (
                 <p className="text-secondary">
-                  {}
+                  { }
                   {!editingProfileImage && (
                     <i
                       className="fa-solid fa-pen-to-square"
@@ -228,6 +232,25 @@ function DashboardProfilePatient() {
               </p>
             )}
             <h5 className="text-secondary my-3">Home Address:</h5>
+            {editingAddress ? (
+              <input
+                type="text"
+                className="form-control"
+                placeholder={serverData.address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            ) : (
+              <p className="text-secondary my-3">
+                {serverData.address || 'Address not found'}
+                {!editingAddress && (
+                  <i
+                    className="fa-solid fa-pen-to-square ms-2"
+                    onClick={() => handleEditClick('address')}
+                  ></i>
+                )}
+              </p>
+            )}
+            <h5 className="text-secondary my-3">Date of birth: </h5>
             {editingAddress ? (
               <input
                 type="text"

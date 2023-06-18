@@ -130,7 +130,7 @@ function DoctorDashboard() {
     const data = await response.json()
 
     if (data.status === 'ok') {
-      setBookedData(data.appointmentBooked)
+      setBookedData(data.booking)
     } else {
       console.log('Error: ' + data.error)
     }
@@ -154,7 +154,6 @@ function DoctorDashboard() {
   const [appointmentDate, setAppointmentDate] = useState('')
   const [appointmentTime, setAppointmentTime] = useState('')
   const [appointmentType, setAppointmentType] = useState('')
-  const [approval, setApproval] = useState('')
 
   async function bookAppointment() {
     const response = await fetch('http://localhost:5000/api/book_appointment', {
@@ -171,16 +170,32 @@ function DoctorDashboard() {
         patientLastName,
         appointmentDate,
         appointmentTime,
-        appointmentType,
-        approval,
+        appointmentType
       }),
     })
 
     const data = await response.json()
-    console.log('Here' + data)
 
     if (data.status === 'ok') {
-      setRequestData(data.appointmentRequest)
+      alert('Booked')
+    } else {
+      console.log('Error: ' + data.error)
+    }
+  }
+
+  async function removeAppointmentRequest() {
+    const response = await fetch('http://localhost:5000/api/appointment_request', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      
     } else {
       console.log('Error: ' + data.error)
     }
@@ -288,6 +303,9 @@ function DoctorDashboard() {
                   <h6 className="mb-0 mt-1">Patient Name</h6>
                   <p className="mb-0 d-text">Patient Address</p>
                   <p className="d-text">Patient City</p>
+                </div>
+                <div className="col-4 mx-auto my-auto">
+                  <Button className="customButton" onClick={openLinkInNewTab}><i className="fa-solid fa-message me-1"></i>Chat</Button>
                 </div>
               </div>
               <div className="col-12 d-flex mt-2">
@@ -416,25 +434,15 @@ function DoctorDashboard() {
                             setAppointmentDate(requestData.appointmentDate)
                             setAppointmentTime(requestData.appointmentTime)
                             setAppointmentType(requestData.appointmentType)
-                            setApproval('A')
                             bookAppointment()
+                            removeAppointmentRequest()
                           }}
                         >
                         </i>
                         <i
                           className="fs-4 fa-regular fa-circle-xmark"
                           onClick={() => {
-                            setDoctorID(requestData.doctorID)
-                            setDoctorFirstName(requestData.doctorFirstName)
-                            setDoctorLastName(requestData.doctorLastName)
-                            setPatientID(requestData.patientID)
-                            setPatientFirstName(requestData.patientFirstName)
-                            setPatientLastName(requestData.patientLastName)
-                            setAppointmentDate(requestData.appointmentDate)
-                            setAppointmentTime(requestData.appointmentTime)
-                            setAppointmentType(requestData.appointmentType)
-                            setApproval('R')
-                            bookAppointment()
+                            removeAppointmentRequest()
                           }}>
                         </i>
                       </div>

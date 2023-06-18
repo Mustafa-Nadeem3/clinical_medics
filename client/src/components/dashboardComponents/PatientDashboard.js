@@ -76,7 +76,7 @@ function PatientDashboard() {
     const data = await response.json()
 
     if (data.status === 'ok') {
-      setBookedData(data.bookings)
+      setBookedData(data.booking)
     } else {
       console.log('Error: ' + data.error)
     }
@@ -118,6 +118,33 @@ function PatientDashboard() {
     }
   }, [])
 
+  const [requestTestData, setRequestTestData] = useState([])
+
+  async function getLabTestRequest() {
+    const response = await fetch('http://localhost:5000/api/p_labTest_request', {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setRequestTestData(data.labTestRequest)
+    } else {
+      alert('Error: ' + data.error)
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getLabTestRequest()
+    } else {
+      alert('Error in Appointment Request useEffect')
+    }
+  }, [])
+
   return (
     <>
       <nav className="nav flex-column menu position-fixed">
@@ -136,7 +163,6 @@ function PatientDashboard() {
               <Link className="nav-link text-white" to="/calendar"><i className="fa-solid fa-calendar-days me-1"></i>Calendar</Link>
               <Link className="nav-link text-white" to={{ pathname: "/viewDoctor", state: { serverData } }}><i className="fa-solid fa-user me-1"></i>View Doctor</Link>
               <Link className="nav-link text-white" to={{ pathname: "/viewLab", state: { serverData } }}><i className="fa-solid fa-user me-1"></i>View Lab</Link>
-              <Link className="nav-link text-white" to="/chat"><i className="fa-solid fa-message me-1"></i>Chat</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>
@@ -234,6 +260,9 @@ function PatientDashboard() {
                   <h6 className="mb-1 mt-1">Doctor Name</h6>
                   <p className="mb-0 d-text">Doctor Address</p>
                 </div>
+                <div className="col-4 mx-auto my-auto">
+                  <Button className="customButton" onClick={openLinkInNewTab}><i className="fa-solid fa-message me-1"></i>Chat</Button>
+                </div>
               </div>
               <div className="col-12 d-flex mt-2">
                 <div className="col-4 me-5">
@@ -302,42 +331,86 @@ function PatientDashboard() {
           </div>
         </div>
         <div className="col-12 d-flex">
-          <div className="card dash-details col-6 mb-3 shadow">
-            <div className="card-header">Requested Appointment Status</div>
+          <div className="card dash-details col-6 mb-3 shadow overflow-scroll">
+            <div className="card-header fixed">Requested Appointment/Lab Test Status</div>
             <div className="card-body">
+              <h6>Appointment Status</h6>
+              <hr />
               <ul className="list-group">
-                {requestData.map((requestData, index) => (
-                  <li key={index} className="d-flex list-group-item border border-0">
-                    <div className="col-8">
-                      <h6>
-                        {requestData.doctorFirstName && requestData.doctorLastName
-                          ? `${requestData.doctorFirstName} ${requestData.doctorLastName}`
-                          : requestData.doctorFirstName || requestData.doctorLastName || 'No Username Found'}
-                      </h6>
-                      <div className="d-flex">
-                        <p className="me-2">{requestData.appointmentDate || 'No Date Found'}</p>
-                        <p>{requestData.appointmentTime || 'No Time Found'}</p>
+                {requestData && requestData.length > 0 ? (
+                  requestData.map((requestData, index) => (
+                    <li key={index} className="d-flex list-group-item border border-0">
+                      <div className="col-8">
+                        <h6>
+                          {requestData.doctorFirstName && requestData.doctorLastName
+                            ? `${requestData.doctorFirstName} ${requestData.doctorLastName}`
+                            : requestData.doctorFirstName || requestData.doctorLastName || 'No Username Found'}
+                        </h6>
+                        <div className="d-flex">
+                          <p className="me-2">{requestData.appointmentDate || 'No Date Found'}</p>
+                          <p>{requestData.appointmentTime || 'No Time Found'}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="col-4 mx-auto my-auto d-flex align-items-center">
-                      {requestData.approval === 'P' ? (
-                        <>
-                          <p className="fs-6 me-2 pending-text">Pending</p>
-                          <p className="d-flex">
-                            <i className="fa-solid fa-circle fa-fade me-2 pending-icon1"></i>
-                            <i className="fa-solid fa-circle fa-fade me-2 pending-icon2"></i>
-                            <i className="fa-solid fa-circle fa-fade pending-icon3"></i>
-                          </p>
-                        </>
-                      ) : requestData.approval === 'R' ?
-                        (
+                      <div className="col-4 mx-auto my-auto d-flex align-items-center">
+                        {requestData.approval === 'P' ? (
                           <>
-                            <p>Rejected</p>
+                            <p className="fs-6 me-2 pending-text">Pending</p>
+                            <p className="d-flex">
+                              <i className="fa-solid fa-circle fa-fade me-2 pending-icon1"></i>
+                              <i className="fa-solid fa-circle fa-fade me-2 pending-icon2"></i>
+                              <i className="fa-solid fa-circle fa-fade pending-icon3"></i>
+                            </p>
                           </>
-                        ) : 'No Status Found'}
-                    </div>
-                  </li>
-                ))}
+                        ) : requestData.approval === 'R' ?
+                          (
+                            <>
+                              <p>Rejected</p>
+                            </>
+                          ) : 'No Status Found'}
+                      </div>
+                    </li>
+                  ))
+                ) : <h6 className="d-flex justify-content-center align-items-center">No Data Available</h6>}
+              </ul>
+              <h6>Lab Test Status</h6>
+              <hr />
+              <ul className="list-group">
+                {requestTestData && requestTestData.length > 0 ? (
+                  requestTestData.map((requestTestData, index) => (
+                    <li key={index} className="d-flex list-group-item border border-0">
+                      <div className="col-8">
+                        <h6>
+                          {requestTestData.bioTechnicianFirstName && requestTestData.bioTechnicianLastName
+                            ? `${requestTestData.bioTechnicianFirstName} ${requestTestData.bioTechnicianLastName}`
+                            : requestTestData.bioTechnicianFirstName || requestTestData.bioTechnicianLastName || 'No Username Found'}
+                        </h6>
+                        <div className="d-flex">
+                          <p className="me-2">{requestTestData.testDate || 'No Date Found'}</p>
+                          <p>{requestTestData.testType === 'L' ? (<p>At Lab</p>
+                          ) : requestTestData.testType === 'H' ? (<p>At Home</p>
+                          ) : 'No Time Found'}</p>
+                        </div>
+                      </div>
+                      <div className="col-4 mx-auto my-auto d-flex align-items-center">
+                        {requestTestData.approval === 'P' ? (
+                          <>
+                            <p className="fs-6 me-2 pending-text">Pending</p>
+                            <p className="d-flex">
+                              <i className="fa-solid fa-circle fa-fade me-2 pending-icon1"></i>
+                              <i className="fa-solid fa-circle fa-fade me-2 pending-icon2"></i>
+                              <i className="fa-solid fa-circle fa-fade pending-icon3"></i>
+                            </p>
+                          </>
+                        ) : requestTestData.approval === 'R' ?
+                          (
+                            <>
+                              <p>Rejected</p>
+                            </>
+                          ) : 'No Status Found'}
+                      </div>
+                    </li>
+                  ))
+                ) : <h6 className="d-flex justify-content-center align-items-center">No Data Available</h6>}
               </ul>
             </div>
           </div>

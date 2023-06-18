@@ -83,7 +83,6 @@ function ViewDoctor() {
     }
   }, [])
 
-
   const [doctorID, setDoctorID] = useState('')
   const [doctorFirstName, setDoctorFirstName] = useState('')
   const [doctorLastName, setDoctorLastName] = useState('')
@@ -118,15 +117,13 @@ function ViewDoctor() {
       })
 
       const data = await req.json()
-      console.log(data);
 
       if (data.status === 'ok') {
-        console.log('Appointment Request ' + data.status)
+        alert('Appointment Request Sent')
       } else {
         alert('Error: ' + data.error)
       }
     } catch (error) {
-      console.error(error)
       alert('Error fetching appointment request', error)
     }
   }
@@ -222,7 +219,7 @@ function ViewDoctor() {
             <div className="col-12" key={index}>
               <div className="col-12 d-flex">
                 <div className="col-2 pt-3 text-center">
-                  <img className="w-50 rounded-circle border border-2" src={doctorData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
+                  <img className="w-50 rounded-circle border border-2 search-image" src={doctorData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
                 </div>
                 <div className="col-5 pt-3">
                   <h5 className="mb-0 test-secondary">{doctorData.firstName && doctorData.lastName
@@ -236,7 +233,7 @@ function ViewDoctor() {
 
                   <Modal show={modalIsOpen[index]} onHide={() => closeModal(index)}>
                     <Modal.Header closeButton>
-                      <Modal.Title className="text-primary">Booking <span >{doctorData._id}</span></Modal.Title>
+                      <Modal.Title className="text-primary">Booking <span>{doctorData._id}</span></Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                       <div className="row">
@@ -269,7 +266,7 @@ function ViewDoctor() {
                           <p className="fw-bold me-2 pt-1">Available Time Slots :</p>
                           <div className="btn-group col-6 mb-3" role="group">
                             <select className="form-select" aria-label="Default select example" onChange={(e) => setAppointmentTime(e.target.value)}>
-                              <option selected>Open To See Time Slots</option>
+                              <option value="">Open To See Time Slots</option>
                               {doctorData.appointmentTime.map((time, index) => (
                                 <option key={index} value={time}>{time}</option>
                               ))}

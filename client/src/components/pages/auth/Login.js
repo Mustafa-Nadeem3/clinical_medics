@@ -7,8 +7,22 @@ import Footer from '../../layout/Footer';
 
 function Login() {
   const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  const togglePasswordVisible = () => {
+    setShowPassword((prevState) => !prevState)
+  }
+
+  const handleMouseEnter = () => {
+    setIsHovered(true)
+  }
+
+  const handleMouseLeave = () => {
+    setIsHovered(false)
+  }
 
   async function loginUser(event) {
     event.preventDefault()
@@ -54,9 +68,9 @@ function Login() {
                     onChange={(e) => setEmail(e.target.value)} />
                   <label for="username" className="text-secondary">Username</label>
                 </div>
-                <div className="form-floating input-box">
+                <div className="form-floating input-box d-flex">
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     className="input-field form-control text-secondary"
                     id="password"
                     placeholder="Password"
@@ -64,6 +78,16 @@ function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)} />
                   <label for="password" className="text-secondary">Password</label>
+                  <span
+                    onClick={togglePasswordVisible}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}>
+                    {showPassword ? (
+                      <i className={isHovered ? 'fa-solid fa-eye fa-bounce' : 'fa-solid fa-eye'}></i>
+                    ) : (
+                      <i className={isHovered ? 'fa-solid fa-eye-slash fa-bounce' : 'fa-solid fa-eye-slash'}></i>
+                    )}
+                  </span>
                 </div>
                 <div className="input-box ms-2">
                   <input type="checkbox" name="rememberMe" id="rememberMe" />

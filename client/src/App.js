@@ -18,7 +18,6 @@ import AdminDashboard from './components/pages/dashboard/AdminDashboard';
 import Profile from './components/pages/Profile';
 import Settings from './components/pages/Settings';
 import Calendar from './components/pages/Calendar';
-import Chat from './components/pages/Chat';
 import SearchDoctor from './components/pages/adminPages/SearchDoctor';
 import SearchPatient from './components/pages/adminPages/SearchPatient';
 import SearchLab from './components/pages/adminPages/SearchLab';
@@ -63,7 +62,6 @@ const App = () => {
           <Route path="/revoke" element={<Revoke />} />
           <Route path="/viewPatient" element={<ViewPatient />} />
           <Route path="/medicalRecord" element={<MedicalRecord />} />
-          <Route path="/chat" element={<Chat />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/addItem" element={<AddItem />} />
           <Route path="/removeItem" element={<RemoveItem />} />

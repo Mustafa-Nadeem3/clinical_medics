@@ -45,6 +45,87 @@ function LabDashboard() {
   };
   // Record View End
 
+  const [requestData, setRequestData] = useState([])
+
+  async function getTestRequest() {
+    const response = await fetch('http://localhost:5000/api/l_test_request', {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setRequestData(data.testRequest)
+    } else {
+      alert('Error: ' + data.error)
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getTestRequest()
+    } else {
+      alert('Error in Appointment Request useEffect')
+    }
+  }, [])
+
+  const [bioTechnicianID, setBioTechnicianID] = useState('')
+  const [bioTechnicianFirstName, setBioTechnicianFirstName] = useState('')
+  const [bioTechnicianLastName, setBioTechnicianLastName] = useState('')
+  const [patientID, setPatientID] = useState('')
+  const [patientFirstName, setPatientFirstName] = useState('')
+  const [patientLastName, setPatientLastName] = useState('')
+  const [testDate, setTestDate] = useState('')
+  const [testType, setTestType] = useState('')
+
+  async function bookTest() {
+    const response = await fetch('http://localhost:5000/api/book_test', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        bioTechnicianID,
+        bioTechnicianFirstName,
+        bioTechnicianLastName,
+        patientID,
+        patientFirstName,
+        patientLastName,
+        testDate,
+        testType
+      }),
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      alert('Booked Test')
+    } else {
+      console.log('Error: ' + data.error)
+    }
+  }
+
+  async function removeTestRequest() {
+    const response = await fetch('http://localhost:5000/api/test_request', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      
+    } else {
+      console.log('Error: ' + data.error)
+    }
+  }
+
   return (
     <>
       <nav className="nav flex-column menu position-fixed">
@@ -180,22 +261,50 @@ function LabDashboard() {
         </div>
         <div className="col-12 d-flex">
           <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Pending Delivery Reports</div>
+            <div class="card-header">Lab Test Request</div>
             <div class="card-body overflow-scroll">
               <ul className="list-group">
-                <li className="d-flex list-group-item border border-0">
-                  <div className="col-8">
-                    <h6>Patient Name</h6>
-                  </div>
-                  <div className="col-4 mx-auto d-flex align-items-center">
-                    <p class="fs-6 me-2 pending-text">Pending</p>
-                    <p className="d-flex ">
-                      <i class="fa-solid fa-circle fa-fade me-2 pending-icon1"></i>
-                      <i class="fa-solid fa-circle fa-fade me-2 pending-icon2"></i>
-                      <i class="fa-solid fa-circle fa-fade pending-icon3"></i>
-                    </p>
-                  </div>
-                </li>
+              {requestData && requestData.length > 0 ? (
+                  requestData.map((requestData, index) => (
+                    <li key={index} className="d-flex list-group-item border border-0">
+                      <div className="col-8">
+                        <h6>
+                          {requestData.patientFirstName && requestData.patientLastName
+                            ? `${requestData.patientFirstName} ${requestData.patientLastName}`
+                            : requestData.patientFirstName || requestData.patientLastName || 'No Username Found'}
+                        </h6>
+                        <div className="d-flex">
+                          <p className="me-2">{requestData.testDate || 'No Date Found'}</p>
+                          <p>{requestData.testType || 'No Time Found'}</p>
+                        </div>
+                      </div>
+                      <div className="col-4 mx-auto my-auto">
+                        <i
+                          className="fs-4 fa-regular fa-circle-check me-3"
+                          onClick={() => {
+                            setBioTechnicianID(requestData.bioTechnicianID)
+                            setBioTechnicianFirstName(requestData.bioTechnicianFirstName)
+                            setBioTechnicianLastName(requestData.bioTechnicianLastNameLastName)
+                            setPatientID(requestData.patientID)
+                            setPatientFirstName(requestData.patientFirstName)
+                            setPatientLastName(requestData.patientLastName)
+                            setTestDate(requestData.testDate)
+                            setTestType(requestData.testType)
+                            bookTest()
+                            removeTestRequest()
+                          }}
+                        >
+                        </i>
+                        <i
+                          className="fs-4 fa-regular fa-circle-xmark"
+                          onClick={() => {
+                            removeTestRequest()
+                          }}>
+                        </i>
+                      </div>
+                    </li>
+                  ))
+                ) : <h6 className="d-flex justify-content-center align-items-center">No Data Available</h6>}
               </ul>
             </div>
           </div>

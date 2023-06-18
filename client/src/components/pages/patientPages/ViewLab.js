@@ -86,44 +86,42 @@ function ViewLab() {
   }, [])
 
 
-  const [labID, setLabID] = useState('')
-  const [labFirstName, setLabFirstName] = useState('')
-  const [labLastName, setLabLastName] = useState('')
+  const [bioTechnicianID, setBioTechnicianID] = useState('')
+  const [bioTechnicianFirstName, setBioTechnicianFirstName] = useState('')
+  const [bioTechnicianLastName, setBioTechnicianLastName] = useState('')
   const [patientID, setPatientID] = useState('')
   const [patientFirstName, setPatientFirstName] = useState('')
   const [patientLastName, setPatientLastName] = useState('')
   const [testDate, setTestDate] = useState('')
-  const [testTime, setTestTime] = useState('')
+  // const [testTime, setTestTime] = useState('')
   const [testType, setTestType] = useState('')
   const [approval] = useState('P')
 
   async function addTestRequest() {
 
     try {
-      const req = await fetch('http://localhost:5000/api/lab_request', {
+      const req = await fetch('http://localhost:5000/api/labTest_request', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          labID,
-          labFirstName,
-          labLastName,
+          bioTechnicianID,
+          bioTechnicianFirstName,
+          bioTechnicianLastName,
           patientID,
           patientFirstName,
           patientLastName,
           testDate,
-          testTime,
           testType,
           approval,
         }),
       })
 
       const data = await req.json()
-      console.log(data);
 
       if (data.status === 'ok') {
-        console.log('Test Request ' + data.status)
+        alert('Lab Test Request Sent')
       } else {
         alert('Error: ' + data.error)
       }
@@ -232,11 +230,11 @@ function ViewLab() {
                     <h5 className="mb-0 test-secondary">{labData.firstName && labData.lastName
                       ? `${labData.firstName} ${labData.lastName}`
                       : labData.firstName || labData.lastName || 'Name not found'}</h5>
-                    <h6 className="mb-0 test-secondary">{labData.specialization || 'Specialization not found'}</h6>
-                    <p className="test-secondary">{labData.degree || 'Degree not found'}</p>
+                    <h6 className="mb-0 test-secondary">{labData.address || 'Address not found'}</h6>
+                    {/* <p className="test-secondary">{labData.degree || 'Degree not found'}</p> */}
                   </div>
                   <div className="col-5 pt-3 text-end">
-                    <Button className="edit-button1" onClick={() => openModal(index)}><i className="fa-solid fa-calendar-check me-2"></i>Book Appointment</Button>
+                    <Button className="edit-button1" onClick={() => openModal(index)}><i className="fa-solid fa-calendar-check me-2"></i>Book Lab Test</Button>
 
                     <Modal show={modalIsOpen[index]} onHide={() => closeModal(index)}>
                       <Modal.Header closeButton>
@@ -270,11 +268,11 @@ function ViewLab() {
                             </div>
                           </div>
                           <div className="col-12 mb-1 d-flex">
-                            <p className="fw-bold me-2 pt-1">Test Time Slots :</p>
+                            <p className="fw-bold me-2 pt-1">Available Test :</p>
                             <div className="btn-group col-6 mb-3" role="group">
-                              <select className="form-select" aria-label="Default select example" onChange={(e) => setTestTime(e.target.value)}>
-                                <option selected>Open To See Time Slots</option>
-                                {labData.appointmentTime.map((time, index) => (
+                              <select className="form-select" aria-label="Default select example" onChange={(e) => setTestType(e.target.value)}>
+                                <option selected>Open To Selected Test</option>
+                                {labData.labTest.map((time, index) => (
                                   <option key={index} value={time}>{time}</option>
                                 ))}
                               </select>
@@ -317,9 +315,9 @@ function ViewLab() {
                       </Modal.Body>
                       <Modal.Footer className="d-flex justify-content-center">
                         <Button variant="secondary" onClick={() => {
-                          setLabID(labData._id)
-                          setLabFirstName(labData.firstName)
-                          setLabLastName(labData.lastName)
+                          setBioTechnicianID(labData._id)
+                          setBioTechnicianFirstName(labData.firstName)
+                          setBioTechnicianLastName(labData.lastName)
                           setPatientID(serverData._id)
                           setPatientFirstName(serverData.firstName)
                           setPatientLastName(serverData.lastName)

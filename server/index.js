@@ -13,13 +13,14 @@ const DoctorProfile = require('./models/doctor_profile')
 const PatientProfile = require('./models/patient_profile')
 const LabProfile = require('./models/lab_profile')
 const AppointmentRequest = require('./models/appointment_request')
+const LabTestRequest = require('./models/labTest_request')
 const AppointmentBooked = require('./models/appointment_booked')
 
 app.use(cors())
 app.use(express.json())
 
-app.use(bodyParser.json({ limit: '50mb' }))
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }))
+app.use(bodyParser.json({ limit: '100mb' }))
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }))
 
 main().catch(err => console.log(err))
 
@@ -272,7 +273,6 @@ app.get('/api/lab_profile', async (req, res) => {
   try {
     const decoded = jwt.verify(token, 'secret123')
     const _id = decoded._id
-    console.log(_id)
     const profile = await LabProfile.findById(_id)
 
     return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, profession: profile.profession, address: profile.address, labTest: profile.labTest })
@@ -320,8 +320,7 @@ app.post('/api/appointment_request', async (req, res) => {
       appointmentTime: req.body.appointmentTime,
       appointmentType: req.body.appointmentType,
       approval: req.body.approval
-    }
-    )
+    })
 
     return res.json({
       status: 'ok',
@@ -372,9 +371,9 @@ app.get('/api/d_book_appointment', async (req, res) => {
   try {
     const decoded = jwt.verify(token, 'secret123')
     const _id = decoded._id
-    const booking = await AppointmentRequest.find({ doctorID: _id })
+    const booking = await AppointmentBooked.find({ doctorID: _id })
 
-    return res.json({ status: 'ok', bookedAppointment: booking })
+    return res.json({ status: 'ok', booking: booking })
   } catch (error) {
     console.log(error)
     res.json({ status: 'error', error: ' Get Appointment Booked Error' })
@@ -387,9 +386,9 @@ app.get('/api/p_book_appointment', async (req, res) => {
   try {
     const decoded = jwt.verify(token, 'secret123')
     const _id = decoded._id
-    const bookings = await AppointmentRequest.find({ patientID: _id })
+    const booking = await AppointmentBooked.find({ patientID: _id })
 
-    return res.json({ status: 'ok', bookings: bookings })
+    return res.json({ status: 'ok', booking: booking })
   } catch (error) {
     console.log(error)
     res.json({ status: 'error', error: ' Get Appointment Booked Error' })
@@ -407,8 +406,7 @@ app.post('/api/book_appointment', async (req, res) => {
       patientLastName,
       appointmentDate,
       appointmentTime,
-      appointmentType,
-      approval
+      appointmentType
     } = req.body
 
     if (
@@ -420,8 +418,7 @@ app.post('/api/book_appointment', async (req, res) => {
       !patientLastName ||
       !appointmentDate ||
       !appointmentTime ||
-      !appointmentType ||
-      !approval
+      !appointmentType
     ) {
       return res.status(400).json({ status: 'error', error: ' Missing required fields in Appointment Booking' })
     } else {
@@ -436,15 +433,153 @@ app.post('/api/book_appointment', async (req, res) => {
           appointmentDate: req.body.appointmentDate,
           appointmentTime: req.body.appointmentTime,
           appointmentType: req.body.appointmentType,
-          approval: req.body.approval
         }
       )
-  
+
       return res.json({ status: 'ok' })
     }
   } catch (error) {
     console.log(error)
     res.json({ status: 'error', error: ' Appointment Booked Error' })
+  }
+})
+
+app.post('/api/book_test', async (req, res) => {
+  try {
+    const {
+      bioTechnicianID,
+      bioTechnicianFirstName,
+      bioTechnicianLastName,
+      patientID,
+      patientFirstName,
+      patientLastName,
+      testDate,
+      testType
+    } = req.body
+
+    if (
+      !bioTechnicianID ||
+      !bioTechnicianFirstName ||
+      !bioTechnicianLastName ||
+      !patientID ||
+      !patientFirstName ||
+      !patientLastName ||
+      !testDate ||
+      !testType
+    ) {
+      return res.status(400).json({ status: 'error', error: ' Missing required fields in Test Booking' })
+    } else {
+      await TestBooked.create(
+        {
+          bioTechnicianID: req.body.bioTechnicianID,
+          bioTechnicianFirstName: req.body.bioTechnicianFirstName,
+          bioTechnicianLastName: req.body.bioTechnicianLastName,
+          patientID: req.body.patientID,
+          patientFirstName: req.body.patientFirstName,
+          patientLastName: req.body.patientLastName,
+          testDate: req.body.testDate,
+          testType: req.body.testType,
+        }
+      )
+
+      return res.json({ status: 'ok' })
+    }
+  } catch (error) {
+    console.log(error)
+    res.json({ status: 'error', error: ' Test Booked Error' })
+  }
+})
+
+app.delete('/api/appointment_request', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    await AppointmentRequest.findOneAndDelete({ doctorID: _id })
+
+    return res.json({ status: 'ok' })
+  } catch (error) {
+    res.json({ status: 'error', error: ' Appointment Request Removal Error' })
+  }
+})
+
+app.delete('/api/test_request', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    await LabTestRequest.findOneAndDelete({ bioTechnicianID: _id })
+
+    return res.json({ status: 'ok' })
+  } catch (error) {
+    res.json({ status: 'error', error: ' Lab Test Request Removal Error' })
+  }
+})
+
+app.post('/api/labTest_request', async (req, res) => {
+  console.log(req)
+
+  try {
+    const {
+      bioTechnicianID,
+      bioTechnicianFirstName,
+      bioTechnicianLastName,
+      patientID,
+      patientFirstName,
+      patientLastName,
+      testDate,
+      testType,
+      approval
+    } = req.body
+
+    if (
+      !bioTechnicianID ||
+      !bioTechnicianFirstName ||
+      !bioTechnicianLastName |
+      !patientID ||
+      !patientFirstName ||
+      !patientLastName ||
+      !testDate ||
+      !testType ||
+      !approval
+    ) {
+      return res.status(400).json({ status: 'error', error: ' Missing required fields in Lab Test Booking' })
+    } else {
+      await LabTestRequest.create({
+        bioTechnicianID: req.body.bioTechnicianID,
+        bioTechnicianFirstName: req.body.bioTechnicianFirstName,
+        bioTechnicianLastName: req.body.bioTechnicianLastName,
+        patientID: req.body.patientID,
+        patientFirstName: req.body.patientFirstName,
+        patientLastName: req.body.patientLastName,
+        testDate: req.body.testDate,
+        testType: req.body.testType,
+        approval: req.body.approval
+      })
+
+      return res.json({
+        status: 'ok',
+      })
+    }
+  } catch (err) {
+    res.json({ status: 'error', error: 'Post Lab Test Request Error' })
+  }
+})
+
+app.get('/api/p_labTest_request', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const labTestRequest = await LabTestRequest.find({ patientID: _id })
+
+    return res.json({ status: 'ok', labTestRequest: labTestRequest })
+  } catch (error) {
+    console.error('Get Appointment Request Error:', error)
+    return res.json({ status: 'error', error: 'Get Appointment Request Error' })
   }
 })
 
