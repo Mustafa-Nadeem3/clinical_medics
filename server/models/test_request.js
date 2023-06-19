@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const LabTestRequest = new mongoose.Schema(
+const TestRequest = new mongoose.Schema(
   {
     bioTechnicianID: { type: String },
     bioTechnicianFirstName: { type: String },
@@ -20,9 +20,9 @@ const LabTestRequest = new mongoose.Schema(
       maxlength: 1
     },
   },
-  { collection: 'LabTestRequest' }
+  { collection: 'TestRequest' }
 )
 
-const model = mongoose.model('LabTestRequestData', LabTestRequest)
+const model = mongoose.model('TestRequestData', TestRequest)
 
 module.exports = model

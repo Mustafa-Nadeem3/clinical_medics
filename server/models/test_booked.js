@@ -2,9 +2,9 @@ const mongoose = require('mongoose')
 
 const TestBooked = new mongoose.Schema(
   {
-    bioTechicianID: { type: String },
-    bioTechicianFirstName: { type: String },
-    bioTechicianLastName: { type: String },
+    bioTechnicianID: { type: String },
+    bioTechnicianFirstName: { type: String },
+    bioTechnicianLastName: { type: String },
     patientID: { type: String },
     patientFirstName: { type: String },
     patientLastName: { type: String },

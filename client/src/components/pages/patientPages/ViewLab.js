@@ -64,14 +64,11 @@ function ViewLab() {
       const data = await req.json()
 
       if (data.status === 'ok') {
-        console.log(data)
-        console.log(data.labs)
         setLabData(data.labs)
       } else {
         alert('Error: ' + data.error)
       }
     } catch (error) {
-      console.error(error)
       alert('Error fetching lab data', error)
     }
   }
@@ -100,7 +97,7 @@ function ViewLab() {
   async function addTestRequest() {
 
     try {
-      const req = await fetch('http://localhost:5000/api/labTest_request', {
+      const req = await fetch('http://localhost:5000/api/test_request', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -149,8 +146,6 @@ function ViewLab() {
               <Link className="nav-link text-white" to="/calendar"><i className="fa-solid fa-calendar-days me-1"></i>Calendar</Link>
               <Link className="nav-link text-white" to="/viewDoctor"><i className="fa-solid fa-user me-1"></i>View Doctor</Link>
               <Link className="nav-link text-primary current-link" to="/viewLab"><i className="fa-solid fa-user me-1"></i>View Lab</Link>
-              <Link className="nav-link text-white" to="/medicalFile"><i className="fa-solid fa-file-pen me-1"></i>Medical File</Link>
-              <Link className="nav-link text-white" to="/chat"><i className="fa-solid fa-message me-1"></i>Chat</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>

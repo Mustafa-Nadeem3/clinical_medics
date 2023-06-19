@@ -65,6 +65,7 @@ function PatientDashboard() {
   }, [])
 
   const [bookedData, setBookedData] = useState([])
+  const [bookedTestData, setBookedTestData] = useState([])
 
   async function getBookedAppointment() {
     const response = await fetch('http://localhost:5000/api/p_book_appointment', {
@@ -82,10 +83,27 @@ function PatientDashboard() {
     }
   }
 
+  async function getBookedTest() {
+    const response = await fetch('http://localhost:5000/api/p_book_test', {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setBookedTestData(data.booking)
+    } else {
+      console.log('Error: ' + data.error)
+    }
+  }
+
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
       getBookedAppointment()
+      getBookedTest()
     } else {
       alert('Error in Appointment Request useEffect')
     }
@@ -120,8 +138,8 @@ function PatientDashboard() {
 
   const [requestTestData, setRequestTestData] = useState([])
 
-  async function getLabTestRequest() {
-    const response = await fetch('http://localhost:5000/api/p_labTest_request', {
+  async function getTestRequest() {
+    const response = await fetch('http://localhost:5000/api/p_test_request', {
       headers: {
         'x-access-token': localStorage.getItem('token'),
       },
@@ -130,7 +148,7 @@ function PatientDashboard() {
     const data = await response.json()
 
     if (data.status === 'ok') {
-      setRequestTestData(data.labTestRequest)
+      setRequestTestData(data.testRequest)
     } else {
       alert('Error: ' + data.error)
     }
@@ -139,7 +157,7 @@ function PatientDashboard() {
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
-      getLabTestRequest()
+      getTestRequest()
     } else {
       alert('Error in Appointment Request useEffect')
     }
@@ -418,17 +436,19 @@ function PatientDashboard() {
             <div className="card-header">Lab Test</div>
             <div className="card-body overflow-scroll">
               <ul className="list-group">
-                {bookedData && bookedData.length > 0 ? (
-                  bookedData.map((bookedData, index) => (
+                {bookedTestData && bookedTestData.length > 0 ? (
+                  bookedTestData.map((bookedTestData, index) => (
                     <li key={index} className="d-flex list-group-item border border-0">
                       <div className="col-8">
-                        <h6>{bookedData.doctorFirstName && bookedData.doctorLastName
-                          ? `${bookedData.doctorFirstName} ${bookedData.doctorLastName}`
-                          : bookedData.doctorFirstName || bookedData.doctorLastName || 'No Username Found'}</h6>
-                        <p>{bookedData.appointmentDate || 'No Time Found'}</p>
+                        <h6>{bookedTestData.bioTechnicianFirstName && bookedTestData.bioTechnicianLastName
+                          ? `${bookedTestData.bioTechnicianFirstName} ${bookedTestData.bioTechnicianLastName}`
+                          : bookedTestData.bioTechnicianFirstName || bookedTestData.bioTechnicianLastName || 'No Username Found'}</h6>
+                        <p>{bookedTestData.testDate || 'No Time Found'}</p>
                       </div>
                       <div className="col-4 mx-auto my-auto">
-                        <p className="fs-6">{bookedData.appointmentTime}</p>
+                        <p>{bookedTestData.testType === 'L' ? (<p>At Lab</p>
+                        ) : bookedTestData.testType === 'H' ? (<p>At Home</p>
+                        ) : 'No Type Found'}</p>
                       </div>
                     </li>
                   ))

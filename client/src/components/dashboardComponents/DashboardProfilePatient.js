@@ -6,8 +6,6 @@ import { Link } from 'react-router-dom';
 function DashboardProfilePatient() {
   const [serverData, setServerData] = useState('')
 
-  console.log(serverData)
-
   const [editingProfileImage, setEditingProfileImage] = useState(false);
   const [editingFirstName, setEditingFirstName] = useState(false)
   const [editingLastName, setEditingLastName] = useState(false)

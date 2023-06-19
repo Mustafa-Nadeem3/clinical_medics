@@ -275,7 +275,9 @@ function LabDashboard() {
                         </h6>
                         <div className="d-flex">
                           <p className="me-2">{requestData.testDate || 'No Date Found'}</p>
-                          <p>{requestData.testType || 'No Time Found'}</p>
+                          <p>{requestData.testType === 'L' ? (<p>At Lab</p>
+                          ) : requestData.testType === 'H' ? (<p>At Home</p>
+                          ) : 'No Type Found'}</p>
                         </div>
                       </div>
                       <div className="col-4 mx-auto my-auto">
@@ -284,7 +286,7 @@ function LabDashboard() {
                           onClick={() => {
                             setBioTechnicianID(requestData.bioTechnicianID)
                             setBioTechnicianFirstName(requestData.bioTechnicianFirstName)
-                            setBioTechnicianLastName(requestData.bioTechnicianLastNameLastName)
+                            setBioTechnicianLastName(requestData.bioTechnicianLastName)
                             setPatientID(requestData.patientID)
                             setPatientFirstName(requestData.patientFirstName)
                             setPatientLastName(requestData.patientLastName)

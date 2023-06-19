@@ -614,6 +614,7 @@
     position: absolute;
     margin-left: -40px;
     margin-top: 25px;
+    cursor: pointer;
   }
 
   .login-form .fa-eye {
@@ -621,6 +622,7 @@
     position: absolute;
     margin-left: -40px;
     margin-top: 25px;
+    cursor: pointer;
   }
 
   /* SignUp CSS */
@@ -645,6 +647,7 @@
     position: absolute;
     margin-top: -35px;
     margin-left: 1000px;
+    cursor: pointer;
   }
 
   .signUp .fa-eye {
@@ -652,6 +655,7 @@
     position: absolute;
     margin-top: -35px;
     margin-left: 1000px;
+    cursor: pointer;
   }
 
   /* Dashboard CSS */
