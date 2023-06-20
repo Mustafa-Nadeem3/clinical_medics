@@ -138,11 +138,11 @@ function DashboardProfilePatient() {
           </div>
         </div>
       </nav>
-      <nav class="navbar fixed-top d-navbar mb-3 shadow">
+      <nav className="navbar fixed-top d-navbar mb-3 shadow">
         <div className="container justify-content-start">
-          <Link class="nav-link text-secondary ms-3 me-4" to="/dashboard">Dashboard</Link>
-          <Link class="nav-link text-secondary me-4 cur-link rounded-bottom-1" to="/profile">Profile</Link>
-          <Link class="nav-link text-secondary me-4" to="/settings">Settings</Link>
+          <Link className="nav-link text-secondary ms-3 me-4" to="/dashboard">Dashboard</Link>
+          <Link className="nav-link text-secondary me-4 cur-link rounded-bottom-1" to="/profile">Profile</Link>
+          <Link className="nav-link text-secondary me-4" to="/settings">Settings</Link>
         </div>
       </nav>
       <div className="row dashboard">

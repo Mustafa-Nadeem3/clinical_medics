@@ -150,11 +150,11 @@ function LabDashboard() {
           </div>
         </div>
       </nav>
-      <nav class="navbar fixed-top d-navbar mb-3 shadow">
+      <nav className="navbar fixed-top d-navbar mb-3 shadow">
         <div className="container justify-content-start">
-          <Link class="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/dashboard">Dashboard</Link>
-          <Link class="nav-link text-secondary me-4" to="/profile">Profile</Link>
-          <Link class="nav-link text-secondary me-4" to="/settings">Settings</Link>
+          <Link className="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/dashboard">Dashboard</Link>
+          <Link className="nav-link text-secondary me-4" to="/profile">Profile</Link>
+          <Link className="nav-link text-secondary me-4" to="/settings">Settings</Link>
         </div>
       </nav>
       <div className="container amount-card">
@@ -185,25 +185,25 @@ function LabDashboard() {
       </div>
       <div className="row dashboard">
         <div className="col-12 d-flex">
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Today's Delivery Reports</div>
-            <div class="card-body overflow-scroll">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Today's Delivery Reports</div>
+            <div className="card-body overflow-scroll">
               <ul className="list-group">
                 <li className="d-flex list-group-item border border-0">
                   <div className="col-6">
                     <h6>Patient Name</h6>
                   </div>
                   <div className="col-6 d-flex">
-                    <p class="fs-6 me-3">Report Date</p>
-                    <p class="fs-6">Delivery Date</p>
+                    <p className="fs-6 me-3">Report Date</p>
+                    <p className="fs-6">Delivery Date</p>
                   </div>
                 </li>
               </ul>
             </div>
           </div>
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Patient Details</div>
-            <div class="card-body">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Patient Details</div>
+            <div className="card-body">
               <div className="col-12 d-flex">
                 <div className="col-4 me-2">
                   <img src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2 d-image" />
@@ -240,8 +240,8 @@ function LabDashboard() {
                 <div className="col-4"></div>
               </div>
               <div className="col-12 d-flex d-button">
-                <div class="col-4 mx-auto">
-                  <Button className="customButton" onClick={openModal1}><i class="fa-solid fa-upload me-1"></i>Upload Report</Button>
+                <div className="col-4 mx-auto">
+                  <Button className="customButton" onClick={openModal1}><i className="fa-solid fa-upload me-1"></i>Upload Report</Button>
 
                   <Modal show={modalIsOpen1} hide={closeModal1} >
                     <Modal.Header closeButton>
@@ -260,9 +260,9 @@ function LabDashboard() {
           </div>
         </div>
         <div className="col-12 d-flex">
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Lab Test Request</div>
-            <div class="card-body overflow-scroll">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Lab Test Request</div>
+            <div className="card-body overflow-scroll">
               <ul className="list-group">
               {requestData && requestData.length > 0 ? (
                   requestData.map((requestData, index) => (
@@ -310,9 +310,9 @@ function LabDashboard() {
               </ul>
             </div>
           </div>
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Statistics Of Report</div>
-            <div class="card-body">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Statistics Of Report</div>
+            <div className="card-body">
               {/* <ChartComponent /> */}
             </div>
           </div>

@@ -80,16 +80,7 @@ function DoctorDashboard() {
     } else {
       alert('error in dashboardDetails ' + data.error)
     }
-  };
-
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      getDashboardDetails()
-    } else {
-      alert('error in d dashboard useEffect')
-    }
-  }, [])
+  }
 
   const [requestData, setRequestData] = useState([])
 
@@ -109,15 +100,6 @@ function DoctorDashboard() {
     }
   }
 
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      getAppointmentRequest()
-    } else {
-      alert('Error in Appointment Request useEffect')
-    }
-  }, [])
-
   const [bookedData, setBookedData] = useState([])
 
   async function getBookedAppointment() {
@@ -135,15 +117,6 @@ function DoctorDashboard() {
       console.log('Error: ' + data.error)
     }
   }
-
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      getBookedAppointment()
-    } else {
-      alert('Error in Appointment Request useEffect')
-    }
-  }, [])
 
   const [doctorID, setDoctorID] = useState('')
   const [doctorFirstName, setDoctorFirstName] = useState('')
@@ -195,11 +168,107 @@ function DoctorDashboard() {
     const data = await response.json()
 
     if (data.status === 'ok') {
-      
+
     } else {
       console.log('Error: ' + data.error)
     }
   }
+
+  // Chat Start
+  // const userID = serverData._id
+  // const [otherUserID, setOtherUserID] = useState('')
+  // const [userMessage, setUserMessage] = useState('')
+  // const [serverMessage1, setServerMessage1] = useState('')
+  // const [serverMessage2, setServerMessage2] = useState('')
+
+  // const handleInputChange = (event) => {
+  //   setUserMessage(event.target.value);
+  // }
+
+  // const handleKeyUp = (event) => {
+  //   if (event.keyCode === 13) {
+  //     sendMessage()
+  //   }
+  // }
+
+  // const sendMessage = () => {
+  //   const messageText = userMessage.trim()
+
+  //   if (messageText !== '') {
+  //     async function setMessage() {
+  //       const response = await fetch('http://localhost:5000/api/message', {
+  //         method: 'POST',
+  //         headers: {
+  //           'x-access-token': localStorage.getItem('token'),
+  //           'Content-Type': "application/json"
+  //         },
+  //         body: JSON.stringify({
+  //           userID,
+  //           userMessage
+  //         }),
+  //       })
+
+  //       const data = await response.json()
+
+  //       if (data.status === 'ok') {
+
+  //       } else {
+  //         alert('error in chat ' + data.error)
+  //       }
+  //     }
+  //     setMessage()
+  //     getDMessage()
+  //     getPMessage()
+  //   }
+  // }
+
+  // async function getDMessage() {
+  //   const id = userID
+
+  //   const response = await fetch(`http://localhost:5000/api/message?id=${id}`, {
+  //     headers: {
+  //       'x-access-token': localStorage.getItem('token'),
+  //     },
+  //   })
+
+  //   const data = await response.json()
+
+  //   if (data.status === 'ok') {
+  //     setServerMessage1(data.message)
+  //   } else {
+  //     alert('error in chat ' + data.error)
+  //   }
+  // }
+
+  // async function getPMessage() {
+  //   const id = otherUserID
+
+  //   const response = await fetch(`http://localhost:5000/api/message?id=${id}`, {
+  //     headers: {
+  //       'x-access-token': localStorage.getItem('token'),
+  //     },
+  //   })
+
+  //   const data = await response.json()
+
+  //   if (data.status === 'ok') {
+  //     setServerMessage2(data.message)
+  //   } else {
+  //     alert('error in chat ' + data.error)
+  //   }
+  // }
+  // Chat End
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getDashboardDetails()
+      getBookedAppointment()
+      getAppointmentRequest()
+    } else {
+      alert('error in dashboard useEffect')
+    }
+  }, [])
 
   return (
     <>
@@ -218,7 +287,6 @@ function DoctorDashboard() {
               <Link className="nav-link text-primary current-link" aria-current="page" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
               <Link className="nav-link text-white" to="/calendar"><i className="fa-solid fa-calendar-days me-1"></i>Calendar</Link>
               <Link className="nav-link text-white" to="/viewPatient"><i className="fa-solid fa-user me-1"></i>View Patient</Link>
-              <Link className="nav-link text-white" to="/chat"><i className="fa-solid fa-message me-1"></i>Chat</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>
@@ -305,7 +373,47 @@ function DoctorDashboard() {
                   <p className="d-text">Patient City</p>
                 </div>
                 <div className="col-4 mx-auto my-auto">
-                  <Button className="customButton" onClick={openLinkInNewTab}><i className="fa-solid fa-message me-1"></i>Chat</Button>
+                  <button className="btn customButton" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><i className="fa-solid fa-message me-1"></i>Chat</button>
+
+                  <div className="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                    <div className="offcanvas-header">
+                      <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div className="offcanvas-body">
+                      <div className="h-100 card">
+                        <div className="card-header">
+                          {/* {bookedData && bookedData.length > 0 ? (
+                            bookedData.map((bookedData, index) => (
+                              <p key={index} value={setOtherUserID(bookedData.patientID)}></p>
+                            ))
+                          ) : <span></span>} */}
+                        </div>
+                        <div className="card-body">
+                          {/* {serverMessage1 && serverMessage1.length > 0 ? (
+                            serverMessage1.map((serverMessage1, index) => (
+                              <p key={index} className="d-flex justify-content-end">{serverMessage1.userMessage}</p>
+                            ))
+                          ) : <span></span>}
+                          {serverMessage2 && serverMessage2.length > 0 ? (
+                            serverMessage2.map((serverMessage2, index) => (
+                              <p key={index} className="d-flex justify-content-start">{serverMessage2.userMessage}</p>
+                            ))
+                          ) : <span></span>} */}
+                        </div>
+                        <div className="card-footer d-flex">
+                          {/* <input
+                            type="text"
+                            className="form-control"
+                            aria-label="Recipient's username"
+                            aria-describedby="button-addon2"
+                            value={userMessage}
+                            onChange={handleInputChange}
+                            onKeyUp={handleKeyUp} />
+                          <button className="ms-2 btn customButton" type="button" id="button-addon2" onClick={sendMessage}>Send</button> */}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="col-12 d-flex mt-2">

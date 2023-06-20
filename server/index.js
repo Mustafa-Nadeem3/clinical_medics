@@ -16,6 +16,7 @@ const AppointmentRequest = require('./models/appointment_request')
 const TestRequest = require('./models/test_request')
 const AppointmentBooked = require('./models/appointment_booked')
 const TestBooked = require('./models/test_booked')
+const ChatMessage = require('./models/chat_messages')
 
 app.use(cors())
 app.use(express.json())
@@ -610,6 +611,45 @@ app.delete('/api/test_request', async (req, res) => {
     return res.json({ status: 'ok' })
   } catch (error) {
     res.json({ status: 'error', error: ' Lab Test Request Removal Error' })
+  }
+})
+
+app.post('/api/message', async (req, res) => {
+  try {
+    const {
+      userID,
+      userMessage
+    } = req.body
+
+    if (
+      !userID ||
+      !userMessage
+    ) {
+      return res.status(400).json({ status: 'error', error: ' Missing required fields in Chat' })
+    } else {
+      await ChatMessage.create(
+        {
+          userID: req.body.userID,
+          userMessage: req.body.userMessage,
+        }
+      )
+
+      return res.json({ status: 'ok' })
+    }
+  } catch (error) {
+    res.json({ status: 'error', error: ' Post Chat Error' })
+  }
+})
+
+app.get('/api/message', async (req, res) => {
+  const { id } = req.query
+
+  try {
+    const message = await ChatMessage.find({ userID: id })
+
+    return res.json({ status: 'ok', message: message })
+  } catch (error) {
+    res.json({ status: 'error', error: ' Get Chat Error' })
   }
 })
 

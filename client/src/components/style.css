@@ -1101,6 +1101,12 @@
   }
 
   /* Chat CSS */
+  .offcanvas-body {
+    display: block;
+    align-items: end;
+    justify-content: end;
+  }
+
   .chat {
     width: 1040px;
     margin-left: 240px;

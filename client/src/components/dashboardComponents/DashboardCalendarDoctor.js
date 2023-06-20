@@ -3,14 +3,14 @@ import '../../App.css';
 import '../style.css';
 import { Link, useNavigate } from 'react-router-dom';
 
-function DashboardCalendarPatient() {
+function DashboardCalendarDoctor() {
   const navigate = useNavigate()
   const [profileData, setProfileData] = useState('')
   const [appointmentData, setAppointmentData] = useState('')
   const calendarRef = useRef(null);
 
-  async function getPatientProfileDetails() {
-    const response = await fetch('http://localhost:5000/api/patient_profile', {
+  async function getDoctorProfileDetails() {
+    const response = await fetch('http://localhost:5000/api/doctor_profile', {
       headers: {
         'x-access-token': localStorage.getItem('token'),
       },
@@ -26,7 +26,7 @@ function DashboardCalendarPatient() {
   }
 
   async function getAppointmentDetails() {
-    const response = await fetch('http://localhost:5000/api/p_book_appointment', {
+    const response = await fetch('http://localhost:5000/api/d_book_appointment', {
       headers: {
         'x-access-token': localStorage.getItem('token'),
       },
@@ -44,7 +44,7 @@ function DashboardCalendarPatient() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      getPatientProfileDetails()
+      getDoctorProfileDetails()
       getAppointmentDetails()
     } else {
       alert('error')
@@ -262,4 +262,4 @@ function DashboardCalendarPatient() {
   )
 }
 
-export default DashboardCalendarPatient;
+export default DashboardCalendarDoctor
