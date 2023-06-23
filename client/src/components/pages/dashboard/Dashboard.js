@@ -48,7 +48,6 @@ const Dashboard = () => {
   else if (serverData.profession === 'p') {
     return <PharmacistDashboard />
   }
-
 }
 
 export default Dashboard;

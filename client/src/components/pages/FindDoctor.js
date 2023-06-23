@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import '../style.css';
 
 function FindDoctor() {
-  const [serverData, setServerData] = useState([]);
+  const [serverData, setServerData] = useState([])
 
   async function doctorDetails() {
     try {
@@ -32,11 +32,24 @@ function FindDoctor() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      doctorDetails();
+      doctorDetails()
     } else {
       alert('Error in findDoctor useEffect');
     }
-  }, []);
+  }, [])
+
+  const ITEMS_PER_PAGE = 50
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const totalPages = Math.ceil(serverData.length / ITEMS_PER_PAGE)
+
+  const displayData = serverData.slice(startIndex, endIndex)
+
+  const goToPage = (page) => {
+    setCurrentPage(page)
+  }
 
   return (
     <>
@@ -45,22 +58,29 @@ function FindDoctor() {
         <div className="row">
           <div className="col-12 mb-2">
             <form className="button-container" role="search">
-              {/* <input className="form-control me-2" type="search" placeholder="Search Doctor" aria-label="Search" /> */}
+              <input
+                className="form-control me-2 search-bar"
+                type="search"
+                placeholder="Search Doctor"
+                aria-label="Search"
+              // value={searchQuery}
+              // onChange={(e) => setSearchQuery(e.target.value)} 
+              />
               <button className="finder-button" type="submit">Search</button>
             </form>
           </div>
           <div className="col-12 bg-white finder-design">
-            {serverData.map((serverData, index) => (
+            {displayData.map((displayData, index) => (
               <div className="col-12" key={index}>
                 <div className="col-12 d-flex">
                   <div className="col-2 pt-3 text-center">
-                    <img className="w-50 rounded-circle finder-image" src={serverData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
+                    <img className="w-50 rounded-circle finder-image search-image" src={displayData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
                   </div>
                   <div className="col-5 pt-3">
-                    <h5 className="mb-0 finder-text">{serverData.firstName && serverData.lastName
-                ? `${serverData.firstName} ${serverData.lastName}`
-                : serverData.firstName || serverData.lastName || 'Name not found'}</h5>
-                    <h6 className="mb-0 finder-text">{serverData.specialization || 'Specialization not found'}</h6>
+                    <h5 className="mb-0 finder-text">{displayData.firstName && displayData.lastName
+                      ? `${displayData.firstName} ${displayData.lastName}`
+                      : displayData.firstName || displayData.lastName || 'Name not found'}</h5>
+                    <h6 className="mb-0 finder-text">{displayData.specialization || 'Specialization not found'}</h6>
                     <p>{'Degree not found'}</p>
                   </div>
                   <div className="col-5 pt-3 text-end">
@@ -86,6 +106,39 @@ function FindDoctor() {
                 </div>
               </div>
             ))}
+          </div>
+          <div className="col-12 mt-5">
+            <ul className="pagination justify-content-center">
+              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                <button
+                  className="page-link customButton"
+                  onClick={() => goToPage(currentPage - 1)}
+                >
+                  Previous
+                </button>
+              </li>
+              {Array.from({ length: totalPages }, (_, index) => (
+                <li
+                  key={index}
+                  className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}
+                >
+                  <button
+                    className="page-link customButton"
+                    onClick={() => goToPage(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                <button
+                  className="page-link customButton"
+                  onClick={() => goToPage(currentPage + 1)}
+                >
+                  Next
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
       </div >

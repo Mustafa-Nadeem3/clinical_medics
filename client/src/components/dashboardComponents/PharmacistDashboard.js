@@ -1,24 +1,68 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../App.css';
 import '../style.css';
 import { Link } from 'react-router-dom';
 // import ChartComponent from './ChartComponent';
 
 function PharmacistDashboard() {
+  const [serverData, setServerData] = useState('')
+
+  async function getData() {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      alert('Token not found');
+      return
+    }
+
+    try {
+      const [profileResponse] = await Promise.all([
+        fetch('http://localhost:5000/api/pharmacist_profile', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+      ])
+
+      const [profileData] = await Promise.all([
+        profileResponse.json(),
+      ])
+
+      if (profileData.status === 'ok') {
+        setServerData(profileData)
+      } else {
+        alert('Error in dashboardDetails: ' + profileData.error)
+      }
+    } catch (error) {
+      console.log('All Data Error:', error.message);
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getData()
+    } else {
+      alert('error in dashboard useEffect')
+    }
+  }, [])
+
   return (
     <>
       <nav className="nav flex-column menu position-fixed">
         <div className="container-fluid">
           <div className="row">
             <div className="col-12 text-center rounded-circle mt-4 mb-2">
-              <img src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2" />
+              <img src={serverData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2" />
             </div>
             <div className="col-12">
-              <h6 className="text-white text-center mb-4">Username</h6>
+              <h6 className="text-white text-center mb-4">{serverData.firstName && serverData.lastName
+                ? `${serverData.firstName} ${serverData.lastName}`
+                : serverData.firstName || serverData.lastName || 'No Username Found'}</h6>
             </div>
             <div className="col-12 links mb-5">
               <Link className="nav-link text-primary current-link" aria-current="page" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
               <Link className="nav-link text-white" to="/inventory"><i className="fa-solid fa-warehouse me-1"></i>Inventory</Link>
+              <Link className="nav-link text-white" to="/medicineBill"><i class="fa-solid fa-file-invoice me-1"></i>Medicine Bill</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>

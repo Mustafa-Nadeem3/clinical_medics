@@ -144,11 +144,10 @@ function ViewPatient() {
                     <img className="search-image rounded-circle border border-2" src={patientData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
                   </div>
                   <div className="col-5 pt-3">
-                    <h5 className="mb-0 test-secondary">{patientData.firstName && patientData.lastName
+                    <h5 className="mb-0 test-secondary mb-2">{patientData.firstName && patientData.lastName
                       ? `${patientData.firstName} ${patientData.lastName}`
                       : patientData.firstName || patientData.lastName || 'Name not found'}</h5>
-                    <h6 className="mb-0 test-secondary">{patientData.specialization || 'Specialization not found'}</h6>
-                    <p className="test-secondary">{patientData.degree || 'Degree not found'}</p>
+                    <h6 className="mb-0 test-secondary">{patientData.email || 'Email not found'}</h6>
                   </div>
                   <div className="col-5 pt-3 text-end">
                     {/* <Button className="edit-button1" onClick={() => openModal(index)}><i className="fa-solid fa-calendar-check me-2"></i>Book Appointment</Button> */}
@@ -235,20 +234,6 @@ function ViewPatient() {
                       <Button variant="secondary" } className="text-center">Close</Button>
                     </Modal.Footer>
                   </Modal> */}
-                  </div>
-                </div>
-                <div className="col-12 d-flex">
-                  <div className="col-4 text-center border-end">
-                    <h6 className="test-secondary">Reviews</h6>
-                    <p className="test-secondary">0</p>
-                  </div>
-                  <div className="col-4 text-center border-end">
-                    <h6 className="test-secondary">Experience</h6>
-                    <p className="test-secondary">0 years</p>
-                  </div>
-                  <div className="col-4 text-center">
-                    <h6 className="test-secondary">Fees</h6>
-                    <p className="test-secondary">Rs. 0</p>
                   </div>
                 </div>
                 <div className="col-12">

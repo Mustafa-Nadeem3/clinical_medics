@@ -9,9 +9,11 @@ const bcrypt = require('bcrypt')
 
 // Models
 const User = require('./models/user')
+const AdminProfile = require('./models/admin_profile')
 const DoctorProfile = require('./models/doctor_profile')
 const PatientProfile = require('./models/patient_profile')
 const LabProfile = require('./models/lab_profile')
+const PharmacistProfile = require('./models/pharmacist_profile')
 const AppointmentRequest = require('./models/appointment_request')
 const TestRequest = require('./models/test_request')
 const AppointmentBooked = require('./models/appointment_booked')
@@ -107,7 +109,8 @@ app.post('/api/register', async (req, res) => {
         lastName: req.body.lastName,
         email: req.body.email,
         profession: req.body.profession,
-        address: null
+        address: null,
+        type: 'l'
       })
     }
 
@@ -153,6 +156,17 @@ app.get('/api/dashboard', async (req, res) => {
   }
 })
 
+app.get('/api/display_users', async (req, res) => {
+  try {
+    const users = await User.find({ _id: { $ne: '649547ab0b99abb83b6f3dc9' } })
+
+    return res.json({ status: 'ok', users: users })
+  } catch (error) {
+    console.error('Error retrieving documents:', error)
+    res.json({ status: 'error', error: 'Failed to retrieve user profiles' })
+  }
+})
+
 app.get('/api/display_doctor', async (req, res) => {
   try {
     const doctors = await DoctorProfile.find({})
@@ -163,6 +177,39 @@ app.get('/api/display_doctor', async (req, res) => {
     res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' })
   }
 })
+
+// To do
+// app.get('/api/search_doctor', async (req, res) => {
+//   try {
+//     const search = sanitizeInput(req.query.search) || ""
+//     const page = parseInt(req.query.page) || 1
+//     const limit = 50
+
+//     const skip = (page - 1) * limit
+
+//     let query = {}
+
+//     if (search) {
+//       query.firstName = { $regex: search, $options: "i" }
+//     }
+
+//     const doctors = await DoctorProfile.find(query)
+//       .skip(skip)
+//       .limit(limit)
+//       .exec()
+
+//     return res.json({ status: 'ok', doctors: doctors })
+//   } catch (error) {
+//     console.error('Error retrieving documents:', error)
+//     res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' })
+//   }
+// })
+
+// function sanitizeInput(input) {
+//   const sanitizedInput = String(input).replace(/[!@#$%^&*()\/.,\[\]{}|]/g, '');
+
+//   return sanitizedInput
+// }
 
 app.get('/api/display_lab', async (req, res) => {
   try {
@@ -183,6 +230,31 @@ app.get('/api/display_patient', async (req, res) => {
   } catch (error) {
     console.error('Error retrieving documents:', error)
     res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' })
+  }
+})
+
+app.get('/api/display_pharmacist', async (req, res) => {
+  try {
+    const pharmacists = await PharmacistProfile.find({})
+
+    return res.json({ status: 'ok', pharmacists: pharmacists })
+  } catch (error) {
+    console.error('Error retrieving documents:', error)
+    res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' })
+  }
+})
+
+app.get('/api/admin_profile', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const profile = await AdminProfile.findById(_id)
+
+    return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email })
+  } catch (error) {
+    res.json({ status: 'error', error: ' invalid token in get a profile' })
   }
 })
 
@@ -305,6 +377,87 @@ app.post('/api/lab_profile', async (req, res) => {
     return res.json({ status: 'ok', _id: profile._id, firstName: profile.firstName, lastName: profile.lastName, email: profile.email })
   } catch (error) {
     res.json({ status: 'error', error: ' invalid token in l profile' })
+  }
+})
+
+app.get('/api/pharmacist_profile', async (req, res) => {
+  const token = req.headers['x-access-token']
+  
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const profile = await PharmacistProfile.findById(_id)
+    
+    return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, profession: profile.profession })
+  } catch (error) {
+    res.json({ status: 'error', error: ' invalid token in p profile' })
+  }
+})
+
+app.post('/api/pharmacist_profile', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const profile = await PharmacistProfile.findByIdAndUpdate(
+      _id,
+      {
+        profileImage: req.body.profileImage,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email
+      },
+      { new: true }
+    )
+
+    return res.json({ status: 'ok', _id: profile._id, firstName: profile.firstName, lastName: profile.lastName, email: profile.email })
+  } catch (error) {
+    res.json({ status: 'error', error: ' invalid token in l profile' })
+  }
+})
+
+app.get('/api/count_doctors', async (req, res) => {
+  try {
+    const count = await DoctorProfile.countDocuments()
+
+    return res.json({ status: 'ok', count: count })
+  } catch (error) {
+    console.error('Error retrieving user count:', error)
+    res.json({ status: 'error', error: 'Failed to retrieve user count' })
+  }
+})
+
+app.get('/api/count_patients', async (req, res) => {
+  try {
+    const count = await PatientProfile.countDocuments()
+
+    return res.json({ status: 'ok', count: count })
+  } catch (error) {
+    console.error('Error retrieving user count:', error)
+    res.json({ status: 'error', error: 'Failed to retrieve user count' })
+  }
+})
+
+app.get('/api/count_labs', async (req, res) => {
+  try {
+    const count = await LabProfile.countDocuments()
+
+    return res.json({ status: 'ok', count: count })
+  } catch (error) {
+    console.error('Error retrieving user count:', error)
+    res.json({ status: 'error', error: 'Failed to retrieve user count' })
+  }
+})
+
+app.get('/api/count_pharmacists', async (req, res) => {
+  try {
+    const count = await PharmacistProfile.countDocuments()
+
+    return res.json({ status: 'ok', count: count })
+  } catch (error) {
+    console.error('Error retrieving user count:', error)
+    res.json({ status: 'error', error: 'Failed to retrieve user count' })
   }
 })
 
@@ -641,7 +794,19 @@ app.post('/api/message', async (req, res) => {
   }
 })
 
-app.get('/api/message', async (req, res) => {
+app.get('/api/d_message', async (req, res) => {
+  const { id } = req.query
+
+  try {
+    const message = await ChatMessage.find({ userID: id })
+
+    return res.json({ status: 'ok', message: message })
+  } catch (error) {
+    res.json({ status: 'error', error: ' Get Chat Error' })
+  }
+})
+
+app.get('/api/p_message', async (req, res) => {
   const { id } = req.query
 
   try {

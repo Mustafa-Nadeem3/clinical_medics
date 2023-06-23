@@ -16,6 +16,11 @@ const PharmacistProfile = new mongoose.Schema(
     },
     pharmacyName: { type: String },
     address: { type: String },
+    type: {
+      type: String,
+      minlength: 1,
+      maxlength: 1
+    }
   },
   { collection: 'PharmacistProfile' }
 )

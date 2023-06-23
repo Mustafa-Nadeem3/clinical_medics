@@ -127,88 +127,88 @@ function PatientDashboard() {
   }
 
   // Chat Start
-  const userID = serverData._id
-  const [otherUserID, setOtherUserID] = useState('')
-  const [userMessage, setUserMessage] = useState('')
-  const [serverMessage1, setServerMessage1] = useState('')
-  const [serverMessage2, setServerMessage2] = useState('')
+  // const userID = serverData._id
+  // const [otherUserID, setOtherUserID] = useState('')
+  // const [userMessage, setUserMessage] = useState('')
+  // const [serverMessage1, setServerMessage1] = useState('')
+  // const [serverMessage2, setServerMessage2] = useState('')
 
-  const handleInputChange = (event) => {
-    setUserMessage(event.target.value);
-  }
+  // const handleInputChange = (event) => {
+  //   setUserMessage(event.target.value);
+  // }
 
-  const handleKeyUp = (event) => {
-    if (event.keyCode === 13) {
-      sendMessage()
-    }
-  }
+  // const handleKeyUp = (event) => {
+  //   if (event.keyCode === 13) {
+  //     sendMessage()
+  //   }
+  // }
 
-  const sendMessage = () => {
-    const messageText = userMessage.trim()
+  // const sendMessage = () => {
+  //   const messageText = userMessage.trim()
 
-    if (messageText !== '') {
-      async function setMessage() {
-        const response = await fetch('http://localhost:5000/api/message', {
-          method: 'POST',
-          headers: {
-            'x-access-token': localStorage.getItem('token'),
-            'Content-Type': "application/json"
-          },
-          body: JSON.stringify({
-            userID,
-            userMessage
-          }),
-        })
+  //   if (messageText !== '') {
+  //     async function setMessage() {
+  //       const response = await fetch('http://localhost:5000/api/message', {
+  //         method: 'POST',
+  //         headers: {
+  //           'x-access-token': localStorage.getItem('token'),
+  //           'Content-Type': "application/json"
+  //         },
+  //         body: JSON.stringify({
+  //           userID,
+  //           userMessage
+  //         }),
+  //       })
 
-        const data = await response.json()
+  //       const data = await response.json()
 
-        if (data.status === 'ok') {
+  //       if (data.status === 'ok') {
 
-        } else {
-          alert('error in chat ' + data.error)
-        }
-      }
-      setMessage()
-      getDMessage()
-      getPMessage()
-    }
-  }
+  //       } else {
+  //         alert('error in chat ' + data.error)
+  //       }
+  //     }
+  //     setMessage()
+  //     getDMessage()
+  //     getPMessage()
+  //   }
+  // }
 
-  async function getDMessage() {
-    const id = userID
+  // async function getDMessage() {
+  //   const id = userID
 
-    const response = await fetch(`http://localhost:5000/api/message?id=${id}`, {
-      headers: {
-        'x-access-token': localStorage.getItem('token'),
-      },
-    })
+  //   const response = await fetch(`http://localhost:5000/api/message?id=${id}`, {
+  //     headers: {
+  //       'x-access-token': localStorage.getItem('token'),
+  //     },
+  //   })
 
-    const data = await response.json()
+  //   const data = await response.json()
 
-    if (data.status === 'ok') {
-      setServerMessage1(data.message)
-    } else {
-      alert('error in chat ' + data.error)
-    }
-  }
+  //   if (data.status === 'ok') {
+  //     setServerMessage1(data.message)
+  //   } else {
+  //     alert('error in chat ' + data.error)
+  //   }
+  // }
 
-  async function getPMessage() {
-    const id = otherUserID
+  // async function getPMessage() {
+  //   const id = otherUserID
 
-    const response = await fetch(`http://localhost:5000/api/message?id=${id}`, {
-      headers: {
-        'x-access-token': localStorage.getItem('token'),
-      },
-    })
+  //   const response = await fetch(`http://localhost:5000/api/message?id=${id}`, {
+  //     headers: {
+  //       'x-access-token': localStorage.getItem('token'),
+  //     },
+  //   })
 
-    const data = await response.json()
+  //   const data = await response.json()
 
-    if (data.status === 'ok') {
-      setServerMessage2(data.message)
-    } else {
-      alert('error in chat ' + data.error)
-    }
-  }
+  //   if (data.status === 'ok') {
+  //     setServerMessage2(data.message)
+  //   } else {
+  //     alert('error in chat ' + data.error)
+  //   }
+  // }
   // Chat End
 
   useEffect(() => {
@@ -349,14 +349,14 @@ function PatientDashboard() {
                     <div className="offcanvas-body">
                       <div className="h-100 card">
                         <div className="card-header">
-                          {bookedData && bookedData.length > 0 ? (
+                          {/* {bookedData && bookedData.length > 0 ? (
                             bookedData.map((bookedData, index) => (
                               <p key={index} value={setOtherUserID(bookedData.doctorID)}></p>
                             ))
-                          ) : <span></span>}
+                          ) : <span></span>} */}
                         </div>
                         <div className="card-body">
-                          {serverMessage1 && serverMessage1.length > 0 ? (
+                          {/* {serverMessage1 && serverMessage1.length > 0 ? (
                             serverMessage1.map((serverMessage1, index) => (
                               <p key={index} className="d-flex justify-content-end">{serverMessage1.userMessage}</p>
                             ))
@@ -365,10 +365,10 @@ function PatientDashboard() {
                             serverMessage2.map((serverMessage2, index) => (
                               <p key={index} className="d-flex justify-content-start">{serverMessage2.userMessage}</p>
                             ))
-                          ) : <span></span>}
+                          ) : <span></span>} */}
                         </div>
                         <div className="card-footer d-flex">
-                          <input
+                          {/* <input
                             type="text"
                             className="form-control"
                             aria-label="Recipient's username"
@@ -376,7 +376,7 @@ function PatientDashboard() {
                             value={userMessage}
                             onChange={handleInputChange}
                             onKeyUp={handleKeyUp} />
-                          <button className="ms-2 btn customButton" type="button" id="button-addon2" onClick={sendMessage}>Send</button>
+                          <button className="ms-2 btn customButton" type="button" id="button-addon2" onClick={sendMessage}>Send</button> */}
                         </div>
                       </div>
                     </div>

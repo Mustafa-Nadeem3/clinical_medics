@@ -1,9 +1,114 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import '../../../App.css';
 import { Link } from 'react-router-dom';
 import '../../style.css';
 
 function SearchDoctor() {
+  const [serverData, setServerData] = useState('')
+  const [doctorData, setDoctorData] = useState([])
+  const [doctorCount, setDoctorCount] = useState('')
+  const [patientCount, setPatientCount] = useState('')
+  const [labCount, setLabCount] = useState('')
+
+  async function getData() {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      alert('Token not found');
+      return
+    }
+
+    try {
+      const [profileResponse, doctorResponse, doctorCountResponse, patientCountResponse, labCountResponse] = await Promise.all([
+        fetch('http://localhost:5000/api/admin_profile', {
+          headers: {
+            'x-access-token': localStorage.getItem('token')
+          },
+        }),
+        fetch('http://localhost:5000/api/display_doctor', {
+          headers: {
+            'x-access-token': localStorage.getItem('token')
+          }
+        }),
+        fetch('http://localhost:5000/api/count_doctors', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+        fetch('http://localhost:5000/api/count_patients', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+        fetch('http://localhost:5000/api/count_labs', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+        // fetch('http://localhost:5000/api/count_pharmacists', {
+        //   headers: {
+        //     'x-access-token': token,
+        //   },
+        // }),
+      ])
+
+      const [profileData, doctorData, doctorCount, patientCount, labCount] = await Promise.all([
+        profileResponse.json(),
+        doctorResponse.json(),
+        doctorCountResponse.json(),
+        patientCountResponse.json(),
+        labCountResponse.json(),
+        // pharmacistCountResponse.json()
+      ])
+
+      if (profileData.status === 'ok') {
+        setServerData(profileData)
+      } else {
+        alert('Error in dashboardDetails: ' + profileData.error)
+      }
+
+      if (doctorData.status === 'ok') {
+        setDoctorData(doctorData.doctors)
+      } else {
+        alert('Error: ' + doctorData.error)
+      }
+
+      if (doctorCount.status === 'ok') {
+        setDoctorCount(doctorCount.count)
+      } else {
+        alert('Error: ' + doctorCount.error)
+      }
+
+      if (patientCount.status === 'ok') {
+        setPatientCount(patientCount.count)
+      } else {
+        alert('Error: ' + patientCount.error)
+      }
+
+      if (labCount.status === 'ok') {
+        setLabCount(labCount.count)
+      } else {
+        alert('Error: ' + labCount.error)
+      }
+
+      // if (pharmacistCount.status === 'ok') {
+      //   setPharmacistCount(pharmacistCount.count)
+      // } else {
+      //   alert('Error: ' + pharmacistCount.error)
+      // }
+    } catch (error) {
+      console.log('All Data Error:', error.message);
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getData()
+    } else {
+      alert('error in dashboard useEffect')
+    }
+  }, [])
+
   return (
     <>
       <nav className="nav flex-column menu position-fixed">
@@ -13,14 +118,16 @@ function SearchDoctor() {
               <img src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2" />
             </div>
             <div className="col-12">
-              <h6 className="text-white text-center mb-4">Username</h6>
+              <h6 className="text-white text-center mb-4">{serverData.firstName && serverData.lastName
+                ? `${serverData.firstName} ${serverData.lastName}`
+                : serverData.firstName || serverData.lastName || 'No Username Found'}</h6>
             </div>
             <div className="col-12 links mb-5">
               <Link className="nav-link text-white" to="/adminDashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
-              <Link className="nav-link text-primary current-link" to="/searchDoctor"><i className="fa-solid fa-user me-1"></i>Doctor</Link>
+              <Link className="nav-link text-primary current-link" to="/searchDoctor"><i class="fa-solid fa-user-doctor me-1"></i>Doctor</Link>
               <Link className="nav-link text-white" to="/searchPatient"><i className="fa-solid fa-user me-1"></i>Patient</Link>
-              <Link className="nav-link text-white" to="/searchLab"><i className="fa-solid fa-user me-1"></i>Laboratory</Link>
-              <Link className="nav-link text-white" to="/searchPharmacist"><i className="fa-solid fa-user me-1"></i>Pharmacist</Link>
+              <Link className="nav-link text-white" to="/searchLab"><i class="fa-solid fa-user-nurse me-1"></i>BioTechnician</Link>
+              <Link className="nav-link text-white" to="/searchPharmacist"><i class="fa-solid fa-user-nurse me-1"></i>Pharmacist</Link>
               <Link className="nav-link text-white" to="/calendar"><i class="fa-solid fa-scroll me-1"></i>Scrawler</Link>
             </div>
             <div className="col-12 links mt-2">
@@ -43,7 +150,7 @@ function SearchDoctor() {
             <div className="col-6 d-flex justify-content-start">
               <div className="card-body ps-0">
                 <h6 className="card-title mt-0 mb-0">Patients</h6>
-                <p className="card-text fs-5">0</p>
+                <p className="card-text fs-5">{patientCount || '0'}</p>
               </div>
             </div>
           </div>
@@ -54,7 +161,7 @@ function SearchDoctor() {
             <div className="col-6 d-flex justify-content-start">
               <div className="card-body ps-0">
                 <h6 className="card-title mt-0 mb-0">Doctors</h6>
-                <p className="card-text fs-5">0</p>
+                <p className="card-text fs-5">{doctorCount || '0'}</p>
               </div>
             </div>
           </div>
@@ -64,8 +171,8 @@ function SearchDoctor() {
             </div>
             <div className="col-6 d-flex justify-content-start">
               <div className="card-body ps-0">
-                <h6 className="card-title mt-0 mb-0">Lab Technician</h6>
-                <p className="card-text fs-5">0</p>
+                <h6 className="card-title mt-0 mb-0">Biotechnicians</h6>
+                <p className="card-text fs-5">{labCount || '0'}</p>
               </div>
             </div>
           </div>
@@ -90,23 +197,29 @@ function SearchDoctor() {
               <button class="btn btn-outline-success border-primary text-secondary" type="submit">Search</button>
             </form>
           </div>
-          <div className="col-12">
-            <div className="col-12 d-flex">
-              <div className="col-2 pt-3 text-center">
-                <img className="search-image rounded-circle" src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
+          {doctorData && doctorData.length > 0 ? (
+            doctorData.map((doctor, index) => (
+              <div className="col-12" key={index}>
+                <div className="col-12 d-flex">
+                  <div className="col-2 pt-3 text-center">
+                    <img className="search-image rounded-circle" src={doctor.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
+                  </div>
+                  <div className="col-5 pt-3">
+                    <h5 className="mb-2">{doctor.firstName && doctor.lastName
+                      ? `${doctor.firstName} ${doctor.lastName}`
+                      : doctor.firstName || doctor.lastName || 'Name not found'}</h5>
+                    <p className="mb-0">{doctor.email || 'Email not found'}</p>
+                  </div>
+                  <div className="col-5 pt-3 text-end">
+                    <Link className="text-decoration-none edit-button" to="/editProfile" role="button"><i class="fa-solid fa-pen-to-square me-2"></i>Edit</Link>
+                  </div>
+                </div>
+                <div className="col-12">
+                  <hr className="line-shadow"></hr>
+                </div>
               </div>
-              <div className="col-5 pt-3">
-                <h5 className="mb-2">Doctor Name</h5>
-                <p className="mb-0">Email Address</p>
-              </div>
-              <div className="col-5 pt-3 text-end">
-                <Link className="text-decoration-none edit-button" to="/editProfile" role="button"><i class="fa-solid fa-pen-to-square me-2"></i>Edit</Link>
-              </div>
-            </div>
-            <div className="col-12">
-              <hr className="line-shadow"></hr>
-            </div>
-          </div>
+            ))
+          ) : <span></span>}
         </div>
       </div >
     </>

@@ -65,56 +65,60 @@ function DoctorDashboard() {
   // Record View End
 
   const [serverData, setServerData] = useState('')
-
-  async function getDashboardDetails() {
-    const response = await fetch('http://localhost:5000/api/doctor_profile', {
-      headers: {
-        'x-access-token': localStorage.getItem('token'),
-      },
-    })
-
-    const data = await response.json()
-
-    if (data.status === 'ok') {
-      setServerData(data)
-    } else {
-      alert('error in dashboardDetails ' + data.error)
-    }
-  }
-
   const [requestData, setRequestData] = useState([])
-
-  async function getAppointmentRequest() {
-    const response = await fetch('http://localhost:5000/api/d_appointment_request', {
-      headers: {
-        'x-access-token': localStorage.getItem('token'),
-      },
-    })
-
-    const data = await response.json()
-
-    if (data.status === 'ok') {
-      setRequestData(data.appointmentRequest)
-    } else {
-      alert('Error: ' + data.error)
-    }
-  }
-
   const [bookedData, setBookedData] = useState([])
 
-  async function getBookedAppointment() {
-    const response = await fetch('http://localhost:5000/api/d_book_appointment', {
-      headers: {
-        'x-access-token': localStorage.getItem('token'),
-      },
-    })
+  async function getData() {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      alert('Token not found');
+      return
+    }
 
-    const data = await response.json()
+    try {
+      const [profileResponse, appointmentRequestResponse, bookedAppointmentResponse] = await Promise.all([
+        fetch('http://localhost:5000/api/doctor_profile', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+        fetch('http://localhost:5000/api/d_appointment_request', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+        fetch('http://localhost:5000/api/d_book_appointment', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+      ])
 
-    if (data.status === 'ok') {
-      setBookedData(data.booking)
-    } else {
-      console.log('Error: ' + data.error)
+      const [profileData, appointmentRequestData, bookedAppointmentData] = await Promise.all([
+        profileResponse.json(),
+        appointmentRequestResponse.json(),
+        bookedAppointmentResponse.json(),
+      ])
+
+      if (profileData.status === 'ok') {
+        setServerData(profileData)
+      } else {
+        alert('Error in dashboardDetails: ' + profileData.error)
+      }
+
+      if (appointmentRequestData.status === 'ok') {
+        setRequestData(appointmentRequestData.appointmentRequest)
+      } else {
+        alert('Error: ' + appointmentRequestData.error)
+      }
+
+      if (bookedAppointmentData.status === 'ok') {
+        setBookedData(bookedAppointmentData.booking)
+      } else {
+        console.log('Error: ' + bookedAppointmentData.error)
+      }
+    } catch (error) {
+      console.log('All Data Error:', error.message);
     }
   }
 
@@ -175,96 +179,89 @@ function DoctorDashboard() {
   }
 
   // Chat Start
-  // const userID = serverData._id
-  // const [otherUserID, setOtherUserID] = useState('')
-  // const [userMessage, setUserMessage] = useState('')
-  // const [serverMessage1, setServerMessage1] = useState('')
-  // const [serverMessage2, setServerMessage2] = useState('')
+  const userID = serverData._id
+  const [userMessage, setUserMessage] = useState('')
+  const [serverMessage1, setServerMessage1] = useState('')
+  const [serverMessage2, setServerMessage2] = useState('')
 
-  // const handleInputChange = (event) => {
-  //   setUserMessage(event.target.value);
-  // }
+  const handleInputChange = (event) => {
+    setUserMessage(event.target.value);
+  }
 
-  // const handleKeyUp = (event) => {
-  //   if (event.keyCode === 13) {
-  //     sendMessage()
-  //   }
-  // }
+  const handleKeyUp = (event) => {
+    if (event.keyCode === 13) {
+      sendMessage()
+    }
+  }
 
-  // const sendMessage = () => {
-  //   const messageText = userMessage.trim()
+  const sendMessage = () => {
+    const messageText = userMessage.trim()
 
-  //   if (messageText !== '') {
-  //     async function setMessage() {
-  //       const response = await fetch('http://localhost:5000/api/message', {
-  //         method: 'POST',
-  //         headers: {
-  //           'x-access-token': localStorage.getItem('token'),
-  //           'Content-Type': "application/json"
-  //         },
-  //         body: JSON.stringify({
-  //           userID,
-  //           userMessage
-  //         }),
-  //       })
+    if (messageText !== '') {
+      async function setMessage() {
+        const response = await fetch('http://localhost:5000/api/message', {
+          method: 'POST',
+          headers: {
+            'x-access-token': localStorage.getItem('token'),
+            'Content-Type': "application/json"
+          },
+          body: JSON.stringify({
+            userID,
+            userMessage
+          }),
+        })
 
-  //       const data = await response.json()
+        const data = await response.json()
 
-  //       if (data.status === 'ok') {
+        if (data.status === 'ok') {
 
-  //       } else {
-  //         alert('error in chat ' + data.error)
-  //       }
-  //     }
-  //     setMessage()
-  //     getDMessage()
-  //     getPMessage()
-  //   }
-  // }
+        } else {
+          alert('error in chat ' + data.error)
+        }
+      }
+      setMessage()
+      getMessage()
+    }
+  }
 
-  // async function getDMessage() {
-  //   const id = userID
+  async function getMessage() {
+    try {
+      const [response1, response2] = await Promise.all([
+        fetch(`http://localhost:5000/api/d_message`, {
+          headers: {
+            'x-access-token': localStorage.getItem('token'),
+          },
+        }),
+        fetch(`http://localhost:5000/api/p_message`, {
+          headers: {
+            'x-access-token': localStorage.getItem('token'),
+          },
+        }),
+      ]);
 
-  //   const response = await fetch(`http://localhost:5000/api/message?id=${id}`, {
-  //     headers: {
-  //       'x-access-token': localStorage.getItem('token'),
-  //     },
-  //   })
+      const [data1, data2] = await Promise.all([response1.json(), response2.json()]);
 
-  //   const data = await response.json()
+      if (data1.status === 'ok') {
+        setServerMessage1(data1.message);
+      } else {
+        alert('error in chat ' + data1.error);
+      }
 
-  //   if (data.status === 'ok') {
-  //     setServerMessage1(data.message)
-  //   } else {
-  //     alert('error in chat ' + data.error)
-  //   }
-  // }
-
-  // async function getPMessage() {
-  //   const id = otherUserID
-
-  //   const response = await fetch(`http://localhost:5000/api/message?id=${id}`, {
-  //     headers: {
-  //       'x-access-token': localStorage.getItem('token'),
-  //     },
-  //   })
-
-  //   const data = await response.json()
-
-  //   if (data.status === 'ok') {
-  //     setServerMessage2(data.message)
-  //   } else {
-  //     alert('error in chat ' + data.error)
-  //   }
-  // }
+      if (data2.status === 'ok') {
+        setServerMessage2(data2.message);
+      } else {
+        alert('error in chat ' + data2.error);
+      }
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
+  }
   // Chat End
 
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
-      getDashboardDetails()
-      getBookedAppointment()
-      getAppointmentRequest()
+      getData()
     } else {
       alert('error in dashboard useEffect')
     }
@@ -382,14 +379,14 @@ function DoctorDashboard() {
                     <div className="offcanvas-body">
                       <div className="h-100 card">
                         <div className="card-header">
-                          {/* {bookedData && bookedData.length > 0 ? (
+                          {bookedData && bookedData.length > 0 ? (
                             bookedData.map((bookedData, index) => (
-                              <p key={index} value={setOtherUserID(bookedData.patientID)}></p>
+                              <p key={index}></p>
                             ))
-                          ) : <span></span>} */}
+                          ) : <span></span>}
                         </div>
                         <div className="card-body">
-                          {/* {serverMessage1 && serverMessage1.length > 0 ? (
+                          {serverMessage1 && serverMessage1.length > 0 ? (
                             serverMessage1.map((serverMessage1, index) => (
                               <p key={index} className="d-flex justify-content-end">{serverMessage1.userMessage}</p>
                             ))
@@ -398,10 +395,10 @@ function DoctorDashboard() {
                             serverMessage2.map((serverMessage2, index) => (
                               <p key={index} className="d-flex justify-content-start">{serverMessage2.userMessage}</p>
                             ))
-                          ) : <span></span>} */}
+                          ) : <span></span>}
                         </div>
                         <div className="card-footer d-flex">
-                          {/* <input
+                          <input
                             type="text"
                             className="form-control"
                             aria-label="Recipient's username"
@@ -409,7 +406,7 @@ function DoctorDashboard() {
                             value={userMessage}
                             onChange={handleInputChange}
                             onKeyUp={handleKeyUp} />
-                          <button className="ms-2 btn customButton" type="button" id="button-addon2" onClick={sendMessage}>Send</button> */}
+                          <button className="ms-2 btn customButton" type="button" id="button-addon2" onClick={sendMessage}>Send</button>
                         </div>
                       </div>
                     </div>

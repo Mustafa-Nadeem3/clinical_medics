@@ -1249,8 +1249,15 @@
     justify-content: center;
   }
 
-  .button-container:hover {
-    justify-content: end;
+  .button-container:hover .search-bar {
+    border: 1px solid #ffffff;
+    background-color: #ffffff;
+    max-width: 1000px;
+  }
+
+  .button-container:hover .search-bar {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
 
   .finder-button {
@@ -1290,6 +1297,26 @@
   .line-shadow {
     box-shadow: 10px 10px 10px 2px rgba(119, 119, 119, 0.5),
       -5px -5px 7px 2px rgba(255, 255, 255, 0.85);
+  }
+
+  .search-bar {
+    position: relative;
+    overflow: hidden;
+    max-width: 0px;
+    border-radius: 50px;
+    border: none;
+    background-color: #f8f9fa;
+    transition: max-width 0.5s ease-in-out;
+  }
+
+  .search-bar:focus {
+    box-shadow: none;
+    border-color: #f8f9fa;
+    background-color: #f8f9fa;
+  }
+
+  .search-bar.expand {
+    max-width: 200px;
   }
 
   /* Book Appointment CSS */
@@ -1347,5 +1374,11 @@
   .finder1 .edit-button1:hover {
     color: #8795a1 !important;
     background-color: #ffffff !important;
+  }
+
+  .bill-btn {
+    width: 120px;
+    height: 40px;
+    margin-top: 10px;
   }
 }

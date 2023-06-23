@@ -9,6 +9,8 @@ function SignUp() {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [showPassword1, setShowPassword1] = useState(false)
+  const [isHovered1, setIsHovered1] = useState(false)
 
   const togglePasswordVisible = () => {
     setShowPassword((prevState) => !prevState)
@@ -20,6 +22,18 @@ function SignUp() {
 
   const handleMouseLeave = () => {
     setIsHovered(false)
+  }
+
+  const togglePasswordVisible1 = () => {
+    setShowPassword1((prevState) => !prevState)
+  }
+
+  const handleMouseEnter1 = () => {
+    setIsHovered1(true)
+  }
+
+  const handleMouseLeave1 = () => {
+    setIsHovered1(false)
   }
 
   const [firstName, setFirstName] = useState('')
@@ -153,13 +167,13 @@ function SignUp() {
               <input type="password" className="input-field form-control text-secondary" id="confirmPass" placeholder="Confirm Password" autocomplete="off" required />
               <label for="confirmPass" className="text-secondary">Confirm Password</label>
               <span
-                onClick={togglePasswordVisible}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}>
-                {showPassword ? (
-                  <i className={isHovered ? 'fa-solid fa-eye fa-bounce' : 'fa-solid fa-eye'}></i>
+                onClick={togglePasswordVisible1}
+                onMouseEnter={handleMouseEnter1}
+                onMouseLeave={handleMouseLeave1}>
+                {showPassword1 ? (
+                  <i className={isHovered1 ? 'fa-solid fa-eye fa-bounce' : 'fa-solid fa-eye'}></i>
                 ) : (
-                  <i className={isHovered ? 'fa-solid fa-eye-slash fa-bounce' : 'fa-solid fa-eye-slash'}></i>
+                  <i className={isHovered1 ? 'fa-solid fa-eye-slash fa-bounce' : 'fa-solid fa-eye-slash'}></i>
                 )}
               </span>
             </div>
