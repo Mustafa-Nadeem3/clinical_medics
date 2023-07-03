@@ -1,7 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
 import numpy as np
-import pandas as pd
+from pymongo import MongoClient
+
+# MongoDB connection settings
+mongo_uri = 'mongodb://localhost:27017/'  # Replace with your MongoDB URI
+database_name = 'clinical-medics'  # Replace with your database name
+collection_name = 'ScrappedMedicine'  # Replace with your collection name
+
+# Establish connection to MongoDB
+client = MongoClient(mongo_uri)
+database = client[database_name]
+collection = database[collection_name]
 
 url = "https://dawaai.pk/all-medicines/a"
 daawai_r1 = requests.get(url)
@@ -31,45 +41,37 @@ medicine_Description_List = []
 for n in np.arange(1, number_Of_Medicines):
     all_medicines = all_medicine_Details[n].find('a')
     link = None  # Initialize link with a default value
-    
+
     if all_medicines is not None:
-# Getting the links of the medicines
+        # Getting the links of the medicines
         link = all_medicines['href']
         medicine_Link.append(link)
-        #print("The link of the medicine", n, "is:")
-       # print(link)
     
-# medicine prices    
+    # medicine prices
     element2 = all_medicine_Prices[n]
-    
+
     if element2 is not None:
-       # Getting the medicine prices
-       
+        # Getting the medicine prices
         # Exclude the text within <span> tags
         for span_tag in element2.find_all('span'):
             span_tag.decompose()
 
         price = element2.text.strip()
         medicine_Price_List.append(price)
-        #print("Printing the Price of medicine #", n)
-        # print(price)
-        
-# Getting inside the medicine link
+
+        # Getting inside the medicine link
         if link is not None:
             medicine_link = requests.get(link)
             medicine_Page = medicine_link.content
             soup_Medicine_Page = BeautifulSoup(medicine_Page, 'html5lib')
-            
 
-# Getting the names of the medicines
+            # Getting the names of the medicines
             medicine_Name_Div = soup_Medicine_Page.find('div', {'class': 'flex-row d-flex-center'})
             name_h1 = medicine_Name_Div.find('h1')
             medicine_Name = name_h1.get_text()
-            #print("Printing the names of the Medicines.")
             medicine_Title.append(medicine_Name)
-           # print(medicine_Name)
-            
-# Getting the description of the medicine
+
+            # Getting the description of the medicine
             medicine_Description_Section = soup_Medicine_Page.find('div', {'class': 'column col-8 py-30 product-side-tabs content'})
             
             if medicine_Description_Section is not None:
@@ -77,22 +79,24 @@ for n in np.arange(1, number_Of_Medicines):
                 
                 if description_p_tag is not None:
                     medicine_Description = description_p_tag.get_text()
-                   # print("Printing the description of the medicine")
                     medicine_Description_List.append(medicine_Description)
-                    #print(medicine_Description)
                 else:
                     medicine_Description_List.append("No description found.")
             else:
                 print("Medicine description section not found.")
-                
-# print(medicine_Title)
-# print(medicine_Price_List)
-# print(medicine_Link)
-# print(medicine_Description_List)
 
+# Create a list of dictionaries for each medicine
+medicine_data = []
+for i in range(len(medicine_Title)):
+    medicine_dict = {
+        'Name': medicine_Title[i],
+        'Price': medicine_Price_List[i],
+        'Description': medicine_Description_List[i],
+        'Link': medicine_Link[i]
+    }
+    medicine_data.append(medicine_dict)
 
-dictionary = {'Names': medicine_Title, 'Price': medicine_Price_List, 'Description': medicine_Description_List, 'Links': medicine_Link}
+# Insert the data into MongoDB collection
+collection.insert_many(medicine_data)
 
-df = pd.DataFrame(dictionary)
-df.to_csv('C:/Users/Azaan/Desktop/dawaai.pk_data.csv', index=False)
-print("The data has been saved in the csv file.")
+print("The data has been imported to your MongoDB database.")

@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
+const { exec } = require('child_process')
 const bodyParser = require('body-parser')
 
 const jwt = require('jsonwebtoken')
@@ -19,12 +20,13 @@ const TestRequest = require('./models/test_request')
 const AppointmentBooked = require('./models/appointment_booked')
 const TestBooked = require('./models/test_booked')
 const ChatMessage = require('./models/chat_messages')
+const Medicine = require('./models/medicine')
 
 app.use(cors())
 app.use(express.json())
 
-app.use(bodyParser.json({ limit: '100mb' }))
-app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }))
+app.use(bodyParser.json({ limit: '600mb' }))
+app.use(bodyParser.urlencoded({ limit: '600mb', extended: true }))
 
 main().catch(err => console.log(err))
 
@@ -382,12 +384,12 @@ app.post('/api/lab_profile', async (req, res) => {
 
 app.get('/api/pharmacist_profile', async (req, res) => {
   const token = req.headers['x-access-token']
-  
+
   try {
     const decoded = jwt.verify(token, 'secret123')
     const _id = decoded._id
     const profile = await PharmacistProfile.findById(_id)
-    
+
     return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, profession: profile.profession })
   } catch (error) {
     res.json({ status: 'error', error: ' invalid token in p profile' })
@@ -462,6 +464,8 @@ app.get('/api/count_pharmacists', async (req, res) => {
 })
 
 app.post('/api/appointment_request', async (req, res) => {
+
+  console.log(req.body)
 
   try {
     const request = await AppointmentRequest.create({
@@ -816,6 +820,31 @@ app.get('/api/p_message', async (req, res) => {
   } catch (error) {
     res.json({ status: 'error', error: ' Get Chat Error' })
   }
+})
+
+app.get('/run_scrapper', (req, res) => {
+  // Drop the collection
+  async function dropCollection() {
+    try {
+      await database.collection(ScrappedMedicine).drop()
+      console.log(`Collection ${collectionName} dropped successfully.`)
+    } catch (error) {
+      console.error('Failed to drop collection:', error)
+    }
+  }
+
+  dropCollection()
+
+  exec('python data_scrawler/dataScrapper.py', (error, stdout, stderr) => {
+    if (error) {
+      console.error('Failed to execute Python script:', error)
+      console.error('Error output:', stderr)
+      res.status(500).json({ status: 'error', error: error.message })
+    } else {
+      console.log('Python script executed successfully!')
+      res.json({ status: 'ok', stdout })
+    }
+  })
 })
 
 app.listen(5000, () => {

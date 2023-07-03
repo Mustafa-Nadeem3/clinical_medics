@@ -1,9 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../../App.css';
 import '../../style.css';
 import { Link } from 'react-router-dom';
 
 function Inventory() {
+  const [serverData, setServerData] = useState([])
+
+  async function getMedicine() {
+    try {
+      const req = await fetch('http://localhost:5000/api/medicine', {
+        headers: {
+          'x-access-token': localStorage.getItem('token')
+        }
+      })
+
+      const data = await req.json()
+
+      if (data.status === 'ok') {
+        setServerData(data.medicines)
+      } else {
+        alert('Error: ' + data.error)
+      }
+    } catch (error) {
+      console.error(error)
+      alert('Error fetching doctor data', error)
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getMedicine()
+    } else {
+      alert('Error in findDoctor useEffect')
+    }
+  }, [])
+
   return (
     <>
       <nav className="nav flex-column menu position-fixed">
@@ -62,19 +94,43 @@ function Inventory() {
         <div className="row">
           <h4 className="text-primary fw-bold text-center mt-3 mb-3">Medicine</h4>
           <div className="col-12 d-flex mb-2">
-            <div>
-              <h6 className="mb-0">Medicine Name</h6>
+            <div className="col-12 ps-5 pt-3 d-flex">
+              <div className="col-4">
+                <h6 className="fw-bold mb-0">Medicine Name: </h6>
+              </div>
+              <div className="col-4 d-flex mx-auto">
+                <p className="fw-bold me-2">Price: </p>
+              </div>
+              <div className="col-4 d-flex">
+                <p className="fw-bold me-2">Link: </p>
+              </div>
             </div>
-            <div className="d-flex mx-auto">
-              <p className="me-2">Available: </p>
-              <p className="">Value</p>
-            </div>
-            <div className="d-flex">
-              <p className="me-2">Price: </p>
-              <p className="">Value</p>
-            </div>
-            <hr />
           </div>
+          <div className="col-12">
+            <hr className="line-shadow"></hr>
+          </div>
+          {serverData && serverData.length > 0 ? (
+            serverData.map((data, index) => (
+              <div className="col-12" key={index}>
+                <div className="col-12 d-flex mb-2">
+                  <div className="col-12 ps-5 pt-3 d-flex">
+                    <div className="col-4">
+                      <h6 className="mb-0">{data.Names}</h6>
+                    </div>
+                    <div className="col-4 d-flex mx-auto">
+                      <p className="">Rs. {data.Price}</p>
+                    </div>
+                    <div className="col-4 d-flex">
+                      <p className=""><a href="/{data.Links}" className="text-decoration-none">{data.Links}</a></p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-12">
+                  <hr className="line-shadow"></hr>
+                </div>
+              </div>
+            ))
+          ) : <span></span>}
         </div>
       </div>
     </>

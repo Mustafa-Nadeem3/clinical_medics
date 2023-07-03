@@ -383,6 +383,10 @@
     opacity: 0.2;
   }
 
+  .how-it-works p {
+    text-align: justify;
+  }
+
   /* Why Choose CSS */
   .why-choose .card {
     height: 500px !important;
@@ -1337,7 +1341,8 @@
 
   .book-appointment .btn:hover {
     background-color: #38b6ff;
-    color: white;
+    color: white !important;
+    opacity: 1;
   }
 
   /* Profile CSS */

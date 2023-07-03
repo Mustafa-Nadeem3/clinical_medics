@@ -28,46 +28,11 @@ function BookAppointment() {
               <p className="finder-text">Available Time Slots :</p>
             </div>
             <div className="btn-group pb-5 ps-5 w-75" role="group">
-              <button className="btn border-primary me-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">12:00 am</button>
-              <button className="btn border-primary me-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">1:00 pm</button>
-              <button className="btn border-primary me-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">2:00 pm</button>
-              <button className="btn border-primary me-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">3:00 pm</button>
-              <button className="btn border-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">4:00 pm</button>
-
-              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-                <div class="offcanvas-header">
-                  <h5 class="offcanvas-title text-secondary" id="offcanvasRightLabel">Booking</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body myDrop">
-                  <p>Selected Time: </p>
-                  <button className="text-primary">For Physical Booking <i class="fa-solid fa-caret-down"></i><i class="fa-solid fa-caret-up"></i></button>
-                  <div className="mt-2 mb-2">
-                    <form action="">
-                      <div class="form-floating mb-2">
-                        <input type="name" class="form-control" id="floatingInput" placeholder="Enter Your Name" />
-                        <label for="floatingInput">Name</label>
-                      </div>
-                      <div class="form-floating mb-2">
-                        <input type="email" class="form-control" id="floatingInput" placeholder="Enter Email Address" />
-                        <label for="floatingInput">Email Address</label>
-                      </div>
-                      <div class="form-floating mb-2">
-                        <input type="number" class="form-control" id="floatingNumber" placeholder="Enter Phone Number" />
-                        <label for="floatingInput">Phone Number</label>
-                      </div>
-                      <div className="d-flex justify-content-center">
-                        <button type="submit" className="myDrop-btn text-white border border-2 border-primary text-primary rounded-pill p-2 ps-3 pe-3 me-3">Submit</button>
-                      </div>
-                    </form>
-                  </div>
-                  <button className="text-primary">For Online Booking <i class="fa-solid fa-caret-down"></i><i class="fa-solid fa-caret-up"></i></button>
-                  <div className="mt-2">
-                    <Link to="/login"><button className="myDrop-btn text-white border border-2 border-primary text-primary rounded-pill p-2 ps-3 pe-3 me-3">Login</button></Link>
-                    <Link to="/signup"><button className="myDrop-btn text-white border border-2 border-primary text-primary rounded-pill p-2 ps-3 pe-3">SignUp</button></Link>
-                  </div>
-                </div>
-              </div>
+              <Link to="/login" className="text-decoration-none text-primary btn me-1">12:00 am</Link>
+              <Link to="/login" className="text-decoration-none text-primary btn me-1">1:00 pm</Link>
+              <Link to="/login" className="text-decoration-none text-primary btn me-1">2:00 pm</Link>
+              <Link to="/login" className="text-decoration-none text-primary btn me-1">3:00 pm</Link>
+              <Link to="/login" className="text-decoration-none text-primary btn me-1">4:00 pm</Link>
             </div>
             <div className="col-12">
               <hr className="line-shadow"></hr>

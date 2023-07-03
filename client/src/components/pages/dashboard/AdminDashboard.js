@@ -101,6 +101,8 @@ function AdminDashboard() {
     }
   }
 
+  
+
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
@@ -129,7 +131,7 @@ function AdminDashboard() {
               <Link className="nav-link text-white" to="/searchPatient"><i className="fa-solid fa-user me-1"></i>Patient</Link>
               <Link className="nav-link text-white" to="/searchLab"><i class="fa-solid fa-user-nurse me-1"></i>BioTechnician</Link>
               <Link className="nav-link text-white" to="/searchPharmacist"><i class="fa-solid fa-user-nurse me-1"></i>Pharmacist</Link>
-              <Link className="nav-link text-white" to="/data-scrawler"><i class="fa-solid fa-scroll me-1"></i>Scrawler</Link>
+              <Link className="nav-link text-white" to="/dataScrawler"><i class="fa-solid fa-scroll me-1"></i>Scrawler</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>
@@ -194,7 +196,7 @@ function AdminDashboard() {
         <div className="col-12 d-flex">
           <div class="card dash-details1 col-12 mb-3 shadow">
             <div class="card-header">User Details</div>
-            <div class="card-body">
+            <div class="card-body overflow-auto">
               <div className="col-12 d-flex">
                 <div className="col-2 w-25">
                   <h6>ID</h6>
@@ -209,7 +211,7 @@ function AdminDashboard() {
                   <h6>User Type</h6>
                 </div>
               </div>
-              <hr className="mt-0"/>
+              <hr className="mt-0" />
               {userData && userData.length > 0 ? (
                 userData.map((user, index) => (
                   <div className="col-12 d-flex" key={index}>

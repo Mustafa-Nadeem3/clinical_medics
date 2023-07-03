@@ -94,8 +94,9 @@ function ViewDoctor() {
   const [appointmentType, setAppointmentType] = useState('')
   const [approval] = useState('P')
 
-  async function addAppointmentRequest() {
+  console.log(doctorID)
 
+  async function addAppointmentRequest() {
     try {
       const req = await fetch('http://localhost:5000/api/appointment_request', {
         method: 'POST',
@@ -146,7 +147,6 @@ function ViewDoctor() {
               <Link className="nav-link text-white" to="/calendar"><i className="fa-solid fa-calendar-days me-1"></i>Calendar</Link>
               <Link className="nav-link text-primary current-link" to="/viewDoctor"><i className="fa-solid fa-user me-1"></i>View Doctor</Link>
               <Link className="nav-link text-white" to="/view"><i className="fa-solid fa-file-pen me-1"></i>View Lab</Link>
-              <Link className="nav-link text-white" to="/chat"><i className="fa-solid fa-message me-1"></i>Chat</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>
@@ -233,7 +233,7 @@ function ViewDoctor() {
 
                   <Modal show={modalIsOpen[index]} onHide={() => closeModal(index)}>
                     <Modal.Header closeButton>
-                      <Modal.Title className="text-primary">Booking <span>{doctorData._id}</span></Modal.Title>
+                      <Modal.Title className="text-primary">Booking</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                       <div className="row">

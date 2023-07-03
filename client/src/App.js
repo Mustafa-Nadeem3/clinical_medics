@@ -34,6 +34,7 @@ import RemoveItem from './components/pages/pharmacistPages/RemoveItem';
 import ViewDoctor from './components/pages/patientPages/ViewDoctor';
 import ViewLab from './components/pages/patientPages/ViewLab';
 import MedicineBilling from './components/pages/pharmacistPages/Billing';
+import DataScrawler from './components/pages/adminPages/DataScrawler';
 
 const App = () => {
   return (
@@ -55,6 +56,7 @@ const App = () => {
           <Route path="/searchPatient" element={<SearchPatient />} />
           <Route path="/searchLab" element={<SearchLab />} />
           <Route path="/searchPharmacist" element={<SearchPharmacist />} />
+          <Route path="/dataScrawler" element={<DataScrawler />} />
           <Route path="/editProfile" element={<EditProfile />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />

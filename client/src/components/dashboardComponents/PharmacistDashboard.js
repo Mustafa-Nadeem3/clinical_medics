@@ -62,7 +62,7 @@ function PharmacistDashboard() {
             <div className="col-12 links mb-5">
               <Link className="nav-link text-primary current-link" aria-current="page" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
               <Link className="nav-link text-white" to="/inventory"><i className="fa-solid fa-warehouse me-1"></i>Inventory</Link>
-              <Link className="nav-link text-white" to="/medicineBill"><i class="fa-solid fa-file-invoice me-1"></i>Medicine Bill</Link>
+              <Link className="nav-link text-white" to="/medicineBill"><i class="fa-solid fa-file-invoice"></i>Medicine Bill</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>

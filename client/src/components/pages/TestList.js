@@ -3,6 +3,7 @@ import '../../App.css';
 import Navbar from '../navigation/Navbar';
 import Footer from '../layout/Footer';
 import '../style.css';
+import { Link } from 'react-router-dom';
 
 function TestList() {
   return (
@@ -26,26 +27,9 @@ function TestList() {
               <p className="finder-text">Available Time Slots :</p>
             </div>
             <div className="btn-group pb-5 ps-5 w-75" role="group">
-              <button className="btn border-primary me-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">12:00 am</button>
-              <button className="btn border-primary me-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">1:00 pm</button>
-              <button className="btn border-primary me-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">2:00 pm</button>
-              <button className="btn border-primary me-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">3:00 pm</button>
-              <button className="btn border-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">4:00 pm</button>
-
-              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-                <div class="offcanvas-header">
-                  <h5 class="offcanvas-title text-secondary" id="offcanvasRightLabel">Lab Test</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body myDrop">
-                  <p className="text-secondary">For Lab Test </p>
-                  <span className="text-secondary">You need to login/create an account: </span>
-                  <div className="mt-4 mx-auto">
-                    <button className="myDrop-btn text-white border border-2 border-primary text-primary rounded-pill p-2 ps-3 pe-3 me-3">Login</button>
-                    <button className="myDrop-btn text-white border border-2 border-primary text-primary rounded-pill p-2 ps-3 pe-3">SignUp</button>
-                  </div>
-                </div>
-              </div>
+              <Link to="/login" className="text-decoration-none text-primary btn me-1">Yest 1</Link>
+              <Link to="/login" className="text-decoration-none text-primary btn me-1">Test 2</Link>
+              <Link to="/login" className="text-decoration-none text-primary btn me-1">Test 3</Link>
             </div>
             <div className="col-12">
               <hr className="line-shadow"></hr>
