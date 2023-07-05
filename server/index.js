@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
+const { MongoClient } = require('mongodb')
 const { exec } = require('child_process')
 const bodyParser = require('body-parser')
 
@@ -21,6 +22,7 @@ const AppointmentBooked = require('./models/appointment_booked')
 const TestBooked = require('./models/test_booked')
 const ChatMessage = require('./models/chat_messages')
 const Medicine = require('./models/medicine')
+const ScrappedMedicine = require('./models/scrapped_medicine')
 
 app.use(cors())
 app.use(express.json())
@@ -822,29 +824,131 @@ app.get('/api/p_message', async (req, res) => {
   }
 })
 
-app.get('/run_scrapper', (req, res) => {
-  // Drop the collection
-  async function dropCollection() {
-    try {
-      await database.collection(ScrappedMedicine).drop()
-      console.log(`Collection ${collectionName} dropped successfully.`)
-    } catch (error) {
-      console.error('Failed to drop collection:', error)
-    }
+app.get('/api/medicine', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const medicines = await Medicine.findById(_id)
+
+    return res.json({ status: 'ok', medicines })
+  } catch (error) {
+    console.error('Error retrieving documents:', error)
+    res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' })
   }
+})
 
-  dropCollection()
+app.post('/api/medicine', async (req, res) => {
+  try {
+    const { pharID, name, quantity, price } = req.body
 
-  exec('python data_scrawler/dataScrapper.py', (error, stdout, stderr) => {
-    if (error) {
-      console.error('Failed to execute Python script:', error)
-      console.error('Error output:', stderr)
-      res.status(500).json({ status: 'error', error: error.message })
+    if (!pharID || !name || !quantity || !price) {
+      return res.status(400).json({ status: 'error', error: 'Missing required fields in Medicine' })
     } else {
-      console.log('Python script executed successfully!')
-      res.json({ status: 'ok', stdout })
+      let medicineData = await Medicine.findById(pharID)
+
+      if (!medicineData) {
+        medicineData = new Medicine({
+          _id: pharID,
+          medicine: [{ name, quantity, price }],
+        })
+      } else {
+        medicineData.medicine.push({ name, quantity, price })
+      }
+
+      await medicineData.save()
+
+      return res.json({ status: 'ok' })
     }
-  })
+  } catch (error) {
+    res.json({ status: 'error', error: 'Post Chat Error' })
+  }
+})
+
+app.delete('/api/medicine', async (req, res) => {
+  const { _id, name } = req.body
+
+  try {
+    const result = await Medicine.findByIdAndUpdate(
+      { _id: _id },
+      { $pull: { medicine: { name: name } } },
+    )
+
+    if (result) {
+      return res.json({ status: 'ok', message: 'Medicine removed' })
+    } else {
+      return res.status(404).json({ status: 'error', error: 'Medicine not found' })
+    }
+  } catch (error) {
+    console.error('Error removing medicine:', error)
+    return res.status(500).json({ status: 'error', error: 'Failed to remove medicine' })
+  }
+})
+
+app.get('/api/count_medicine', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const count = await Medicine.findById({ _id: _id })
+
+    return res.json({ status: 'ok', count: count.__v })
+  } catch (error) {
+    console.error('Error retrieving medicine count: ', error)
+    res.json({ status: 'error', error: 'Failed to retrieve medicine count' })
+  }
+})
+
+app.get('/run_scrapper', async (req, res) => {
+  try {
+    // Drop the collection
+    const uri = 'mongodb://localhost:27017' // MongoDB connection URI
+    const client = new MongoClient(uri)
+    await client.connect()
+    const database = client.db('clinical_medicine')
+    const collectionName = 'ScrappedMedicine'
+
+    const collections = await database.listCollections().toArray()
+
+    const collectionExists = collections.some(
+      (collection) => collection.name === collectionName
+    )
+
+    if (collectionExists) {
+      await database.collection(collectionName).drop()
+      console.log(`Collection ${collectionName} dropped successfully.`)
+    } else {
+      console.log(`Collection ${collectionName} does not exist.`)
+    }
+
+    // Execute the Python script
+    exec('python data_scrawler/dataScrapper.py', (error, stdout, stderr) => {
+      if (error) {
+        console.error('Failed to execute Python script:', error)
+        console.error('Error output:', stderr)
+        res.status(500).json({ status: 'error', error: error.message })
+      } else {
+        console.log('Python script executed successfully!')
+        res.json({ status: 'ok', message: 'Script executed successfully!', stdout })
+      }
+    })
+  } catch (error) {
+    console.error('Failed to drop collection:', error)
+    res.status(500).json({ status: 'error', error: error.message })
+  }
+})
+
+app.get('/api/display_scrapped_medicine', async (req, res) => {
+  try {
+    const medicines = await ScrappedMedicine.find({})
+
+    return res.json({ status: 'ok', medicines: medicines })
+  } catch (error) {
+    console.error('Error retrieving documents:', error)
+    res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' })
+  }
 })
 
 app.listen(5000, () => {

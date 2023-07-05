@@ -2,10 +2,13 @@ const mongoose = require('mongoose')
 
 const Medicine = new mongoose.Schema(
   {
-    Names: { type: String },
-    Price: { type: String },
-    Description: { type: String },
-    Links: { type: String },
+    medicine: [
+      {
+        name: { type: String },
+        quantity: { type: String },
+        price: { type: String }
+      }
+    ],
   },
   { collection: 'Medicine' }
 )

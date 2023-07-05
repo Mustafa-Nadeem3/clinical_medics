@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 
 function PharmacistDashboard() {
   const [serverData, setServerData] = useState('')
+  const [medicineCount, setMedicineCount] = useState('')
 
   async function getData() {
     const token = localStorage.getItem('token')
@@ -15,22 +16,34 @@ function PharmacistDashboard() {
     }
 
     try {
-      const [profileResponse] = await Promise.all([
+      const [profileResponse, medicineCountResponse] = await Promise.all([
         fetch('http://localhost:5000/api/pharmacist_profile', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+        fetch('http://localhost:5000/api/count_medicine', {
           headers: {
             'x-access-token': token,
           },
         }),
       ])
 
-      const [profileData] = await Promise.all([
+      const [profileData, medicineCount] = await Promise.all([
         profileResponse.json(),
+        medicineCountResponse.json(),
       ])
 
       if (profileData.status === 'ok') {
         setServerData(profileData)
       } else {
         alert('Error in dashboardDetails: ' + profileData.error)
+      }
+
+      if (medicineCount.status === 'ok') {
+        setMedicineCount(medicineCount.count)
+      } else {
+        alert('Error in dashboardDetails: ' + medicineCount.error)
       }
     } catch (error) {
       console.log('All Data Error:', error.message);
@@ -62,7 +75,7 @@ function PharmacistDashboard() {
             <div className="col-12 links mb-5">
               <Link className="nav-link text-primary current-link" aria-current="page" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
               <Link className="nav-link text-white" to="/inventory"><i className="fa-solid fa-warehouse me-1"></i>Inventory</Link>
-              <Link className="nav-link text-white" to="/medicineBill"><i class="fa-solid fa-file-invoice"></i>Medicine Bill</Link>
+              <Link className="nav-link text-white" to="/medicineBill"><i className="fa-solid fa-file-invoice"></i>Medicine Bill</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>
@@ -97,6 +110,17 @@ function PharmacistDashboard() {
             <div className="col-6 d-flex justify-content-start">
               <div className="card-body ps-0">
                 <h6 className="card-title mt-0 mb-0">Medicines</h6>
+                <p className="card-text fs-5">{medicineCount || '0'}</p>
+              </div>
+            </div>
+          </div>
+          <div className="ms-2 col-3 g-0 dash-card shadow d-flex">
+            <div className="col-6 d-flex justify-content-center mt-2 ps-5">
+              <i className="fa-solid fa-rupee-sign icon text-white d-flex justify-content-center align-items-center fs-5"></i>
+            </div>
+            <div className="col-6 d-flex justify-content-start">
+              <div className="card-body ps-0">
+                <h6 className="card-title mt-0 mb-0">Income</h6>
                 <p className="card-text fs-5">0</p>
               </div>
             </div>

@@ -67,6 +67,8 @@ import { Link } from 'react-router-dom';
 
 function MedicineBilling() {
   const [serverData, setServerData] = useState('')
+  const [medicineData, setMedicineData] = useState('')
+  const [medicineCount, setMedicineCount] = useState('')
 
   async function getData() {
     const token = localStorage.getItem('token')
@@ -76,22 +78,46 @@ function MedicineBilling() {
     }
 
     try {
-      const [profileResponse] = await Promise.all([
+      const [profileResponse, medicineDataResponse, medicineCountResponse] = await Promise.all([
         fetch('http://localhost:5000/api/pharmacist_profile', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+        fetch('http://localhost:5000/api/medicine', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+        fetch('http://localhost:5000/api/count_medicine', {
           headers: {
             'x-access-token': token,
           },
         }),
       ])
 
-      const [profileData] = await Promise.all([
+      const [profileData, medicineData, medicineCount] = await Promise.all([
         profileResponse.json(),
+        medicineDataResponse.json(),
+        medicineCountResponse.json(),
       ])
 
       if (profileData.status === 'ok') {
         setServerData(profileData)
       } else {
         alert('Error in dashboardDetails: ' + profileData.error)
+      }
+
+      if (medicineData.status === 'ok') {
+        setMedicineData(medicineData.medicines.medicine)
+      } else {
+        alert('Error: ' + medicineData.error)
+      }
+
+      if (medicineCount.status === 'ok') {
+        setMedicineCount(medicineCount.count)
+      } else {
+        alert('Error in dashboardDetails: ' + medicineCount.error)
       }
     } catch (error) {
       console.log('All Data Error:', error.message);
@@ -107,63 +133,58 @@ function MedicineBilling() {
     }
   }, [])
 
-  const [medicines, setMedicines] = useState([
-    { name: 'Medicine 1', price: 30 },
-    { name: 'Medicine 2', price: 45 },
-    { name: 'Medicine 3', price: 20 },
-  ])
   const [selectedMedicine, setSelectedMedicine] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [billingItems, setBillingItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleMedicineChange = (event) => {
-    setSelectedMedicine(event.target.value);
-  };
+    setSelectedMedicine(event.target.value)
+  }
 
   const handleQuantityChange = (event) => {
-    setQuantity(parseInt(event.target.value));
-  };
+    setQuantity(parseInt(event.target.value))
+  }
 
   const handleAddToBilling = () => {
-    const selectedMedicineData = medicines.find((medicine) => medicine.name === selectedMedicine);
+    const selectedMedicineData = medicineData.find((medicine) => medicine.name === selectedMedicine);
 
     if (selectedMedicineData) {
       const medicine = {
         name: selectedMedicine,
         price: selectedMedicineData.price,
         quantity: quantity,
-      };
+      }
 
-      setBillingItems([...billingItems, medicine]);
-      setSelectedMedicine('');
-      setQuantity(1);
+      setBillingItems([...billingItems, medicine])
+      setSelectedMedicine('')
+      setQuantity(1)
     }
-  };
+  }
 
   const handleRemoveFromBilling = (index) => {
-    const updatedBillingItems = [...billingItems];
-    updatedBillingItems.splice(index, 1);
-    setBillingItems(updatedBillingItems);
-  };
+    const updatedBillingItems = [...billingItems]
+    updatedBillingItems.splice(index, 1)
+    setBillingItems(updatedBillingItems)
+  }
 
   const getTotalAmount = () => {
-    let total = 0;
+    let total = 0
 
     billingItems.forEach((item) => {
-      total += item.price * item.quantity;
-    });
+      total += item.price * item.quantity
+    })
 
-    return total;
-  };
+    return total
+  }
 
   const generateInvoice = () => {
-    setIsModalOpen(true);
-  };
+    setIsModalOpen(true)
+  }
 
   const closeModal = () => {
-    setIsModalOpen(false);
-  };
+    setIsModalOpen(false)
+  }
 
   return (
     <>
@@ -214,6 +235,17 @@ function MedicineBilling() {
             <div className="col-6 d-flex justify-content-start">
               <div className="card-body ps-0">
                 <h6 className="card-title mt-0 mb-0">Medicines</h6>
+                <p className="card-text fs-5">{medicineCount || '0'}</p>
+              </div>
+            </div>
+          </div>
+          <div className="ms-2 col-3 g-0 dash-card shadow d-flex">
+            <div className="col-6 d-flex justify-content-center mt-2 ps-5">
+              <i className="fa-solid fa-rupee-sign icon text-white d-flex justify-content-center align-items-center fs-5"></i>
+            </div>
+            <div className="col-6 d-flex justify-content-start">
+              <div className="card-body ps-0">
+                <h6 className="card-title mt-0 mb-0">Income</h6>
                 <p className="card-text fs-5">0</p>
               </div>
             </div>
@@ -228,11 +260,13 @@ function MedicineBilling() {
               <div className="form-floating mb-3 w-25 me-3">
                 <select className="form-select" id="medicine" value={selectedMedicine} onChange={handleMedicineChange}>
                   <option value="">Select a medicine</option>
-                  {medicines.map((medicine) => (
-                    <option key={medicine.name} value={medicine.name}>
-                      {medicine.name}
-                    </option>
-                  ))}
+                  {medicineData && medicineData.length > 0 ? (
+                    medicineData.map((data, index) => (
+                      <option key={index} value={data.name}>
+                        {data.name}
+                      </option>
+                    ))
+                  ) : <span></span>}
                 </select>
                 <label htmlFor="medicine" className="text-secondary me-2">Medicine:</label>
               </div>
@@ -301,13 +335,33 @@ function MedicineBilling() {
                 <p>Time: {new Date().toLocaleTimeString()}</p>
                 <h6>Bought Items:</h6>
                 <ol>
+                  <li className="bill-list d-flex">
+                    <div className="col-4">
+                      Name
+                    </div>
+                    <div className="col-4">
+                      Price
+                    </div>
+                    <div className="col-4">
+                      Quantity
+                    </div>
+                  </li>
+                  <hr />
                   {billingItems.map((item, index) => (
-                    <li key={index} className="bill-list">
-                      {item.name}: Rs {item.price} x {item.quantity}
+                    <li key={index} className="bill-list d-flex">
+                      <div className="col-4">
+                        {item.name}
+                      </div>
+                      <div className="col-4">
+                        Rs. {item.price}
+                      </div>
+                      <div className="col-4">
+                        {item.quantity}
+                      </div>
                     </li>
                   ))}
                 </ol>
-                <h6>Total Amount: Rs {getTotalAmount()}</h6>
+                <h6>Total Amount: <span className="ms-3">Rs. {getTotalAmount()}</span></h6>
               </Modal.Body>
               <Modal.Footer className="d-flex justify-content-center">
                 {/* <PDFViewer width="800" height="600">

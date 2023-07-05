@@ -9,7 +9,7 @@ function AdminDashboard() {
   const [doctorCount, setDoctorCount] = useState('')
   const [patientCount, setPatientCount] = useState('')
   const [labCount, setLabCount] = useState('')
-  // const [pharmacistCount, setPharmacistCount] = useState('')
+  const [pharmacistCount, setPharmacistCount] = useState('')
 
   async function getData() {
     const token = localStorage.getItem('token')
@@ -19,7 +19,7 @@ function AdminDashboard() {
     }
 
     try {
-      const [profileResponse, userResponse, doctorCountResponse, patientCountResponse, labCountResponse] = await Promise.all([
+      const [profileResponse, userResponse, doctorCountResponse, patientCountResponse, labCountResponse, pharmacistCountResponse] = await Promise.all([
         fetch('http://localhost:5000/api/admin_profile', {
           headers: {
             'x-access-token': token,
@@ -45,20 +45,20 @@ function AdminDashboard() {
             'x-access-token': token,
           },
         }),
-        // fetch('http://localhost:5000/api/count_pharmacists', {
-        //   headers: {
-        //     'x-access-token': token,
-        //   },
-        // }),
+        fetch('http://localhost:5000/api/count_pharmacists', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
       ])
 
-      const [profileData, usersData, doctorCount, patientCount, labCount] = await Promise.all([
+      const [profileData, usersData, doctorCount, patientCount, labCount, pharmacistCount] = await Promise.all([
         profileResponse.json(),
         userResponse.json(),
         doctorCountResponse.json(),
         patientCountResponse.json(),
         labCountResponse.json(),
-        // pharmacistCountResponse.json()
+        pharmacistCountResponse.json()
       ])
 
       if (profileData.status === 'ok') {
@@ -91,17 +91,15 @@ function AdminDashboard() {
         alert('Error: ' + labCount.error)
       }
 
-      // if (pharmacistCount.status === 'ok') {
-      //   setPharmacistCount(pharmacistCount.count)
-      // } else {
-      //   alert('Error: ' + pharmacistCount.error)
-      // }
+      if (pharmacistCount.status === 'ok') {
+        setPharmacistCount(pharmacistCount.count)
+      } else {
+        alert('Error: ' + pharmacistCount.error)
+      }
     } catch (error) {
       console.log('All Data Error:', error.message);
     }
   }
-
-  
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -127,11 +125,11 @@ function AdminDashboard() {
             </div>
             <div className="col-12 links mb-5">
               <Link className="nav-link text-primary current-link" aria-current="page" to="/adminDashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
-              <Link className="nav-link text-white" to="/searchDoctor"><i class="fa-solid fa-user-doctor me-1"></i>Doctor</Link>
+              <Link className="nav-link text-white" to="/searchDoctor"><i className="fa-solid fa-user-doctor me-1"></i>Doctor</Link>
               <Link className="nav-link text-white" to="/searchPatient"><i className="fa-solid fa-user me-1"></i>Patient</Link>
-              <Link className="nav-link text-white" to="/searchLab"><i class="fa-solid fa-user-nurse me-1"></i>BioTechnician</Link>
-              <Link className="nav-link text-white" to="/searchPharmacist"><i class="fa-solid fa-user-nurse me-1"></i>Pharmacist</Link>
-              <Link className="nav-link text-white" to="/dataScrawler"><i class="fa-solid fa-scroll me-1"></i>Scrawler</Link>
+              <Link className="nav-link text-white" to="/searchLab"><i className="fa-solid fa-user-nurse me-1"></i>BioTechnician</Link>
+              <Link className="nav-link text-white" to="/searchPharmacist"><i className="fa-solid fa-user-nurse me-1"></i>Pharmacist</Link>
+              <Link className="nav-link text-white" to="/dataScrawler"><i className="fa-solid fa-scroll me-1"></i>Scrawler</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>
@@ -139,9 +137,9 @@ function AdminDashboard() {
           </div>
         </div>
       </nav>
-      <nav class="navbar fixed-top d-navbar mb-3 shadow">
+      <nav className="navbar fixed-top d-navbar mb-3 shadow">
         <div className="container justify-content-start">
-          <Link class="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/adminDashboard">Dashboard</Link>
+          <Link className="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/adminDashboard">Dashboard</Link>
         </div>
       </nav>
       <div className="container amount-card">
@@ -186,7 +184,7 @@ function AdminDashboard() {
             <div className="col-6 d-flex justify-content-start">
               <div className="card-body ps-0">
                 <h6 className="card-title mt-0 mb-0">Pharmacists</h6>
-                <p className="card-text fs-5">0</p>
+                <p className="card-text fs-5">{pharmacistCount || '0'}</p>
               </div>
             </div>
           </div>
@@ -194,9 +192,9 @@ function AdminDashboard() {
       </div>
       <div className="row dashboard">
         <div className="col-12 d-flex">
-          <div class="card dash-details1 col-12 mb-3 shadow">
-            <div class="card-header">User Details</div>
-            <div class="card-body overflow-auto">
+          <div className="card dash-details1 col-12 mb-3 shadow">
+            <div className="card-header">User Details</div>
+            <div className="card-body overflow-auto">
               <div className="col-12 d-flex">
                 <div className="col-2 w-25">
                   <h6>ID</h6>
@@ -227,7 +225,7 @@ function AdminDashboard() {
                       <p className="align-self-center">{user.email || 'No Email Found'}</p>
                     </div>
                     <div className="col-2 d-flex d-inline w-25">
-                      <p class="align-self-center">{user.profession === "d" ? "Doctor" : user.profession === "u" ? "Patient" : user.profession === "l" ? "BioTechnician" : user.profession === "p" ? "Pharmacist" : user.profession || "No Profession Found"}</p>
+                      <p className="align-self-center">{user.profession === "d" ? "Doctor" : user.profession === "u" ? "Patient" : user.profession === "l" ? "BioTechnician" : user.profession === "p" ? "Pharmacist" : user.profession || "No Profession Found"}</p>
                     </div>
                   </div>
                 ))
@@ -236,15 +234,15 @@ function AdminDashboard() {
           </div>
         </div>
         {/* <div className="col-12 d-flex">
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Total User's Stats</div>
-            <div class="card-body">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Total User's Stats</div>
+            <div className="card-body">
               <Chart />
             </div>
           </div>
-          <div class="card dash-details col-6 mb-3 shadow">
-            <div class="card-header">Incoming Traffic</div>
-            <div class="card-body">
+          <div className="card dash-details col-6 mb-3 shadow">
+            <div className="card-header">Incoming Traffic</div>
+            <div className="card-body">
               <Chart />
             </div>
           </div>

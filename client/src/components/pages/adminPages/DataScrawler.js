@@ -9,6 +9,7 @@ function DataScrawler() {
   const [patientCount, setPatientCount] = useState('')
   const [labCount, setLabCount] = useState('')
   // const [pharmacistCount, setPharmacistCount] = useState('')
+  const [medicineData, setMedicineData] = useState([])
 
   async function getData() {
     const token = localStorage.getItem('token')
@@ -18,7 +19,7 @@ function DataScrawler() {
     }
 
     try {
-      const [profileResponse, doctorCountResponse, patientCountResponse, labCountResponse] = await Promise.all([
+      const [profileResponse, doctorCountResponse, patientCountResponse, labCountResponse, medicineDataResponse] = await Promise.all([
         fetch('http://localhost:5000/api/admin_profile', {
           headers: {
             'x-access-token': token,
@@ -44,14 +45,20 @@ function DataScrawler() {
         //     'x-access-token': token,
         //   },
         // }),
+        fetch('http://localhost:5000/api/display_scrapped_medicine', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
       ])
 
-      const [profileData, doctorCount, patientCount, labCount] = await Promise.all([
+      const [profileData, doctorCount, patientCount, labCount, medicineData] = await Promise.all([
         profileResponse.json(),
         doctorCountResponse.json(),
         patientCountResponse.json(),
         labCountResponse.json(),
         // pharmacistCountResponse.json()
+        medicineDataResponse.json(),
       ])
 
       if (profileData.status === 'ok') {
@@ -83,6 +90,12 @@ function DataScrawler() {
       // } else {
       //   alert('Error: ' + pharmacistCount.error)
       // }
+
+      if (medicineData.status === 'ok') {
+        setMedicineData(medicineData.medicines)
+      } else {
+        alert('Error: ' + medicineData.error)
+      }
     } catch (error) {
       console.log('All Data Error:', error.message);
     }
@@ -91,14 +104,12 @@ function DataScrawler() {
   async function scrapData() {
     try {
       const req = await fetch('http://localhost:5000/run_scrapper', {
-        headers: {
-          'x-access-token': localStorage.getItem('token')
-        },
+
       })
 
       const data = await req.json()
       if (data.status === 'ok') {
-        
+
       } else {
         alert('Error' + data.error)
       }
@@ -111,7 +122,7 @@ function DataScrawler() {
     const token = localStorage.getItem('token')
     if (token) {
       getData()
-      
+
       const runButton = document.getElementById('scrapbtn');
 
       runButton.addEventListener('click', () => {
@@ -136,12 +147,12 @@ function DataScrawler() {
                 : serverData.firstName || serverData.lastName || 'No Username Found'}</h6>
             </div>
             <div className="col-12 links mb-5">
-              <Link className="nav-link text-primary current-link" aria-current="page" to="/adminDashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
+              <Link className="nav-link text-white" to="/adminDashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
               <Link className="nav-link text-white" to="/searchDoctor"><i class="fa-solid fa-user-doctor me-1"></i>Doctor</Link>
               <Link className="nav-link text-white" to="/searchPatient"><i className="fa-solid fa-user me-1"></i>Patient</Link>
               <Link className="nav-link text-white" to="/searchLab"><i class="fa-solid fa-user-nurse me-1"></i>BioTechnician</Link>
               <Link className="nav-link text-white" to="/searchPharmacist"><i class="fa-solid fa-user-nurse me-1"></i>Pharmacist</Link>
-              <Link className="nav-link text-white" to="/dataScrawler"><i class="fa-solid fa-scroll me-1"></i>Scrawler</Link>
+              <Link className="nav-link text-primary current-link" to="/dataScrawler"><i class="fa-solid fa-scroll me-1"></i>Scrawler</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>
@@ -151,7 +162,7 @@ function DataScrawler() {
       </nav>
       <nav class="navbar fixed-top d-navbar mb-3 shadow">
         <div className="container justify-content-start">
-          <Link class="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/adminDashboard">Dashboard</Link>
+          <Link class="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/adminDashboard">Scrawler</Link>
         </div>
       </nav>
       <div className="container amount-card">
@@ -205,9 +216,46 @@ function DataScrawler() {
       <div className="row dashboard">
         <div className="col-12">
           <div className="card dash-details1 col-12 mb-3 shadow">
-            <div className="card-header text-center"><button id="scrapbtn" className="customButton rounded-pill">Scrap Data</button></div>
+            <div className="card-header justify-content-center d-flex">
+              <h2 className="text-primary fw-bold">Medicine</h2>
+              <button id="scrapbtn" className="customButton rounded-pill mb-1">Scrap Data</button>
+            </div>
             <div className="card-body overflow-auto">
-
+              <div className="col-12 d-flex">
+                <div className="col-12 ps-5 d-flex">
+                  <div className="col-4">
+                    <h6 className="mb-0">Name</h6>
+                  </div>
+                  <div className="col-4 d-flex mx-auto">
+                    <p>Price</p>
+                  </div>
+                  <div className="col-4">
+                    <p>Link</p>
+                  </div>
+                </div>
+              </div>
+              {medicineData && medicineData.length > 0 ? (
+                medicineData.map((data, index) => (
+                  <div className="col-12" key={index}>
+                    <div className="col-12 d-flex">
+                      <div className="col-12 ps-5 pt-3 d-flex">
+                        <div className="col-4">
+                          <h6 className="mb-0">{data.Name}</h6>
+                        </div>
+                        <div className="col-4 d-flex mx-auto">
+                          <p>{data.Price}</p>
+                        </div>
+                        <div className="col-4">
+                          <a href={data.Link} className="customButton text-decoration-none border border-2 rounded-pill border-primary p-2">Link</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-12">
+                      <hr className="line-shadow"></hr>
+                    </div>
+                  </div>
+                ))
+              ) : <span></span>}
             </div>
           </div>
         </div>

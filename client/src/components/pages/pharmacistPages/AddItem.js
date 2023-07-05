@@ -1,23 +1,118 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../../App.css';
 import '../../style.css';
 import { Link } from 'react-router-dom';
 
 function AddItem() {
+  const [serverData, setServerData] = useState('')
+  const [medicineCount, setMedicineCount] = useState('')
+  const [name, setName] = useState('')
+  const [quantity, setQuantity] = useState('')
+  const [price, setPrice] = useState('')
+
+  async function getData() {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      alert('Token not found')
+      return
+    }
+
+    try {
+      const [profileResponse, medicineCountResponse] = await Promise.all([
+        fetch('http://localhost:5000/api/pharmacist_profile', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+        fetch('http://localhost:5000/api/count_medicine', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+      ])
+
+      const [profileData, medicineCount] = await Promise.all([
+        profileResponse.json(),
+        medicineCountResponse.json(),
+      ])
+
+      if (profileData.status === 'ok') {
+        setServerData(profileData)
+      } else {
+        alert('Error in dashboardDetails: ' + profileData.error)
+      }
+
+      if (medicineCount.status === 'ok') {
+        setMedicineCount(medicineCount.count)
+      } else {
+        alert('Error in dashboardDetails: ' + medicineCount.error)
+      }
+    } catch (error) {
+      console.log('All Data Error:', error.message);
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      getData()
+    } else {
+      alert('Error in dashboard useEffect')
+    }
+  }, [])
+
+  const handleAddItem = async (e) => {
+    e.preventDefault()
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Token not found')
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/medicine', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': token,
+        },
+        body: JSON.stringify({
+          pharID: serverData._id,
+          name,
+          quantity,
+          price,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.status === 'ok') {
+        alert('Medicine Added')
+      } else {
+        alert('Error: ' + data.error)
+      }
+    } catch (error) {
+      console.log('Add Item Error:', error.message)
+    }
+  }
+
   return (
     <>
       <nav className="nav flex-column menu position-fixed">
         <div className="container-fluid">
           <div className="row">
             <div className="col-12 text-center rounded-circle mt-4 mb-2">
-              <img src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2" />
+              <img src={serverData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2" />
             </div>
             <div className="col-12">
-              <h6 className="text-white text-center mb-4">Username</h6>
+              <h6 className="text-white text-center mb-4">{serverData.firstName && serverData.lastName
+                ? `${serverData.firstName} ${serverData.lastName}`
+                : serverData.firstName || serverData.lastName || 'No Username Found'}</h6>
             </div>
             <div className="col-12 links mb-5">
               <Link className="nav-link text-white" aria-current="page" to="/dashboard"><i className="fa-solid fa-display me-1"></i>Dashboard</Link>
-              <Link className="nav-link text-primary current-link" to="/inventory"><i class="fa-solid fa-warehouse me-1"></i>Inventory</Link>
+              <Link className="nav-link text-primary current-link" to="/inventory"><i className="fa-solid fa-warehouse me-1"></i>Inventory</Link>
+              <Link className="nav-link text-white" to="/medicineBill"><i className="fa-solid fa-file-invoice"></i>Medicine Bill</Link>
             </div>
             <div className="col-12 links mt-2">
               <Link className="nav-link text-white border-bottom log" to="/"><i className="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</Link>
@@ -25,11 +120,11 @@ function AddItem() {
           </div>
         </div>
       </nav>
-      <nav class="navbar fixed-top d-navbar mb-3 shadow">
+      <nav className="navbar fixed-top d-navbar mb-3 shadow">
         <div className="container justify-content-start">
-          <Link class="nav-link text-secondary ms-3 me-4" to="/inventory">Inventory</Link>
-          <Link class="nav-link text-secondary me-4 cur-link rounded-bottom-1" to="/addItem">Add Item</Link>
-          <Link class="nav-link text-secondary me-4" to="/removeItem">Remove Item</Link>
+          <Link className="nav-link text-secondary ms-3 me-4" to="/inventory">Inventory</Link>
+          <Link className="nav-link text-secondary me-4 cur-link rounded-bottom-1" to="/addItem">Add Item</Link>
+          <Link className="nav-link text-secondary me-4" to="/removeItem">Remove Item</Link>
         </div>
       </nav>
       <div className="container amount-card">
@@ -52,6 +147,17 @@ function AddItem() {
             <div className="col-6 d-flex justify-content-start">
               <div className="card-body ps-0">
                 <h6 className="card-title mt-0 mb-0">Medicines</h6>
+                <p className="card-text fs-5">{medicineCount || '0'}</p>
+              </div>
+            </div>
+          </div>
+          <div className="ms-2 col-3 g-0 dash-card shadow d-flex">
+            <div className="col-6 d-flex justify-content-center mt-2 ps-5">
+              <i className="fa-solid fa-rupee-sign icon text-white d-flex justify-content-center align-items-center fs-5"></i>
+            </div>
+            <div className="col-6 d-flex justify-content-start">
+              <div className="card-body ps-0">
+                <h6 className="card-title mt-0 mb-0">Income</h6>
                 <p className="card-text fs-5">0</p>
               </div>
             </div>
@@ -60,26 +166,52 @@ function AddItem() {
       </div>
       <div className="row edit-profile shadow">
         <div className="col-12">
-          <h4 className="text-primary text-center my-3">Cancel Appointment</h4>
-          <form action="" className="mb-5">
-            <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingInput" placeholder="Enter Medicine Name" />
-              <label for="floatingInput">Medicine Name</label>
+          <h4 className="text-primary text-center my-3">Add Medicine</h4>
+          <form onSubmit={handleAddItem} className="mb-5">
+            <div className="form-floating mb-3">
+              <input
+                type="text"
+                className="form-control"
+                id="floatingInput"
+                placeholder="Enter Medicine Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <label htmlFor="floatingInput">Medicine Name</label>
             </div>
-            <div class="form-floating mb-3">
-              <input type="number" class="form-control" id="floatingInput" placeholder="Enter Quantity" />
-              <label for="floatingInput">Quantity</label>
+            <div className="form-floating mb-3">
+              <input
+                type="number"
+                className="form-control"
+                id="floatingInput"
+                placeholder="Enter Quantity"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+              />
+              <label htmlFor="floatingInput">Quantity</label>
             </div>
-            <div class="form-floating mb-3">
-              <input type="number" class="form-control" id="floatingInput" placeholder="Enter Price" />
-              <label for="floatingInput">Price</label>
+            <div className="form-floating mb-3">
+              <input
+                type="number"
+                className="form-control"
+                id="floatingInput"
+                placeholder="Enter Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+              <label htmlFor="floatingInput">Price</label>
             </div>
             <div className="d-flex justify-content-center">
-              <button className="myDrop-btn bg-white text-white border border-2 border-primary text-primary rounded-pill p-2 ps-3 pe-3 mb-2">Add</button>
+              <button
+                type="submit"
+                className="myDrop-btn bg-white text-white border border-2 border-primary text-primary rounded-pill p-2 ps-3 pe-3 mb-2"
+              >
+                Add
+              </button>
             </div>
           </form>
         </div>
-      </div >
+      </div>
     </>
   )
 }
