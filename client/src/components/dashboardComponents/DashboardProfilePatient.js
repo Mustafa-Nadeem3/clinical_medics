@@ -6,19 +6,19 @@ import { Link } from 'react-router-dom';
 function DashboardProfilePatient() {
   const [serverData, setServerData] = useState('')
 
-  const [editingProfileImage, setEditingProfileImage] = useState(false);
+  const [editingProfileImage, setEditingProfileImage] = useState(false)
   const [editingFirstName, setEditingFirstName] = useState(false)
   const [editingLastName, setEditingLastName] = useState(false)
   const [editingEmail, setEditingEmail] = useState(false)
   const [editingAddress, setEditingAddress] = useState(false)
-  // const [editingDOB, setDOB] = useState(false)
-  // const [editingGender, setGender] = useState(false)
-  // const [editingWeight, setWeight] = useState(false)
-  // const [editingHeight, setHeight] = useState(false)
+  const [editingDOB, setEditingDOB] = useState(false)
+  const [editingGender, setEditingGender] = useState(false)
+  const [editingWeight, setEditingWeight] = useState(false)
+  const [editingHeight, setEditingHeight] = useState(false)
 
   const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
+    const file = event.target.files[0]
+    const reader = new FileReader()
 
     reader.onloadend = () => {
       setProfileImage(reader.result)
@@ -30,28 +30,44 @@ function DashboardProfilePatient() {
   }
 
   const _id = serverData._id
-  const [profileImage, setProfileImage] = useState('')
+  const [profileImage, setProfileImage] = useState(serverData.profileImage)
   const [firstName, setFirstName] = useState(serverData.firstName)
   const [lastName, setLastName] = useState(serverData.lastName)
   const [email, setEmail] = useState(serverData.email)
-  const [address, setAddress] = useState('')
+  const [address, setAddress] = useState(serverData.address)
+  const [DOB, setDOB] = useState(serverData.DOB)
+  const [gender, setGender] = useState(serverData.gender)
+  const [weight, setWeight] = useState(serverData.weight)
+  const [height, setHeight] = useState(serverData.height)
 
   const handleEditClick = (field) => {
     switch (field) {
       case 'profileImage':
-        setEditingProfileImage(true);
+        setEditingProfileImage(true)
         break;
       case 'firstName':
-        setEditingFirstName(true);
+        setEditingFirstName(true)
         break;
       case 'lastName':
-        setEditingLastName(true);
+        setEditingLastName(true)
         break;
       case 'email':
-        setEditingEmail(true);
+        setEditingEmail(true)
         break;
       case 'address':
-        setEditingAddress(true);
+        setEditingAddress(true)
+        break;
+      case 'DOB':
+        setEditingDOB(true)
+        break;
+      case 'gender':
+        setEditingGender(true)
+        break;
+      case 'weight':
+        setEditingWeight(true)
+        break;
+      case 'height':
+        setEditingHeight(true)
         break;
       default:
         alert('error u handleEditClick function')
@@ -74,6 +90,10 @@ function DashboardProfilePatient() {
         lastName,
         email,
         address,
+        DOB,
+        gender,
+        weight,
+        height,
       }),
     })
 
@@ -173,7 +193,7 @@ function DashboardProfilePatient() {
               {editingFirstName ? (
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-control w-50"
                   placeholder={serverData.firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                 />
@@ -192,7 +212,7 @@ function DashboardProfilePatient() {
               {editingLastName ? (
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-control w-50"
                   placeholder={serverData.lastName}
                   onChange={(e) => setLastName(e.target.value)}
                 />
@@ -214,7 +234,7 @@ function DashboardProfilePatient() {
             {editingEmail ? (
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-50"
                 placeholder={serverData.email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -233,7 +253,7 @@ function DashboardProfilePatient() {
             {editingAddress ? (
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-50"
                 placeholder={serverData.address}
                 onChange={(e) => setAddress(e.target.value)}
               />
@@ -249,20 +269,101 @@ function DashboardProfilePatient() {
               </p>
             )}
             <h5 className="text-secondary my-3">Date of birth: </h5>
-            {editingAddress ? (
+            {editingDOB ? (
               <input
-                type="text"
-                className="form-control"
-                placeholder={serverData.address}
-                onChange={(e) => setAddress(e.target.value)}
+                type="date"
+                className="form-control w-50"
+                placeholder={serverData.DOB}
+                onChange={(e) => setDOB(e.target.value)}
               />
             ) : (
               <p className="text-secondary my-3">
-                {serverData.address || 'Address not found'}
-                {!editingAddress && (
+                {serverData.DOB || 'DOB not found'}
+                {!editingDOB && (
                   <i
                     className="fa-solid fa-pen-to-square ms-2"
-                    onClick={() => handleEditClick('address')}
+                    onClick={() => handleEditClick('DOB')}
+                  ></i>
+                )}
+              </p>
+            )}
+            <h5 className="text-secondary my-3">Gender: </h5>
+            {editingGender ? (
+              <div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="gender"
+                    id="maleRadio"
+                    value="male"
+                    checked={serverData.gender === "male"}
+                    onChange={(e) => setGender(e.target.value)}
+                  />
+                  <label className="form-check-label" htmlFor="maleRadio">
+                    Male
+                  </label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="gender"
+                    id="femaleRadio"
+                    value="female"
+                    checked={serverData.gender === "female"}
+                    onChange={(e) => setGender(e.target.value)}
+                  />
+                  <label className="form-check-label" htmlFor="femaleRadio">
+                    Female
+                  </label>
+                </div>
+              </div>
+            ) : (
+              <p className="text-secondary my-3">
+                {serverData.gender || 'Gender not found'}
+                {!editingGender && (
+                  <i
+                    className="fa-solid fa-pen-to-square ms-2"
+                    onClick={() => handleEditClick('gender')}
+                  ></i>
+                )}
+              </p>
+            )}
+            <h5 className="text-secondary my-3">Weight:</h5>
+            {editingWeight ? (
+              <input
+                type="text"
+                className="form-control w-50"
+                placeholder={serverData.weight}
+                onChange={(e) => setWeight(e.target.value)}
+              />
+            ) : (
+              <p className="text-secondary my-3">
+                {serverData.weight || 'Weight not found'}
+                {!editingWeight && (
+                  <i
+                    className="fa-solid fa-pen-to-square ms-2"
+                    onClick={() => handleEditClick('weight')}
+                  ></i>
+                )}
+              </p>
+            )}
+            <h5 className="text-secondary my-3">Height:</h5>
+            {editingHeight ? (
+              <input
+                type="text"
+                className="form-control w-50"
+                placeholder={serverData.height}
+                onChange={(e) => setHeight(e.target.value)}
+              />
+            ) : (
+              <p className="text-secondary my-3">
+                {serverData.height || 'Height not found'}
+                {!editingHeight && (
+                  <i
+                    className="fa-solid fa-pen-to-square ms-2"
+                    onClick={() => handleEditClick('height')}
                   ></i>
                 )}
               </p>

@@ -336,8 +336,8 @@ function PatientDashboard() {
                   <img src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2 d-image" />
                 </div>
                 <div className="col-8">
-                  <h6 className="mb-1 mt-1">Doctor Name</h6>
-                  <p className="mb-0 d-text">Doctor Address</p>
+                  <h6 className="mb-1 mt-1">Doctor 2</h6>
+                  <p className="mb-0 d-text">234 D, Johar town</p>
                 </div>
                 <div className="col-4 mx-auto my-auto">
                   <button className="btn customButton" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><i className="fa-solid fa-message me-1"></i>Chat</button>
@@ -386,21 +386,21 @@ function PatientDashboard() {
               <div className="col-12 d-flex mt-2">
                 <div className="col-4 me-5">
                   <h6>Degree</h6>
-                  <p>Unknown</p>
+                  <p>MBBS</p>
                 </div>
                 <div className="col-4 me-5">
                   <h6>Specialization</h6>
-                  <p>Unknown</p>
+                  <p>Dermatology</p>
                 </div>
                 <div className="col-4 me-5">
                   <h6>Ratings</h6>
-                  <p>Unknown</p>
+                  <p>Not available</p>
                 </div>
               </div>
               <div className="col-12 d-flex">
                 <div className="col-4 me-5">
                   <h6>Consulted</h6>
-                  <p>Unknown</p>
+                  <p>Not available</p>
                 </div>
                 <div className="col-4 me-5">
                   <h6>Your Rating</h6>

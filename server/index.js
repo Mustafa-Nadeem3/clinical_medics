@@ -85,7 +85,11 @@ app.post('/api/register', async (req, res) => {
         lastName: req.body.lastName,
         email: req.body.email,
         profession: req.body.profession,
-        address: null
+        address: null,
+        DOB: null,
+        gender: null,
+        weight: null,
+        height: null
       })
     }
     else if (req.body.profession == 'l') {
@@ -315,7 +319,7 @@ app.get('/api/patient_profile', async (req, res) => {
     const _id = decoded._id
     const profile = await PatientProfile.findById(_id)
 
-    return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, profession: profile.profession, address: profile.address })
+    return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, profession: profile.profession, address: profile.address, DOB: profile.DOB, gender: profile.gender, weight: profile.weight, height: profile.height })
   } catch (error) {
     res.json({ status: 'error', error: ' invalid token in p profile' })
   }
@@ -323,6 +327,8 @@ app.get('/api/patient_profile', async (req, res) => {
 
 app.post('/api/patient_profile', async (req, res) => {
   const token = req.headers['x-access-token']
+  const dob = req.body.DOB
+  const dateOnly = dob.toString().split('T')[0]
 
   try {
     const decoded = jwt.verify(token, 'secret123')
@@ -334,7 +340,11 @@ app.post('/api/patient_profile', async (req, res) => {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
-        address: req.body.address
+        address: req.body.address,
+        DOB: dateOnly,
+        gender: req.body.gender,
+        weight: req.body.weight,
+        height: req.body.height
       },
       { new: true }
     )
@@ -466,9 +476,6 @@ app.get('/api/count_pharmacists', async (req, res) => {
 })
 
 app.post('/api/appointment_request', async (req, res) => {
-
-  console.log(req.body)
-
   try {
     const request = await AppointmentRequest.create({
       doctorID: req.body.doctorID,

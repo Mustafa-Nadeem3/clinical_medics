@@ -226,7 +226,7 @@ function DoctorDashboard() {
 
   async function getMessage() {
     try {
-      const [response1, response2] = await Promise.all([
+      const [response1, response2, response3] = await Promise.all([
         fetch(`http://localhost:5000/api/d_message`, {
           headers: {
             'x-access-token': localStorage.getItem('token'),
@@ -237,9 +237,18 @@ function DoctorDashboard() {
             'x-access-token': localStorage.getItem('token'),
           },
         }),
+        fetch(`http://localhost:5000/api/patient_profile`, {
+          headers: {
+            'x-access-token': localStorage.getItem('token'),
+          },
+        }),
       ]);
 
-      const [data1, data2] = await Promise.all([response1.json(), response2.json()]);
+      const [data1, data2, data3] = await Promise.all([
+        response1.json(), 
+        response2.json(),
+        response3.json()
+      ]);
 
       if (data1.status === 'ok') {
         setServerMessage1(data1.message);
@@ -249,6 +258,12 @@ function DoctorDashboard() {
 
       if (data2.status === 'ok') {
         setServerMessage2(data2.message);
+      } else {
+        alert('error in chat ' + data2.error);
+      }
+
+      if (data3.status === 'ok') {
+        // setPatientDetails(data2);
       } else {
         alert('error in chat ' + data2.error);
       }
@@ -345,7 +360,9 @@ function DoctorDashboard() {
                   bookedData.map((bookedData, index) => (
                     <li key={index} className="d-flex list-group-item border border-0">
                       <div className="col-8">
-                        <h6>{bookedData.patientFirstName}</h6>
+                        <h6>{bookedData.patientFirstName && bookedData.patientLastName
+                          ? `${bookedData.patientFirstName} ${bookedData.patientLastName}`
+                          : bookedData.patientFirstName || bookedData.patientLastName || 'No Username Found'}</h6>
                         <p>{bookedData.appointmentDate || 'No Time Found'}</p>
                       </div>
                       <div className="col-4 justify-content-end">
@@ -365,9 +382,9 @@ function DoctorDashboard() {
                   <img src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2 d-image" />
                 </div>
                 <div className="col-8">
-                  <h6 className="mb-0 mt-1">Patient Name</h6>
-                  <p className="mb-0 d-text">Patient Address</p>
-                  <p className="d-text">Patient City</p>
+                  <h6 className="mb-0 mt-1">Patient 1</h6>
+                  <p className="mb-0 d-text">123 A, Wapda town</p>
+                  <p className="d-text">Lahore</p>
                 </div>
                 <div className="col-4 mx-auto my-auto">
                   <button className="btn customButton" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><i className="fa-solid fa-message me-1"></i>Chat</button>
@@ -416,25 +433,25 @@ function DoctorDashboard() {
               <div className="col-12 d-flex mt-2">
                 <div className="col-4 me-5">
                   <h6>D.O.B</h6>
-                  <p>Unknown</p>
+                  <p>18/11/1999</p>
                 </div>
                 <div className="col-4 me-5">
                   <h6>Gender</h6>
-                  <p>Unknown</p>
+                  <p>Male</p>
                 </div>
                 <div className="col-4 me-5">
                   <h6>Weight</h6>
-                  <p>Unknown kg</p>
+                  <p>56 kg</p>
                 </div>
               </div>
               <div className="col-12 d-flex">
                 <div className="col-4 me-5">
                   <h6>Height</h6>
-                  <p>Unknown cm</p>
+                  <p>163 cm</p>
                 </div>
                 <div className="col-4 me-5">
                   <h6>Previous Appointment</h6>
-                  <p>Unknown</p>
+                  <p>Not Available</p>
                 </div>
                 <div className="col-4"></div>
               </div>
