@@ -7,9 +7,16 @@ import '../../style.css';
 function MedicineList() {
   const [serverData, setServerData] = useState([])
 
+  const handleClick = () => {
+    const value = document.getElementById('search').value;
+    console.log(value)
+    setServerData(serverData.filter(word => word.startsWith(value)))
+    console.log(serverData.filter(word => word.startsWith(value)))
+  }
+
   async function getMedicine() {
     try {
-      const req = await fetch('http://localhost:5000/api/medicine', {
+      const req = await fetch('http://localhost:5000/api/display_scrapped_medicine', {
         headers: {
           'x-access-token': localStorage.getItem('token')
         }
@@ -35,7 +42,7 @@ function MedicineList() {
     } else {
       alert('Error in findDoctor useEffect')
     }
-  }, [])
+  }, [serverData])
 
   return (
     <>
@@ -43,8 +50,8 @@ function MedicineList() {
       <div className="container book-appointment">
         <div className="col-12 mb-2">
           <form className="button-container" role="search">
-            {/* <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" /> */}
-            <button className="finder-button" type="submit">Search</button>
+            <input className="form-control me-2" type="search" id="search" placeholder="Search" aria-label="Search" />
+            <button className="finder-button" type="submit" onClick={handleClick}>Search</button>
           </form>
         </div>
         <div className="row finder-design">
@@ -57,7 +64,7 @@ function MedicineList() {
                 <div className="col-12 d-flex mb-2">
                   <div className="col-12 ps-5 pt-3 d-flex">
                     <div className="col-6">
-                      <h6 className="fw-bold mb-0 finder-text">{data.Names}</h6>
+                      <h6 className="fw-bold mb-0 finder-text">{data.Name}</h6>
                     </div>
                     <div className="col-6 d-flex mx-auto">
                       <p className="finder-text me-2">Price: </p>

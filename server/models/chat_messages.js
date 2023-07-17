@@ -2,8 +2,10 @@ const mongoose = require('mongoose')
 
 const ChatMessage = new mongoose.Schema(
   {
-    userID: { type: String },
-    userMessage: { type: String },
+    doctorID: { type: String },
+    patientID: { type: String },
+    message: { type: Array },
+    sender: { type: String },
   },
   { collection: 'ChatMessage' }
 )

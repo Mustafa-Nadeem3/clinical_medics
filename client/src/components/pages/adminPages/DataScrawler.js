@@ -111,7 +111,7 @@ function DataScrawler() {
       if (data.status === 'ok') {
 
       } else {
-        alert('Error' + data.error)
+        alert('Error ' + data.error)
       }
     } catch (error) {
       console.error('Failed to execute Python file:', error)

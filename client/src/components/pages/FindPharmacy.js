@@ -77,11 +77,9 @@ function FindPharmacy() {
                     <img className="w-50 rounded-circle finder-image" src={displayData.profileImage || process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" />
                   </div>
                   <div className="col-5 pt-3">
-                    <h5 className="mb-0 finder-text">{displayData.firstName && displayData.lastName
-                      ? `${displayData.firstName} ${displayData.lastName}`
-                      : displayData.firstName || displayData.lastName || 'Name not found'}</h5>
+                    <h5 className="mb-0 finder-text">Dawaai</h5>
                     <h6 className="mb-0 finder-text">Address</h6>
-                    <a href="/" className="finder-text">Website Link</a>
+                    <a href="https://dawaai.pk" className="finder-text">https://dawaai.pk</a>
                   </div>
                   <div className="col-5 pt-3 text-end">
                     <Link className="finder-button text-decoration-none" to="/medicineList" role="button">Medicine</Link>

@@ -94,8 +94,6 @@ function ViewDoctor() {
   const [appointmentType, setAppointmentType] = useState('')
   const [approval] = useState('P')
 
-  console.log(doctorID)
-
   async function addAppointmentRequest() {
     try {
       const req = await fetch('http://localhost:5000/api/appointment_request', {
@@ -126,6 +124,34 @@ function ViewDoctor() {
       }
     } catch (error) {
       alert('Error fetching appointment request', error)
+    }
+  }
+
+  async function sendNotification() {
+    const userID = doctorID
+    const message = `Appointment Request: ${patientFirstName} ${patientLastName} has requested an appointment on ${appointmentDate} at ${appointmentTime}`
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/notification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userID,
+          message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'ok') {
+        console.log('Notification sent successfully');
+      } else {
+        console.error('Error in sending notification:', data.error);
+      }
+    } catch (error) {
+      console.error('Error in sending notification:', error);
     }
   }
 
@@ -318,6 +344,7 @@ function ViewDoctor() {
                         setPatientLastName(serverData.lastName)
                         closeModal(index)
                         addAppointmentRequest()
+                        sendNotification()
                       }} className="text-center">Submit</Button>
                       <Button variant="secondary" onClick={() => closeModal(index)} className="text-center">Close</Button>
                     </Modal.Footer>

@@ -23,6 +23,7 @@ const TestBooked = require('./models/test_booked')
 const ChatMessage = require('./models/chat_messages')
 const Medicine = require('./models/medicine')
 const ScrappedMedicine = require('./models/scrapped_medicine')
+const Notification = require('./models/notification.js')
 
 app.use(cors())
 app.use(express.json())
@@ -280,6 +281,18 @@ app.get('/api/doctor_profile', async (req, res) => {
   }
 })
 
+app.get('/api/p_doctor_profile', async (req, res) => {
+  const doctorID = req.query.id;
+
+  try {
+    const profile = await DoctorProfile.findById(doctorID)
+
+    return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, profession: profile.profession, address: profile.address, officeAddress: profile.officeAddress, degree: profile.degree, specialization: profile.specialization, appointmentTime: profile.appointmentTime, fee: profile.fee })
+  } catch (error) {
+    res.json({ status: 'error', error: ' invalid token in get d profile' })
+  }
+})
+
 app.post('/api/doctor_profile', async (req, res) => {
   const token = req.headers['x-access-token']
 
@@ -318,6 +331,18 @@ app.get('/api/patient_profile', async (req, res) => {
     const decoded = jwt.verify(token, 'secret123')
     const _id = decoded._id
     const profile = await PatientProfile.findById(_id)
+
+    return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, profession: profile.profession, address: profile.address, DOB: profile.DOB, gender: profile.gender, weight: profile.weight, height: profile.height })
+  } catch (error) {
+    res.json({ status: 'error', error: ' invalid token in p profile' })
+  }
+})
+
+app.get('/api/d_patient_profile', async (req, res) => {
+  const patientID = req.query.id;
+
+  try {
+    const profile = await PatientProfile.findById(patientID)
 
     return res.json({ status: 'ok', _id: profile._id, profileImage: profile.profileImage, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, profession: profile.profession, address: profile.address, DOB: profile.DOB, gender: profile.gender, weight: profile.weight, height: profile.height })
   } catch (error) {
@@ -782,50 +807,61 @@ app.delete('/api/test_request', async (req, res) => {
 
 app.post('/api/message', async (req, res) => {
   try {
-    const {
-      userID,
-      userMessage
-    } = req.body
+    const { user1, user2, message, sender } = req.body
 
-    if (
-      !userID ||
-      !userMessage
-    ) {
-      return res.status(400).json({ status: 'error', error: ' Missing required fields in Chat' })
+    if (!user1 || !user2 || !message) {
+      return res.status(400).json({ status: 'error', error: 'Missing required fields in Chat' })
     } else {
-      await ChatMessage.create(
-        {
-          userID: req.body.userID,
-          userMessage: req.body.userMessage,
-        }
+      const existingChat = await ChatMessage.findOneAndUpdate(
+        { doctorID: user1 },
+        { $push: { message: { text: message, sender: sender } } }
       )
+
+      if (!existingChat) {
+        await ChatMessage.create({
+          doctorID: user1,
+          patientID: user2,
+          message: [{ text: message, sender: sender }]
+        })
+      }
 
       return res.json({ status: 'ok' })
     }
   } catch (error) {
-    res.json({ status: 'error', error: ' Post Chat Error' })
+    res.json({ status: 'error', error: 'Post Chat Error' })
   }
 })
 
 app.get('/api/d_message', async (req, res) => {
-  const { id } = req.query
+  const token = req.headers['x-access-token']
 
   try {
-    const message = await ChatMessage.find({ userID: id })
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const chatMessage = await ChatMessage.find({ doctorID: _id })
 
-    return res.json({ status: 'ok', message: message })
+    console.log(chatMessage)
+    console.log(chatMessage[0].message)
+
+    return res.json({ status: 'ok', messages: chatMessage })
   } catch (error) {
     res.json({ status: 'error', error: ' Get Chat Error' })
   }
 })
 
 app.get('/api/p_message', async (req, res) => {
-  const { id } = req.query
+  const token = req.headers['x-access-token']
 
   try {
-    const message = await ChatMessage.find({ userID: id })
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const chatMessage = await ChatMessage.find({ patientID: _id })
 
-    return res.json({ status: 'ok', message: message })
+    console.log(_id)
+    console.log(chatMessage)
+    console.log(chatMessage.message)
+
+    return res.json({ status: 'ok', messages: chatMessage })
   } catch (error) {
     res.json({ status: 'error', error: ' Get Chat Error' })
   }
@@ -839,7 +875,7 @@ app.get('/api/medicine', async (req, res) => {
     const _id = decoded._id
     const medicines = await Medicine.findById(_id)
 
-    return res.json({ status: 'ok', medicines })
+    return res.json({ status: 'ok', medicines: medicines.medicine })
   } catch (error) {
     console.error('Error retrieving documents:', error)
     res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' })
@@ -911,10 +947,10 @@ app.get('/api/count_medicine', async (req, res) => {
 app.get('/run_scrapper', async (req, res) => {
   try {
     // Drop the collection
-    const uri = 'mongodb://localhost:27017' // MongoDB connection URI
+    const uri = 'mongodb://127.0.0.1:27017/' // MongoDB connection URI
     const client = new MongoClient(uri)
     await client.connect()
-    const database = client.db('clinical_medicine')
+    const database = client.db('clinical-medics')
     const collectionName = 'ScrappedMedicine'
 
     const collections = await database.listCollections().toArray()
@@ -955,6 +991,41 @@ app.get('/api/display_scrapped_medicine', async (req, res) => {
   } catch (error) {
     console.error('Error retrieving documents:', error)
     res.json({ status: 'error', error: 'Failed to retrieve doctor profiles' })
+  }
+})
+
+app.post('/api/notification', async (req, res) => {
+  try {
+    const { userID, message } = req.body
+
+    console.log(req.body)
+
+    if (!userID || !message) {
+      return res.status(400).json({ status: 'error', error: 'Missing required fields in notification' })
+    } else {
+      await Notification.create({
+        userID: req.body.userID,
+        message: req.body.message,
+      })
+
+      return res.json({ status: 'ok' })
+    }
+  } catch (error) {
+    res.json({ status: 'error', error: 'Post Chat Error' })
+  }
+})
+
+app.get('/api/notification', async (req, res) => {
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const _id = decoded._id
+    const notification = await Notification.findOne({ userID: _id })
+
+    return res.json({ status: 'ok', notification: notification })
+  } catch (error) {
+    res.json({ status: 'error', error: 'Failed to retrieve notification' })
   }
 })
 

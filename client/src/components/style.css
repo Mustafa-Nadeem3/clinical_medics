@@ -16,6 +16,34 @@
 /* `xl` applies to large devices (desktops, less than 1200px) */
 /* @media (max-width: 1199.98px) { ... } */
 
+.rating {
+  direction: rtl;
+  unicode-bidi: bidi-override;
+  text-align: center;
+  color: #8795a1;
+}
+
+.rating input {
+  display: none;
+}
+
+.rating label:before {
+  content: "\2605";
+}
+
+.rating input:checked ~ label {
+  color: #38b6ff;
+}
+
+.rating label:hover,
+.rating label:hover ~ label {
+  color: #38b6ff;
+}
+
+.rating label:before {
+  font-size: 30px;
+}
+
 /* `xxl` applies to x-large devices (large desktops, less than 1400px) */
 @media (min-width: 1200px) and (max-width: 1399.98px) {
   /* Navbar CSS */
@@ -904,6 +932,43 @@
     100% {
       opacity: 1;
     }
+  }
+
+  .doctor {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .patient {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .notification {
+    margin-left: 700px;
+  }
+
+  .notification button {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    border-radius: 50%;
+  }
+
+  .notification button:hover {
+    background-color: #38b6ff;
+    border-radius: 50%;
+  }
+
+  .notification i:hover {
+    color: #ffffff !important;
+  }
+
+  .notification .dropdown-toggle::after {
+    display: none;
+  }
+
+  .notification .dropdown-menu {
+    margin-left: -100px;
   }
 
   /* Calender CSS */

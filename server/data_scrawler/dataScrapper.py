@@ -4,7 +4,7 @@ import numpy as np
 from pymongo import MongoClient
 
 # MongoDB connection settings
-mongo_uri = 'mongodb://localhost:27017/'  # Replace with your MongoDB URI
+mongo_uri = 'mongodb://127.0.0.1:27017/'  # Replace with your MongoDB URI
 database_name = 'clinical-medics'  # Replace with your database name
 collection_name = 'ScrappedMedicine'  # Replace with your collection name
 

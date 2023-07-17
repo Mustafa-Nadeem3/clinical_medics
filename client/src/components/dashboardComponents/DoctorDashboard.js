@@ -67,6 +67,9 @@ function DoctorDashboard() {
   const [serverData, setServerData] = useState('')
   const [requestData, setRequestData] = useState([])
   const [bookedData, setBookedData] = useState([])
+  const [notification, setNotification] = useState([])
+  const [patientData, setPatientData] = useState([])
+  const [userID, setUserID] = useState('')
 
   async function getData() {
     const token = localStorage.getItem('token')
@@ -76,7 +79,7 @@ function DoctorDashboard() {
     }
 
     try {
-      const [profileResponse, appointmentRequestResponse, bookedAppointmentResponse] = await Promise.all([
+      const [profileResponse, appointmentRequestResponse, bookedAppointmentResponse, notificationResponse, patientProfileResponse] = await Promise.all([
         fetch('http://localhost:5000/api/doctor_profile', {
           headers: {
             'x-access-token': token,
@@ -92,12 +95,24 @@ function DoctorDashboard() {
             'x-access-token': token,
           },
         }),
+        fetch('http://localhost:5000/api/notification', {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
+        fetch(`http://localhost:5000/api/d_patient_profile?id=${userID}`, {
+          headers: {
+            'x-access-token': token,
+          },
+        }),
       ])
 
-      const [profileData, appointmentRequestData, bookedAppointmentData] = await Promise.all([
+      const [profileData, appointmentRequestData, bookedAppointmentData, notificationData, patientData] = await Promise.all([
         profileResponse.json(),
         appointmentRequestResponse.json(),
         bookedAppointmentResponse.json(),
+        notificationResponse.json(),
+        patientProfileResponse.json(),
       ])
 
       if (profileData.status === 'ok') {
@@ -113,9 +128,31 @@ function DoctorDashboard() {
       }
 
       if (bookedAppointmentData.status === 'ok') {
+        function compareAppointments(a, b) {
+          const dateA = new Date(a.appointmentDate + " " + a.appointmentTime);
+          const dateB = new Date(b.appointmentDate + " " + b.appointmentTime);
+
+          return dateA - dateB;
+        }
+
+        bookedAppointmentData.booking.sort(compareAppointments)
+
         setBookedData(bookedAppointmentData.booking)
+        setUserID(bookedAppointmentData.booking.patientID)
       } else {
         console.log('Error: ' + bookedAppointmentData.error)
+      }
+
+      if (notificationData.status === 'ok') {
+        setNotification(notificationData.notification)
+      } else {
+        console.log('Error: ' + notificationData.error)
+      }
+
+      if (patientData.status === 'ok') {
+        setPatientData(patientData)
+      } else {
+        console.log('Error: ' + patientData.error)
       }
     } catch (error) {
       console.log('All Data Error:', error.message);
@@ -160,6 +197,62 @@ function DoctorDashboard() {
     }
   }
 
+  async function sendNotification() {
+    const userID = patientID
+    const message = `Appointment Request: ${doctorFirstName} ${doctorLastName} has accepted your requested for appointment on ${appointmentDate} at ${appointmentTime}`
+
+    try {
+      const response = await fetch('http://localhost:5000/api/notification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userID,
+          message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'ok') {
+        console.log('Notification sent successfully');
+      } else {
+        console.error('Error in sending notification:', data.error);
+      }
+    } catch (error) {
+      console.error('Error in sending notification:', error);
+    }
+  }
+
+  async function sendRejectNotification() {
+    const userID = patientID
+    const message = `Appointment Request: ${doctorFirstName} ${doctorLastName} has rejected your requested for appointment on ${appointmentDate} at ${appointmentTime}`
+
+    try {
+      const response = await fetch('http://localhost:5000/api/notification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userID,
+          message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'ok') {
+        console.log('Notification sent successfully');
+      } else {
+        console.error('Error in sending notification:', data.error);
+      }
+    } catch (error) {
+      console.error('Error in sending notification:', error);
+    }
+  }
+
   async function removeAppointmentRequest() {
     const response = await fetch('http://localhost:5000/api/appointment_request', {
       method: 'DELETE',
@@ -179,13 +272,11 @@ function DoctorDashboard() {
   }
 
   // Chat Start
-  const userID = serverData._id
-  const [userMessage, setUserMessage] = useState('')
-  const [serverMessage1, setServerMessage1] = useState('')
-  const [serverMessage2, setServerMessage2] = useState('')
+  const [message, setMessage] = useState([])
+  const [chatMessage, setChatMessage] = useState([])
 
   const handleInputChange = (event) => {
-    setUserMessage(event.target.value);
+    setMessage(event.target.value)
   }
 
   const handleKeyUp = (event) => {
@@ -194,11 +285,18 @@ function DoctorDashboard() {
     }
   }
 
+  const handleClick = () => {
+    sendMessage()
+  }
+
   const sendMessage = () => {
-    const messageText = userMessage.trim()
+    const user1 = serverData._id
+    const user2 = bookedData[0].patientID
+    const sender = "doctor"
+    const messageText = message.trim()
 
     if (messageText !== '') {
-      async function setMessage() {
+      async function setChat() {
         const response = await fetch('http://localhost:5000/api/message', {
           method: 'POST',
           headers: {
@@ -206,8 +304,10 @@ function DoctorDashboard() {
             'Content-Type': "application/json"
           },
           body: JSON.stringify({
-            userID,
-            userMessage
+            user1,
+            user2,
+            message,
+            sender
           }),
         })
 
@@ -219,53 +319,29 @@ function DoctorDashboard() {
           alert('error in chat ' + data.error)
         }
       }
-      setMessage()
-      getMessage()
+      setChat()
     }
   }
 
   async function getMessage() {
     try {
-      const [response1, response2, response3] = await Promise.all([
+      const [response1] = await Promise.all([
         fetch(`http://localhost:5000/api/d_message`, {
           headers: {
             'x-access-token': localStorage.getItem('token'),
           },
         }),
-        fetch(`http://localhost:5000/api/p_message`, {
-          headers: {
-            'x-access-token': localStorage.getItem('token'),
-          },
-        }),
-        fetch(`http://localhost:5000/api/patient_profile`, {
-          headers: {
-            'x-access-token': localStorage.getItem('token'),
-          },
-        }),
       ]);
 
-      const [data1, data2, data3] = await Promise.all([
-        response1.json(), 
-        response2.json(),
-        response3.json()
+      const [data1] = await Promise.all([
+        response1.json()
       ]);
 
       if (data1.status === 'ok') {
-        setServerMessage1(data1.message);
+        console.log(data1[0].message)
+        setChatMessage(data1[0].message)
       } else {
         alert('error in chat ' + data1.error);
-      }
-
-      if (data2.status === 'ok') {
-        setServerMessage2(data2.message);
-      } else {
-        alert('error in chat ' + data2.error);
-      }
-
-      if (data3.status === 'ok') {
-        // setPatientDetails(data2);
-      } else {
-        alert('error in chat ' + data2.error);
       }
     } catch (error) {
       alert('Error: ' + error.message);
@@ -280,6 +356,7 @@ function DoctorDashboard() {
     } else {
       alert('error in dashboard useEffect')
     }
+    getMessage()
   }, [])
 
   return (
@@ -311,6 +388,20 @@ function DoctorDashboard() {
           <Link className="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/dashboard">Dashboard</Link>
           <Link className="nav-link text-secondary me-4" to="/profile">Profile</Link>
           <Link className="nav-link text-secondary me-4" to="/settings">Settings</Link>
+          <div className="dropdown notification">
+            <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa-regular fa-bell text-primary fs-5"></i>
+            </button>
+            <div className="dropdown-menu">
+              {notification && notification.length > 0 ? (
+                notification.map((notification, index) => (
+                  <li key={index}>
+                    <p>{notification.message}</p>
+                  </li>
+                ))
+              ) : <span>No Notification</span>}
+            </div>
+          </div>
         </div>
       </nav>
       <div className="container amount-card">
@@ -382,35 +473,31 @@ function DoctorDashboard() {
                   <img src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2 d-image" />
                 </div>
                 <div className="col-8">
-                  <h6 className="mb-0 mt-1">Patient 1</h6>
-                  <p className="mb-0 d-text">123 A, Wapda town</p>
-                  <p className="d-text">Lahore</p>
+                  <h6 className="mb-0 mt-1">{patientData.firstName && patientData.lastName
+                    ? `${patientData.firstName} ${patientData.lastName}`
+                    : patientData.firstName || patientData.lastName || 'No Username Found'}</h6>
+                  <p className="mb-0 d-text">{patientData.address}</p>
                 </div>
                 <div className="col-4 mx-auto my-auto">
-                  <button className="btn customButton" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><i className="fa-solid fa-message me-1"></i>Chat</button>
+                  <button className="btn customButton" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" onClick={handleClick}><i className="fa-solid fa-message me-1"></i>Chat</button>
 
-                  <div className="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                  <div className="offcanvas offcanvas-end" tabIndex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
                     <div className="offcanvas-header">
-                      <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                      <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+                        <p>{doctorID}</p>
+                        <p>{patientID}</p>
+                      </button>
                     </div>
                     <div className="offcanvas-body">
                       <div className="h-100 card">
-                        <div className="card-header">
-                          {bookedData && bookedData.length > 0 ? (
-                            bookedData.map((bookedData, index) => (
-                              <p key={index}></p>
-                            ))
-                          ) : <span></span>}
-                        </div>
+                        <div className="card-header"></div>
                         <div className="card-body">
-                          {serverMessage1 && serverMessage1.length > 0 ? (
-                            serverMessage1.map((serverMessage1, index) => (
-                              <p key={index} className="d-flex justify-content-end">{serverMessage1.userMessage}</p>
-                            ))
-                          ) : <span></span>}
-                          {serverMessage2 && serverMessage2.length > 0 ? (
-                            serverMessage2.map((serverMessage2, index) => (
-                              <p key={index} className="d-flex justify-content-start">{serverMessage2.userMessage}</p>
+                          {chatMessage && chatMessage.length > 0 ? (
+                            chatMessage.map((chatMessage, index) => (
+                              <div key={index}>
+                                <p className={chatMessage.sender === 'doctor' ? 'doctor' : 'patient'}>{chatMessage.text}</p>
+                              </div>
+
                             ))
                           ) : <span></span>}
                         </div>
@@ -420,10 +507,10 @@ function DoctorDashboard() {
                             className="form-control"
                             aria-label="Recipient's username"
                             aria-describedby="button-addon2"
-                            value={userMessage}
+                            value={message}
                             onChange={handleInputChange}
                             onKeyUp={handleKeyUp} />
-                          <button className="ms-2 btn customButton" type="button" id="button-addon2" onClick={sendMessage}>Send</button>
+                          <button className="ms-2 btn customButton" type="button" id="button-addon2" onClick={handleClick}>Send</button>
                         </div>
                       </div>
                     </div>
@@ -433,21 +520,21 @@ function DoctorDashboard() {
               <div className="col-12 d-flex mt-2">
                 <div className="col-4 me-5">
                   <h6>D.O.B</h6>
-                  <p>18/11/1999</p>
+                  <p>{patientData.DOB}</p>
                 </div>
                 <div className="col-4 me-5">
                   <h6>Gender</h6>
-                  <p>Male</p>
+                  <p>{patientData.gender}</p>
                 </div>
                 <div className="col-4 me-5">
                   <h6>Weight</h6>
-                  <p>56 kg</p>
+                  <p>{patientData.weight}kg</p>
                 </div>
               </div>
               <div className="col-12 d-flex">
                 <div className="col-4 me-5">
                   <h6>Height</h6>
-                  <p>163 cm</p>
+                  <p>{patientData.height} cm</p>
                 </div>
                 <div className="col-4 me-5">
                   <h6>Previous Appointment</h6>
@@ -557,6 +644,7 @@ function DoctorDashboard() {
                             setAppointmentTime(requestData.appointmentTime)
                             setAppointmentType(requestData.appointmentType)
                             bookAppointment()
+                            sendNotification()
                             removeAppointmentRequest()
                           }}
                         >
@@ -564,6 +652,7 @@ function DoctorDashboard() {
                         <i
                           className="fs-4 fa-regular fa-circle-xmark"
                           onClick={() => {
+                            sendRejectNotification()
                             removeAppointmentRequest()
                           }}>
                         </i>

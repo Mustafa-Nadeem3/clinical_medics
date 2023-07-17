@@ -57,6 +57,8 @@ function PatientDashboard() {
 
   const [bookedData, setBookedData] = useState([])
   const [bookedTestData, setBookedTestData] = useState([])
+  const [doctorData, setDoctorData] = useState([])
+  const [userID, setUserID] = useState('')
 
   async function getBookedAppointment() {
     const response = await fetch('http://localhost:5000/api/p_book_appointment', {
@@ -68,7 +70,33 @@ function PatientDashboard() {
     const data = await response.json()
 
     if (data.status === 'ok') {
+      function compareAppointments(a, b) {
+        const dateA = new Date(a.appointmentDate + " " + a.appointmentTime);
+        const dateB = new Date(b.appointmentDate + " " + b.appointmentTime);
+
+        return dateA - dateB;
+      }
+
+      data.booking.sort(compareAppointments)
+
       setBookedData(data.booking)
+      setUserID(data.booking.doctorID)
+    } else {
+      console.log('Error: ' + data.error)
+    }
+  }
+
+  async function getDoctorDetails() {
+    const response = await fetch(`http://localhost:5000/api/p_doctor_profile?id=${userID}`, {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setDoctorData(data)
     } else {
       console.log('Error: ' + data.error)
     }
@@ -126,89 +154,99 @@ function PatientDashboard() {
     }
   }
 
+  const [notification, setNotification] = useState([])
+
+  async function getNotification() {
+    const response = await fetch('http://localhost:5000/api/notification', {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'ok') {
+      setNotification(data.notification)
+    } else {
+      alert('Error: ' + data.error)
+    }
+  }
+
   // Chat Start
-  // const userID = serverData._id
-  // const [otherUserID, setOtherUserID] = useState('')
-  // const [userMessage, setUserMessage] = useState('')
-  // const [serverMessage1, setServerMessage1] = useState('')
-  // const [serverMessage2, setServerMessage2] = useState('')
+  const [message, setMessage] = useState([])
+  const [chatMessage, setChatMessage] = useState([])
 
-  // const handleInputChange = (event) => {
-  //   setUserMessage(event.target.value);
-  // }
+  const handleInputChange = (event) => {
+    setMessage(event.target.value)
+  }
 
-  // const handleKeyUp = (event) => {
-  //   if (event.keyCode === 13) {
-  //     sendMessage()
-  //   }
-  // }
+  const handleKeyUp = (event) => {
+    if (event.keyCode === 13) {
+      sendMessage()
+    }
+  }
 
-  // const sendMessage = () => {
-  //   const messageText = userMessage.trim()
+  const handleClick = () => {
+    sendMessage()
+  }
 
-  //   if (messageText !== '') {
-  //     async function setMessage() {
-  //       const response = await fetch('http://localhost:5000/api/message', {
-  //         method: 'POST',
-  //         headers: {
-  //           'x-access-token': localStorage.getItem('token'),
-  //           'Content-Type': "application/json"
-  //         },
-  //         body: JSON.stringify({
-  //           userID,
-  //           userMessage
-  //         }),
-  //       })
+  const sendMessage = () => {
+    const user1 = bookedData[0].doctorID
+    const user2 = serverData._id
+    const sender = "patient"
+    const messageText = message.trim()
 
-  //       const data = await response.json()
+    if (messageText !== '') {
+      async function setChat() {
+        const response = await fetch('http://localhost:5000/api/message', {
+          method: 'POST',
+          headers: {
+            'x-access-token': localStorage.getItem('token'),
+            'Content-Type': "application/json"
+          },
+          body: JSON.stringify({
+            user1,
+            user2,
+            message,
+            sender
+          }),
+        })
 
-  //       if (data.status === 'ok') {
+        const data = await response.json()
 
-  //       } else {
-  //         alert('error in chat ' + data.error)
-  //       }
-  //     }
-  //     setMessage()
-  //     getDMessage()
-  //     getPMessage()
-  //   }
-  // }
+        if (data.status === 'ok') {
 
-  // async function getDMessage() {
-  //   const id = userID
+        } else {
+          alert('error in chat ' + data.error)
+        }
+      }
+      setChat()
+    }
+  }
 
-  //   const response = await fetch(`http://localhost:5000/api/message?id=${id}`, {
-  //     headers: {
-  //       'x-access-token': localStorage.getItem('token'),
-  //     },
-  //   })
+  async function getMessage() {
+    try {
+      const [response1] = await Promise.all([
+        fetch(`http://localhost:5000/api/p_message`, {
+          headers: {
+            'x-access-token': localStorage.getItem('token'),
+          },
+        }),
+      ]);
 
-  //   const data = await response.json()
+      const [data1] = await Promise.all([
+        response1.json()
+      ]);
 
-  //   if (data.status === 'ok') {
-  //     setServerMessage1(data.message)
-  //   } else {
-  //     alert('error in chat ' + data.error)
-  //   }
-  // }
-
-  // async function getPMessage() {
-  //   const id = otherUserID
-
-  //   const response = await fetch(`http://localhost:5000/api/message?id=${id}`, {
-  //     headers: {
-  //       'x-access-token': localStorage.getItem('token'),
-  //     },
-  //   })
-
-  //   const data = await response.json()
-
-  //   if (data.status === 'ok') {
-  //     setServerMessage2(data.message)
-  //   } else {
-  //     alert('error in chat ' + data.error)
-  //   }
-  // }
+      if (data1.status === 'ok') {
+        setChatMessage(data1.message);
+      } else {
+        alert('error in chat ' + data1.error);
+      }
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
+  }
   // Chat End
 
   useEffect(() => {
@@ -219,9 +257,12 @@ function PatientDashboard() {
       getBookedTest()
       getAppointmentRequest()
       getTestRequest()
+      getDoctorDetails()
+      getNotification()
     } else {
       alert('error in dashboard useEffect')
     }
+    getMessage()
   }, [])
 
   return (
@@ -254,6 +295,18 @@ function PatientDashboard() {
           <Link className="nav-link text-secondary ms-3 me-4 cur-link rounded-bottom-1" to="/dashboard">Dashboard</Link>
           <Link className="nav-link text-secondary me-4" to="/profile">Profile</Link>
           <Link className="nav-link text-secondary me-4" to="/settings">Settings</Link>
+          <div className="dropdown notification">
+            <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa-regular fa-bell text-primary fs-5"></i>
+            </button>
+            <div className="dropdown-menu">
+              {notification && notification.length > 0 ? (
+                notification.map((notification, index) => (
+                  <li key={index}>{notification.message}</li>
+                ))
+              ) : <span>No Notification</span>}
+            </div>
+          </div>
         </div>
       </nav>
       <div className="container amount-card">
@@ -336,47 +389,40 @@ function PatientDashboard() {
                   <img src={process.env.PUBLIC_URL + '/images/user-solid.svg'} alt="Profile Pic" className="border rounded-circle border-2 d-image" />
                 </div>
                 <div className="col-8">
-                  <h6 className="mb-1 mt-1">Doctor 2</h6>
-                  <p className="mb-0 d-text">234 D, Johar town</p>
+                  <h6 className="mb-1 mt-1">{doctorData.firstName && doctorData.lastName
+                    ? `${doctorData.firstName} ${doctorData.lastName}`
+                    : doctorData.firstName || doctorData.lastName || 'No Username Found'}</h6>
+                  <p className="mb-0 d-text">{doctorData.officeAddress}</p>
                 </div>
                 <div className="col-4 mx-auto my-auto">
                   <button className="btn customButton" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><i className="fa-solid fa-message me-1"></i>Chat</button>
 
-                  <div className="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                  <div className="offcanvas offcanvas-end" tabIndex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
                     <div className="offcanvas-header">
                       <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
                     <div className="offcanvas-body">
                       <div className="h-100 card">
-                        <div className="card-header">
-                          {/* {bookedData && bookedData.length > 0 ? (
-                            bookedData.map((bookedData, index) => (
-                              <p key={index} value={setOtherUserID(bookedData.doctorID)}></p>
-                            ))
-                          ) : <span></span>} */}
-                        </div>
+                        <div className="card-header"></div>
                         <div className="card-body">
-                          {/* {serverMessage1 && serverMessage1.length > 0 ? (
-                            serverMessage1.map((serverMessage1, index) => (
-                              <p key={index} className="d-flex justify-content-end">{serverMessage1.userMessage}</p>
+                          {chatMessage && chatMessage.length > 0 ? (
+                            chatMessage.map((chatMessage, index) => (
+                              <div key={index}>
+                                <p >{chatMessage.message.text}</p>
+                              </div>
                             ))
                           ) : <span></span>}
-                          {serverMessage2 && serverMessage2.length > 0 ? (
-                            serverMessage2.map((serverMessage2, index) => (
-                              <p key={index} className="d-flex justify-content-start">{serverMessage2.userMessage}</p>
-                            ))
-                          ) : <span></span>} */}
                         </div>
                         <div className="card-footer d-flex">
-                          {/* <input
+                          <input
                             type="text"
                             className="form-control"
                             aria-label="Recipient's username"
                             aria-describedby="button-addon2"
-                            value={userMessage}
+                            value={message}
                             onChange={handleInputChange}
                             onKeyUp={handleKeyUp} />
-                          <button className="ms-2 btn customButton" type="button" id="button-addon2" onClick={sendMessage}>Send</button> */}
+                          <button className="ms-2 btn customButton" type="button" id="button-addon2" onClick={handleClick}>Send</button>
                         </div>
                       </div>
                     </div>
@@ -386,25 +432,35 @@ function PatientDashboard() {
               <div className="col-12 d-flex mt-2">
                 <div className="col-4 me-5">
                   <h6>Degree</h6>
-                  <p>MBBS</p>
+                  <p>{doctorData.degree}</p>
                 </div>
                 <div className="col-4 me-5">
                   <h6>Specialization</h6>
-                  <p>Dermatology</p>
+                  <p>{doctorData.specialization}</p>
                 </div>
                 <div className="col-4 me-5">
-                  <h6>Ratings</h6>
-                  <p>Not available</p>
+                  <h6>Fee</h6>
+                  <p>{doctorData.fee}</p>
                 </div>
               </div>
               <div className="col-12 d-flex">
                 <div className="col-4 me-5">
-                  <h6>Consulted</h6>
-                  <p>Not available</p>
+                <h6 className="mb-0">Your Rating</h6>
+                  <div className="rating">
+                    <input type="radio" id="star5" name="rating" value="5" />
+                    <label for="star5" title="Excellent"></label>
+                    <input type="radio" id="star4" name="rating" value="4" />
+                    <label for="star4" title="Very Good"></label>
+                    <input type="radio" id="star3" name="rating" value="3" />
+                    <label for="star3" title="Good"></label>
+                    <input type="radio" id="star2" name="rating" value="2" />
+                    <label for="star2" title="Fair"></label>
+                    <input type="radio" id="star1" name="rating" value="1" />
+                    <label for="star1" title="Very Poor"></label>
+                  </div>
                 </div>
                 <div className="col-4 me-5">
-                  <h6>Your Rating</h6>
-                  <p>Unknown</p>
+                  
                 </div>
               </div>
               <div className="col-12 d-flex d-button">
